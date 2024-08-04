@@ -1,0 +1,94 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.logo-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px; 
+}
+
+.logo {
+    width: 250px; 
+    margin: 0; 
+}
+
+main {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    flex-wrap: wrap;
+}
+
+.left {
+    flex: 1;
+    position: relative;
+}
+
+.about-us {
+    position: absolute;
+    top: 5px; 
+    left: 5px;
+    background-color: rgba(0, 0, 255, 0.7);
+    padding: 10px; 
+    border-radius: 10px;
+    color: white;
+    max-width: 300px;
+}
+
+.disaster-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    margin: 0; 
+    padding: 0; 
+}
+
+.right {
+    flex: 1;
+    background-color: #ADD8E6;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px; 
+}
+
+.intro-text {
+    font-size: 24px; 
+    font-weight: bold; 
+    color: #000080;
+    text-align: center;
+    margin-bottom: 10px; 
+}
+
+.btn {
+    background-color: #FF7F50;
+    border: none;
+    color: white;
+    padding: 10px 30px; 
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 20px; 
+    margin: 5px; 
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+.btn.login {
+    background-color: #FF7F50;
+}
+
+.btn.signup {
+    background-color: #FF7F50;
+}
