@@ -71,24 +71,26 @@ main {
     margin-bottom: 10px; 
 }
 
+input[type="text"], input[type="password"] {
+    width: 250px; /* Αύξηση του πλάτους των πλαισίων */
+    padding: 10px; /* Προσθήκη εσωτερικού περιθωρίου */
+    margin: 5px; /* Προσθήκη εξωτερικού περιθωρίου */
+    border: 1px solid #ccc; /* Προσθήκη περιγράμματος */
+    border-radius: 5px; /* Στρογγυλοποίηση γωνιών */
+    font-size: 16px; 
+}
+
 .btn {
     background-color: #FF7F50;
     border: none;
     color: white;
-    padding: 10px 30px; 
+    padding: 10px 20px; /* Μείωση padding */
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 20px; 
+    font-size: 16px; /* Μείωση μεγέθους γραμματοσειράς */
     margin: 5px; 
     cursor: pointer;
     border-radius: 8px;
 }
 
-.btn.login {
-    background-color: #FF7F50;
-}
-
-.btn.signup {
-    background-color: #FF7F50;
-}

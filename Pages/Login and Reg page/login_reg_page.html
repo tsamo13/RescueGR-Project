@@ -25,10 +25,16 @@
                 <p class="intro-text">
                     Join us in building a resilient and supportive community. Together, we can make a difference, one helping hand at a time.
                 </p>
-                <button class="btn login">Log in</button>
-                <button class="btn signup">Sign up</button>
+                <form id="loginForm">
+                    <input type="text" id="username" name="username" placeholder="Username" required>
+                    <input type="password" id="password" name="password" placeholder="Password" required>
+                    <button type="submit" class="btn">Log in</button>
+                </form>
+                <button class="btn">Sign up</button>
             </section>
         </main>
     </div>
+
+    <script src="login_reg_page.js"></script>
 </body>
 </html>
