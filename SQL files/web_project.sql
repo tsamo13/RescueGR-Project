@@ -1,6 +1,6 @@
 USE web_project;
 
-CREATE TABLE user (
+CREATE TABLE IF NOT EXISTS user (
     user_id INT PRIMARY KEY AUTO_INCREMENT,
     username VARCHAR(50) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
@@ -10,12 +10,12 @@ CREATE TABLE user (
     location POINT
 );
 
-CREATE TABLE category (
+CREATE TABLE IF NOT EXISTS category (
     category_id INT PRIMARY KEY AUTO_INCREMENT,
     category_name VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE item (
+CREATE TABLE IF NOT EXISTS item (
     item_id INT PRIMARY KEY AUTO_INCREMENT,
     category_id INT,
     item_name VARCHAR(100) NOT NULL,
@@ -23,7 +23,16 @@ CREATE TABLE item (
     FOREIGN KEY (category_id) REFERENCES category(category_id)
 );
 
-CREATE TABLE request (
+
+CREATE TABLE IF NOT EXISTS vehicle (
+    vehicle_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
+    availability BOOLEAN DEFAULT TRUE,
+    active_task INT,
+    FOREIGN KEY (user_id) REFERENCES user(user_id)
+);
+
+CREATE TABLE IF NOT EXISTS request (
     request_id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT,
     item_id INT,
@@ -36,7 +45,7 @@ CREATE TABLE request (
     FOREIGN KEY (assigned_vehicle_id) REFERENCES vehicle(vehicle_id)
 );
 
-CREATE TABLE offer (
+CREATE TABLE IF NOT EXISTS offer (
     offer_id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT,
     item_id INT,
@@ -49,16 +58,7 @@ CREATE TABLE offer (
     FOREIGN KEY (assigned_vehicle_id) REFERENCES vehicle(vehicle_id)
 );
 
-CREATE TABLE vehicle (
-    vehicle_id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT,
-    availability BOOLEAN DEFAULT TRUE,
-    active_task INT,
-    FOREIGN KEY (user_id) REFERENCES user(user_id),
-    FOREIGN KEY (active_task) REFERENCES task(task_id)
-);
-
-CREATE TABLE task (
+CREATE TABLE IF NOT EXISTS task (
     task_id INT PRIMARY KEY AUTO_INCREMENT,
     vehicle_id INT,
     type ENUM('Request', 'Offer') NOT NULL,
@@ -71,7 +71,13 @@ CREATE TABLE task (
     FOREIGN KEY (offer_id) REFERENCES offer(offer_id)
 );
 
-CREATE TABLE announcement (
+CREATE TABLE IF NOT EXISTS administrator (
+    admin_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
+    FOREIGN KEY (user_id) REFERENCES user(user_id)
+);
+
+CREATE TABLE IF NOT EXISTS announcement (
     announcement_id INT PRIMARY KEY AUTO_INCREMENT,
     admin_id INT,
     title VARCHAR(255) NOT NULL,
@@ -80,19 +86,14 @@ CREATE TABLE announcement (
     FOREIGN KEY (admin_id) REFERENCES administrator(admin_id)
 );
 
-CREATE TABLE administrator (
-    admin_id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT,
-    FOREIGN KEY (user_id) REFERENCES user(user_id)
-);
 
-CREATE TABLE civilian (
+CREATE TABLE IF NOT EXISTS civilian (
     civilian_id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT,
     FOREIGN KEY (user_id) REFERENCES user(user_id)
 );
 
-CREATE TABLE rescuer (
+CREATE TABLE IF NOT EXISTS rescuer (
     rescuer_id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT,
     vehicle_id INT,
@@ -100,5 +101,5 @@ CREATE TABLE rescuer (
     FOREIGN KEY (vehicle_id) REFERENCES vehicle(vehicle_id)
 );
 
-
+alter table vehicle add foreign key (active_task) REFERENCES task(task_id);
 
