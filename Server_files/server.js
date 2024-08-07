@@ -27,31 +27,16 @@ app.use(bodyParser.json()); // Use body-parser middleware to parse JSON
 app.use(bodyParser.urlencoded({ extended: true })); // Use body-parser middleware to parse URL-encoded data
 
 
-// Define routes
-app.get('/', (req, res) => {
-    res.send('Welcome to the web project!');
-  });
-  
-  app.get('/users', (req, res) => {
-    let sql = 'SELECT * FROM user';
-    db.query(sql, (err, results) => {
-      if (err) throw err;
-      res.json(results);
-    });
-  });
-  
-  app.post('/user', (req, res) => {
-    let newUser = req.body;
-    let sql = 'INSERT INTO user SET ?';
-    db.query(sql, newUser, (err, result) => {
-      if (err) {
-        console.error('Error inserting new user:', err);
-        res.status(500).send('Error inserting new user');
-        return;
-      }
-      res.send('User added...');
-    });
-  });
+// Middleware to attach db connection to request object
+app.use((req, res, next) => {
+  req.db = db;
+  next();
+});
+
+
+// Import and use login route
+const loginRoute = require('./routes/login');
+app.use('/login', loginRoute);
 
 
 // Start server
