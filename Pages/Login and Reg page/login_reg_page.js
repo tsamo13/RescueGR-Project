@@ -26,10 +26,19 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
        
         if (data.success) {
            
-            //Ανατακεύθυνση στην κατάλληλη σελίδα ανάλογα τον ρόλο που έχει ο χρήστης που κάνει Login
-            window.location.href = 'page.html';
-        } else {
-            
+            if (data.user_type == 1){
+                   window.location.href = 'admin_page.html';
+            }
+         else if (data.user_type == 2) {
+            window.location.href = 'rescuer_page.html';
+        }   
+
+        else if (data.user_type == 3){
+            window.location.href = 'civilian_page.html';
+        }
+        }
+        
+        else {
             alert('Invalid login credentials');
         }
     })
