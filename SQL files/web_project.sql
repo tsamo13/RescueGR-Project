@@ -103,3 +103,12 @@ CREATE TABLE IF NOT EXISTS rescuer (
 
 alter table vehicle add foreign key (active_task) REFERENCES task(task_id);
 
+-- Add the user_type column to the user table
+ALTER TABLE user ADD COLUMN user_type INT NOT NULL;
+
+-- Update existing records with appropriate user_type values
+UPDATE user SET user_type = 1 WHERE role = 'Administrator';
+UPDATE user SET user_type = 2 WHERE role = 'Rescuer';
+UPDATE user SET user_type = 3 WHERE role = 'Civilian';
+
+
