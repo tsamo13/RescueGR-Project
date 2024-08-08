@@ -1,0 +1,28 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #ADD8E6; /* Background χρώμα */
+}
+
+header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    height: 150px; /* Ύψος του header */
+}
+
+.logo {
+    max-width: 100%;
+    height: auto;
+}
+
+.admin-info {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    color: #000080; /* Χρώμα του κειμένου */
+    font-size: 18px;
+    font-weight: bold;
+    text-align: left;
+}

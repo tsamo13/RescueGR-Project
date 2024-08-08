@@ -112,3 +112,4 @@ UPDATE user SET user_type = 2 WHERE role = 'Rescuer';
 UPDATE user SET user_type = 3 WHERE role = 'Civilian';
 
 
+
