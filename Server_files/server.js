@@ -1,6 +1,7 @@
 const express = require('express'); // Import express
 const mysql = require('mysql'); // Import MySQL driver
 const bodyParser = require('body-parser'); // Import body-parser
+const path = require('path');
 
 const app = express(); // Create an Express application
 const port = 3000; // Define the port your server will run on
@@ -10,7 +11,7 @@ const port = 3000; // Define the port your server will run on
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root', 
-    password: 'Ilov3soad', 
+    password: 'NodejsProject!', 
     database: 'web_project' 
   });
   
@@ -26,6 +27,9 @@ const db = mysql.createConnection({
 app.use(bodyParser.json()); // Use body-parser middleware to parse JSON
 app.use(bodyParser.urlencoded({ extended: true })); // Use body-parser middleware to parse URL-encoded data
 
+
+// Serve static files from the "pages/Login and Reg Page" directory
+app.use(express.static(path.join(__dirname, '..', 'pages', 'Login and Reg Page')));
 
 // Middleware to attach db connection to request object
 app.use((req, res, next) => {
