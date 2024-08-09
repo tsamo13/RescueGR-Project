@@ -31,6 +31,9 @@ app.use(bodyParser.urlencoded({ extended: true })); // Use body-parser middlewar
 // Serve static files from the "pages/Login and Reg Page" directory
 app.use(express.static(path.join(__dirname, '..', 'pages', 'Login and Reg Page')));
 
+// Serve static files from "pages/Admin page" directory
+app.use(express.static(path.join(__dirname, '..', 'pages', 'Admin page')));
+
 // Middleware to attach db connection to request object
 app.use((req, res, next) => {
   req.db = db;
