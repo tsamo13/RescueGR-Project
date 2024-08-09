@@ -1,0 +1,27 @@
+{
+  "code": 1,
+  "message": "Retrieved successfully",
+  "items": [],
+  "categories": [
+    {
+      "id": "5",
+      "category_name": "Food"
+    },
+    {
+      "id": "42",
+      "category_name": "Μedicines"
+    },
+    {
+      "id": "7",
+      "category_name": "Clothing"
+    },
+    {
+      "id": "57",
+      "category_name": "Household Items"
+    },
+    {
+      "id": "67",
+      "category_name": "Solar-Powered Devices"
+    }
+  ]
+}

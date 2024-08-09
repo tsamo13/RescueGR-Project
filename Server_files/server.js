@@ -46,6 +46,11 @@ const loginRoute = require('./routes/login');
 app.use('/login', loginRoute);
 
 
+// Import and use fetch_data route
+const fetchDataRoute = require('./routes/fetch_data');
+app.use('/fetch_data', fetchDataRoute);
+
+
 // Start server
 app.listen(port, () => {
     console.log(`Server started on port ${port}`);
