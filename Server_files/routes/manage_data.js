@@ -4,7 +4,8 @@ const fs = require('fs');
 const path = require('path');
 
 // Route to fetch and insert categories and items from local JSON file
-router.post('/', (req, res) => {
+router.post('/insert_data', (req, res) => {
+    console.log('Insert data route accessed');
     const db = req.db;
     const jsonFilePath = path.join(__dirname, '../data.json'); // Path to data.json
 
@@ -57,4 +58,34 @@ router.post('/', (req, res) => {
     });
 });
 
+
+// Route to delete all categories and items from the database
+router.post('/delete_data', (req, res) => {
+    console.log('Delete data route accessed');
+    const db = req.db;
+
+    // SQL queries to delete all records from item and category tables
+    const deleteItemsSql = 'DELETE FROM item';
+    const deleteCategoriesSql = 'DELETE FROM category';
+
+    // Execute the queries in sequence
+    db.query(deleteItemsSql, (err, result) => {
+        if (err) {
+            console.error('Error deleting items:', err);
+            return res.status(500).json({ success: false, message: 'Error deleting items' });
+        }
+
+        db.query(deleteCategoriesSql, (err, result) => {
+            if (err) {
+                console.error('Error deleting categories:', err);
+                return res.status(500).json({ success: false, message: 'Error deleting categories' });
+            }
+
+            // Send a success response if both deletions succeed
+            res.json({ success: true, message: 'All items and categories deleted successfully' });
+        });
+    });
+});
+
 module.exports = router;
+

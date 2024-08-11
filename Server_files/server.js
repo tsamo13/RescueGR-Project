@@ -41,9 +41,9 @@ app.use((req, res, next) => {
 });
 
 
-// Import and use fetch_data route
-const fetchDataRoute = require('./routes/fetch_data');
-app.use('/fetch_data', fetchDataRoute);
+// Import and use manage_data route
+const manageDataRoute = require('./routes/manage_data');
+app.use('/manage_data', manageDataRoute);
 
 
 // Import and use login route
