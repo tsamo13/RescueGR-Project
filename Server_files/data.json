@@ -1,0 +1,261 @@
+{
+  "code": 1,
+  "message": "Retrieved successfully",
+  "items": [
+    {
+      "id": "16",
+      "name": "Water",
+      "category": "1",
+      "details": [
+        {
+          "detail_name": "Volume",
+          "detail_value": "1.5L"
+        },
+        {
+          "detail_name": "Pack Size",
+          "detail_value": "6"
+        }
+      ]
+    },
+    {
+      "id": "25",
+      "name": "Spaghetti",
+      "category": "5",
+      "details": [
+        {
+          "detail_name": "Weight",
+          "detail_value": "500gr"
+        }
+      ]
+    },
+    {
+      "id": "29",
+      "name": "Biscuits",
+      "category": "5",
+      "details": [
+        {
+          "detail_name": "Brand",
+          "detail_value": "Papadopoulou"
+        },
+        {
+          "detail_name": "Pieces",
+          "detail_value": "30"
+        }
+      ]
+    },
+    {
+      "id": "90",
+      "name": "Condensed Milk",
+      "category": "5",
+      "details": [
+        {
+          "detail_name": "Weight",
+          "detail_value": "400gr"
+        }
+      ]
+    },
+    {
+      "id": "115",
+      "name": "Rice",
+      "category": "5",
+      "details": [
+        {
+          "detail_name": "Weight",
+          "detail_value": "500gr"
+        }
+      ]
+    },
+    {
+      "id": "182",
+      "name": "Depon",
+      "category": "42",
+      "details": [
+        {
+          "detail_name": "Tablets",
+          "detail_value": "20"
+        },
+	{
+          "detail_name": "Paracetamol",
+          "detail_value": "500mg"
+        }
+      ]
+    },  
+    {
+      "id": "183",
+      "name": "Antibiotic Ointment",
+      "category": "42",
+      "details": [
+        {
+          "detail_name": "Weight",
+          "detail_value": "30gr"
+        }
+      ]
+    },
+    {
+      "id": "180",
+      "name": "Xanax",
+      "category": "42",
+      "details": [
+        {
+          "detail_name": "Tablets",
+          "detail_value": "30"
+        },
+	{
+          "detail_name": "Content",
+          "detail_value": "0,5mg"
+        }
+      ]
+    },  
+    {
+      "id": "187",
+      "name": "Aspirin",
+      "category": "42",
+      "details": [
+        {
+          "detail_name": "Tablets",
+          "detail_value": "12"
+        },
+	{
+          "detail_name": "Content",
+          "detail_value": "500mg"
+        }
+      ]
+    },
+    {
+      "id": "65",
+      "name": "Men's Underwear",
+      "category": "7",
+      "details": [
+        {
+          "detail_name": "Size",
+          "detail_value": "XL"
+        }
+      ]
+    },
+    {
+      "id": "66",
+      "name": "Socks",
+      "category": "7",
+      "details": []
+    },
+    {
+      "id": "67",
+      "name": "Warm Jacket",
+      "category": "7",
+      "details": [
+        {
+          "detail_name": "Size",
+          "detail_value": "XXL"
+        }
+      ]
+    },
+    {
+      "id": "69",
+      "name": "Gloves",
+      "category": "7",
+      "details": []
+    },
+    {
+      "id": "71",
+      "name": "Boots",
+      "category": "7",
+      "details": [
+        {
+          "detail_name": "Size",
+          "detail_value": "42EU"
+        }
+      ]
+    }, 
+    {
+      "id": "70",
+      "name": "Pants",
+      "category": "7",
+      "details": [
+        {
+          "detail_name": "Size",
+          "detail_value": "38EU"
+        }
+      ]
+    }, 
+    {
+      "id": "260",
+      "name": "Pot",
+      "category": "57",
+      "details": [
+        {
+          "detail_name": "Diameter",
+          "detail_value": "26cm"
+        },
+        {
+          "detail_name": "Volume",
+          "detail_value": "5.5L"
+        }
+      ]
+    },
+    {
+      "id": "261",
+      "name": "Plates",
+      "category": "57",
+      "details": [
+        {
+          "detail_name": "Pieces",
+          "detail_value": "18"
+        }
+      ]
+    },
+    {
+      "id": "263",
+      "name": "Cutlery ",
+      "category": "57",
+      "details": [
+        {
+          "detail_name": "Pieces",
+          "detail_value": "30"
+        }
+      ]
+    },
+    {
+      "id": "279",
+      "name": "Solar Charger",
+      "category": "67",
+      "details": [
+        {
+          "detail_name": "Maximum Power Output",
+          "detail_value": "40 W"
+        }
+      ]
+    },
+    {
+      "id": "281",
+      "name": "Solar Powered Torch",
+      "category": "67",
+      "details": []
+    }
+  ],
+  "categories": [
+    {
+      "id": "1",
+      "category_name": "Water"
+    },
+    {
+      "id": "5",
+      "category_name": "Food"
+    },
+    {
+      "id": "42",
+      "category_name": "Μedicines"
+    },
+    {
+      "id": "7",
+      "category_name": "Clothing"
+    },
+    {
+      "id": "57",
+      "category_name": "Household Items"
+    },
+    {
+      "id": "67",
+      "category_name": "Solar-Powered Devices"
+    }
+  ]
+}
