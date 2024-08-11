@@ -31,6 +31,12 @@ body {
     text-align: right;
 }
 
+.admin-info a.logout {
+    color: #000080;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
 .main-content {
     display: flex;
     justify-content: flex-start;
