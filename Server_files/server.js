@@ -41,24 +41,16 @@ app.use((req, res, next) => {
 });
 
 
-<<<<<<< HEAD
-
-=======
 // Import and use manage_data route
 const manageDataRoute = require('./routes/manage_data');
 app.use('/manage_data', manageDataRoute);
 
 
 // Import and use login route
->>>>>>> chris-server
 const loginRoute = require('./routes/login');
 app.use('/login', loginRoute);
 
 
-<<<<<<< HEAD
-
-=======
->>>>>>> chris-server
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
