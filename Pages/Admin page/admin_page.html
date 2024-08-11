@@ -13,7 +13,7 @@
         </div>
         <div class="admin-info">
             <p>Type of user: Admin</p>
-            <p>Username: nikosbel</p>
+            <p id="usernameDisplay">Username: </p> 
         </div>
     </div>
 
@@ -23,10 +23,20 @@
         </div>
 
         <div class="right-panel">
-            <!-- Εδώ θα μπει το μενού μελλοντικά -->
+            
         </div>
     </div>
     
-    <script src="admin_page.js"></script>
+    <script>
+       
+        function getUsernameFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('username');
+        }
+
+        
+        const username = getUsernameFromURL();
+        document.getElementById('usernameDisplay').textContent = `Username: ${username}`;
+    </script>
 </body>
 </html>

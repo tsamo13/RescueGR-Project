@@ -20,9 +20,9 @@ router.post('/', (req, res) => {
 
     const user = results[0];
 
-    // Compare the password directly
+    
     if (password === user.password) {
-      // Include user_type in the response
+    
       res.json({ success: true, user_type: user.user_type });
     } else {
       res.json({ success: false, message: 'Invalid username or password' });

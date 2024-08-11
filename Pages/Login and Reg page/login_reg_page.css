@@ -72,11 +72,11 @@ main {
 }
 
 input[type="text"], input[type="password"] {
-    width: 250px; /* Αύξηση του πλάτους των πλαισίων */
-    padding: 10px; /* Προσθήκη εσωτερικού περιθωρίου */
-    margin: 5px; /* Προσθήκη εξωτερικού περιθωρίου */
-    border: 1px solid #ccc; /* Προσθήκη περιγράμματος */
-    border-radius: 5px; /* Στρογγυλοποίηση γωνιών */
+    width: 250px; 
+    padding: 10px; 
+    margin: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px; 
     font-size: 16px; 
 }
 
@@ -84,11 +84,11 @@ input[type="text"], input[type="password"] {
     background-color: #FF7F50;
     border: none;
     color: white;
-    padding: 10px 20px; /* Μείωση padding */
+    padding: 10px 20px; 
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 16px; /* Μείωση μεγέθους γραμματοσειράς */
+    font-size: 16px; 
     margin: 5px; 
     cursor: pointer;
     border-radius: 8px;
