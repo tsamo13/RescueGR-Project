@@ -111,5 +111,7 @@ UPDATE user SET user_type = 1 WHERE role = 'Administrator';
 UPDATE user SET user_type = 2 WHERE role = 'Rescuer';
 UPDATE user SET user_type = 3 WHERE role = 'Civilian';
 
+ALTER TABLE item
+ADD COLUMN quantity INT NOT NULL;
 
 
