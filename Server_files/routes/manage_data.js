@@ -48,13 +48,22 @@ router.post('/insert_data', (req, res) => {
             });
         });
 
-        // Wait for all category and item insertions to complete
-        Promise.all([...insertCategoryPromises, ...insertItemPromises])
-            .then(() => res.json({ success: true, message: 'Categories and items inserted successfully' }))
-            .catch(err => {
-                console.error('Error inserting categories or items:', err);
-                res.status(500).json({ success: false, message: 'Error inserting categories or items' });
-            });
+         // Wait for all category and item insertions to complete
+         Promise.all([...insertCategoryPromises, ...insertItemPromises])
+         .then(() => {
+             // Fetch all categories after insertion
+             db.query('SELECT * FROM category', (err, categories) => {
+                 if (err) {
+                     console.error('Error fetching categories:', err);
+                     return res.status(500).json({ success: false, message: 'Error fetching categories' });
+                 }
+                 res.json({ success: true, categories: categories });
+             });
+         })
+         .catch(err => {
+             console.error('Error inserting categories or items:', err);
+             res.status(500).json({ success: false, message: 'Error inserting categories or items' });
+         });
     });
 });
 

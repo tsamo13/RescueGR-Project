@@ -23,7 +23,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
         if (data.success) {
             if (data.user_type == 1){
                 
-                window.location.href = `admin_page.html?username=${encodeURIComponent(username)}`;
+                window.location.href = `http://localhost:3000/admin_page?username=${encodeURIComponent(username)}`;
             }
             else if (data.user_type == 2) {
                 window.location.href = 'rescuer_page.html';
