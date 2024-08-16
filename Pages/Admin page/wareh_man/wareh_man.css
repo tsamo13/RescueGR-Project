@@ -2,8 +2,8 @@ body {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-    background: linear-gradient(to bottom, #ADD8E6, #ffffff); 
-    height: 100vh; 
+    background: linear-gradient(to bottom, #ADD8E6, #ffffff);
+    height: 100vh;
 }
 
 .header-container {
@@ -14,14 +14,14 @@ body {
 }
 
 .header-container h1 {
-    color: #000080; 
+    color: #000080;
     margin: 0;
     padding-left: 35%;
     font-size: 2em;
 }
 
 .header-container .logo {
-    width: 180px; 
+    width: 180px;
     height: auto;
 }
 
@@ -35,99 +35,143 @@ body {
 
 .sidebar .link {
     display: block;
-    color: #000080; 
+    color: #000080;
     text-decoration: none;
-    margin: 5px 0; 
+    margin: 5px 0;
 }
 
 .sidebar .link:hover {
     text-decoration: underline;
 }
 
-
-.button-container {
-    position: absolute;
-    top: 350px; 
-    left: 750px; 
+.content-container {
     display: flex;
-    flex-direction: column;
-    gap: 20px;
+    justify-content: space-around;
+    align-items: flex-start;
+    padding-top: 50px;
 }
 
-.btn-bwm {
-    background-color: #FF7F50;
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 5px;
-    cursor: pointer;
-    border-radius: 8px;
-    width: 170px;
-    transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.1s ease; 
+.list-wrapper {
+    width: 30%;
 }
-
-.btn-bwm:active {
-    background-color: #FF6347; 
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); 
-    transform: scale(0.99); 
-}
-
 
 .list-title {
-    color: #000080; 
+    color: #000080;
     margin-bottom: 10px;
-    text-align: left; 
-    margin-left: 150px; 
+    text-align: center;
 }
 
-
 .list-container {
-    margin-top: 10px; 
-    margin-left: 150px; 
-    width: 25%;
-    max-height: 300px; 
+    width: 100%;
+    max-height: 300px;
     overflow-y: auto;
     border: 1px solid #000080;
     padding: 10px;
+    margin-bottom: 20px;
+    background-color: #f0f8ff;
 }
-
-
-.bottom-button-container {
-    display: flex;
-    justify-content: flex-start; 
-    gap: 40px; 
-    margin-top: 20px;
-    margin-left: 200px; 
-}
-
-.bottom-button-container .btn-bwm {
-    width: 170px; 
-    
-}
-
 
 .category-list {
-    list-style-type: none; 
+    list-style-type: none;
     padding: 0;
     margin: 0;
 }
 
 .category-item {
     padding: 8px;
-    background-color: #f0f8ff; 
+    background-color: #f0f8ff;
     margin-bottom: 5px;
     border: 1px solid #000080;
-    cursor: pointer; 
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
 }
 
 .category-item:hover {
-    background-color: #ADD8E6; 
+    background-color: #ADD8E6;
+    cursor: pointer; /* This makes the cursor change to a pointer */
 }
 
 .category-item.selected {
-    background-color: #87CEEB; 
+    background-color: #87CEEB;
+}
+
+.product-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+}
+
+.product-table th,
+.product-table td {
+    border: 1px solid #000080;
+    padding: 8px;
+    text-align: left;
+}
+
+.product-table th {
+    background-color: #f0f8ff;
+    color: #000080;
+}
+
+.product-table tbody tr:hover {
+    background-color: #ADD8E6;
+    cursor: pointer; /* This makes the cursor change to a pointer */
+}
+
+.product-table th:nth-child(1) {
+    width: 30%;
+}
+
+.product-table th:nth-child(2) {
+    width: 60%;
+}
+
+.product-table th:nth-child(3) {
+    width: 10%;
+}
+
+.product-table td:nth-child(1) {
+    width: 30%;
+}
+
+.product-table td:nth-child(2) {
+    width: 60%;
+}
+
+.product-table td:nth-child(3) {
+    width: 10%;
+}
+
+.bottom-button-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 140px;
+}
+
+.btn-bwm {
+    background-color: #FF7F50;
+    border: none;
+    color: white;
+    padding: 7px 15px; /* Smaller size */
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px; /* Smaller font size */
+    cursor: pointer;
+    border-radius: 8px;
+    width: 150px; /* Smaller width */
+    transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.1s ease;
+}
+
+.btn-bwm:active {
+    background-color: #FF6347;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transform: scale(0.99);
 }

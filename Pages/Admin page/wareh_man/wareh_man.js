@@ -1,4 +1,15 @@
 // JavaScript to handle 'Load Products' button click
+
+const params = new URLSearchParams(window.location.search);
+const username = params.get('username');
+
+
+if (username) {
+    const mainPageLink = document.getElementById('mainPageLink');
+    mainPageLink.href = `../admin_page.html?username=${encodeURIComponent(username)}`;
+}
+
+
 document.getElementById('loadProductsBtn').addEventListener('click', function() {
     fetch('/manage_data/insert_data', {
         method: 'POST',
