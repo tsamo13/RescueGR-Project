@@ -3,12 +3,10 @@
 const params = new URLSearchParams(window.location.search);
 const username = params.get('username');
 
-
 if (username) {
     const mainPageLink = document.getElementById('mainPageLink');
     mainPageLink.href = `../admin_page.html?username=${encodeURIComponent(username)}`;
 }
-
 
 document.getElementById('loadProductsBtn').addEventListener('click', function() {
     fetch('/manage_data/insert_data', {
@@ -63,3 +61,34 @@ function clearCategoryList() {
     const categoryList = document.querySelector('.category-list');
     categoryList.innerHTML = ''; // Clear the list
 }
+
+// Event listener for the "Add Category" button to show the modal
+document.getElementById('addCategoryBtn').addEventListener('click', function() {
+    document.getElementById('addCategoryModal').style.display = 'flex';
+});
+
+// Event listener for the "Save" button in the modal
+document.getElementById('addCategoryForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const categoryName = document.getElementById('categoryName').value;
+    const categoryId = document.getElementById('categoryId').value;
+    const errorMessage = document.getElementById('errorMessage');
+
+    if (categoryName && categoryId) {
+        // Close the modal if both fields are filled
+        document.getElementById('addCategoryModal').style.display = 'none';
+
+        // Reset the form fields
+        document.getElementById('addCategoryForm').reset();
+    } else {
+        // Show error message
+        errorMessage.textContent = 'Both fields are required.';
+        errorMessage.style.display = 'block';
+    }
+});
+
+// Event listener for the close button (X) to hide the modal
+document.querySelector('.close').addEventListener('click', function() {
+    document.getElementById('addCategoryModal').style.display = 'none';
+});
