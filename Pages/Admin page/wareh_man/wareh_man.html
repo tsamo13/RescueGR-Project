@@ -102,6 +102,27 @@
         </div>
     </div>
 
+    <!-- Pop-up window for editing a product -->
+    <div id="editProductModal" class="modal">
+        <div class="modal-content">
+            <span class="close-edit-modal">&times;</span> <!-- Close button -->
+            <h2>Edit product</h2>
+            <form id="editProductForm">
+                <label for="editProductName">Name:</label>
+                <input type="text" id="editProductName" name="editProductName" required>
+
+                <label for="editProductDetails">Details:</label>
+                <input type="text" id="editProductDetails" name="editProductDetails" required>
+
+                <label for="editProductQuantity">Quantity:</label>
+                <input type="number" id="editProductQuantity" name="editProductQuantity" min="0" required>
+
+                <button type="submit" class="btn-bwm" id="saveEditProductBtn"><b>Save</b></button>
+                <p id="editProductErrorMessage" class="error-message"></p>
+            </form>
+        </div>
+    </div>
+
     <script src="/wareh_man/wareh_man.js"></script>
 </body>
 </html>

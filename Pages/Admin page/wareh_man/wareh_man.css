@@ -119,6 +119,10 @@ body {
     cursor: pointer; /* This makes the cursor change to a pointer */
 }
 
+.product-table tbody tr.selected {
+    background-color: #87CEEB; /* Χρώμα που δείχνει ότι το προϊόν είναι επιλεγμένο */
+}
+
 .product-table th:nth-child(1) {
     width: 20%; /* Name: 20% */
 }
@@ -203,14 +207,15 @@ body {
     background-color: #ADD8E6;
     margin: auto;
     padding: 30px;
-    border: 4px solid #808080; /* Changed to a thicker gray border */
+    border: 4px solid #808080;
     width: 500px;
     text-align: center;
     position: relative;
 }
 
 .close,
-.close-product-modal {
+.close-product-modal,
+.close-edit-modal {
     position: absolute;
     top: 10px;
     right: 15px;
@@ -223,7 +228,9 @@ body {
 .close:hover,
 .close:focus,
 .close-product-modal:hover,
-.close-product-modal:focus {
+.close-product-modal:focus,
+.close-edit-modal:hover,
+.close-edit-modal:focus {
     color: #000;
     text-decoration: none;
     cursor: pointer;
@@ -255,8 +262,4 @@ body {
     margin-bottom: 20px;
     font-size: 1.2em;
     border: 1px solid #ccc;
-}
-
-.product-table tbody tr.selected {
-    background-color: #87CEEB; /* Χρώμα που δείχνει ότι το προϊόν είναι επιλεγμένο */
 }

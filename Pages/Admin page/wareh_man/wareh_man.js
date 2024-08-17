@@ -82,11 +82,6 @@ function clearProductTable() {
     const productTableBody = document.querySelector('.product-table tbody');
     productTableBody.innerHTML = ''; // Clear all products
 }
-// Function to clear the category list in the front-end
-function clearCategoryList() {
-    const categoryList = document.querySelector('.category-list');
-    categoryList.innerHTML = ''; // Clear the list
-}
 
 // Event listener for the "Add Category" button to show the modal
 document.getElementById('addCategoryBtn').addEventListener('click', function() {
@@ -245,6 +240,71 @@ document.getElementById('addProductForm').addEventListener('submit', function(ev
         // Reset the form fields
         document.getElementById('addProductForm').reset();
     }
+});
+
+// Event listener for the "Edit" button in the products table to edit the selected product
+document.querySelector('.products-list-wrapper .btn-bwm + .btn-bwm + .btn-bwm').addEventListener('click', function() {
+    const selectedProduct = document.querySelector('.product-table tbody tr.selected');
+    if (selectedProduct) {
+        const productName = selectedProduct.querySelector('td:nth-child(1)').textContent;
+        const productDetails = selectedProduct.querySelector('td:nth-child(2)').textContent;
+        const productQuantity = selectedProduct.querySelector('td:nth-child(3)').textContent;
+
+        // Pre-fill the form with the selected product's current values
+        document.getElementById('editProductName').value = productName;
+        document.getElementById('editProductDetails').value = productDetails;
+        document.getElementById('editProductQuantity').value = productQuantity;
+
+        const errorMessage = document.getElementById('editProductErrorMessage');
+        errorMessage.style.display = 'none'; // Hide the error message when opening the modal
+
+        // Display the modal
+        document.getElementById('editProductModal').style.display = 'flex';
+    } else {
+        alert('Please select a product to edit.');
+    }
+});
+
+// Event listener for the "Save" button in the edit product modal
+document.getElementById('editProductForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const newProductName = document.getElementById('editProductName').value.trim();
+    const newProductDetails = document.getElementById('editProductDetails').value.trim();
+    const newProductQuantity = parseInt(document.getElementById('editProductQuantity').value, 10);
+    const errorMessage = document.getElementById('editProductErrorMessage');
+
+    const productList = Array.from(document.querySelectorAll('.product-table tbody tr')).map(row => row.querySelector('td:nth-child(1)').textContent);
+    const selectedProduct = document.querySelector('.product-table tbody tr.selected');
+    const originalProductName = selectedProduct.querySelector('td:nth-child(1)').textContent;
+
+    // Validation checks
+    if (!newProductName) {
+        errorMessage.textContent = 'Product Name is required.';
+        errorMessage.style.display = 'block';
+    } else if (newProductName !== originalProductName && productList.includes(newProductName)) {
+        errorMessage.textContent = 'Product Name already exists.';
+        errorMessage.style.display = 'block';
+    } else if (isNaN(newProductQuantity) || newProductQuantity < 0) {
+        errorMessage.textContent = 'Quantity must be a valid integer greater than or equal to 0.';
+        errorMessage.style.display = 'block';
+    } else {
+        // Update the product's information in the table
+        selectedProduct.querySelector('td:nth-child(1)').textContent = newProductName;
+        selectedProduct.querySelector('td:nth-child(2)').textContent = newProductDetails;
+        selectedProduct.querySelector('td:nth-child(3)').textContent = newProductQuantity;
+
+        // Close the modal
+        document.getElementById('editProductModal').style.display = 'none';
+
+        // Reset the form fields
+        document.getElementById('editProductForm').reset();
+    }
+});
+
+// Event listener for the close button (X) to hide the edit product modal
+document.querySelector('.close-edit-modal').addEventListener('click', function() {
+    document.getElementById('editProductModal').style.display = 'none';
 });
 
 // Event listener for the "Delete" button in the products table to remove the selected product
