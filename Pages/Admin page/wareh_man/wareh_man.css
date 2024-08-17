@@ -120,27 +120,35 @@ body {
 }
 
 .product-table th:nth-child(1) {
-    width: 30%;
+    width: 20%; /* Name: 20% */
 }
 
 .product-table th:nth-child(2) {
-    width: 60%;
+    width: 50%; /* Details: 50% */
 }
 
 .product-table th:nth-child(3) {
-    width: 10%;
+    width: 10%; /* Quantity: 10% */
+}
+
+.product-table th:nth-child(4) {
+    width: 20%; /* Category: 20% */
 }
 
 .product-table td:nth-child(1) {
-    width: 30%;
+    width: 20%; /* Name: 20% */
 }
 
 .product-table td:nth-child(2) {
-    width: 60%;
+    width: 50%; /* Details: 50% */
 }
 
 .product-table td:nth-child(3) {
-    width: 10%;
+    width: 10%; /* Quantity: 10% */
+}
+
+.product-table td:nth-child(4) {
+    width: 20%; /* Category: 20% */
 }
 
 .bottom-button-container {
@@ -201,7 +209,8 @@ body {
     position: relative;
 }
 
-.close {
+.close,
+.close-product-modal {
     position: absolute;
     top: 10px;
     right: 15px;
@@ -212,7 +221,9 @@ body {
 }
 
 .close:hover,
-.close:focus {
+.close:focus,
+.close-product-modal:hover,
+.close-product-modal:focus {
     color: #000;
     text-decoration: none;
     cursor: pointer;
@@ -237,10 +248,15 @@ body {
     color: #000080;
 }
 
-.modal-content input {
+.modal-content input,
+.modal-content select {
     width: 100%;
     padding: 10px;
     margin-bottom: 20px;
     font-size: 1.2em;
     border: 1px solid #ccc;
+}
+
+.product-table tbody tr.selected {
+    background-color: #87CEEB; /* Χρώμα που δείχνει ότι το προϊόν είναι επιλεγμένο */
 }

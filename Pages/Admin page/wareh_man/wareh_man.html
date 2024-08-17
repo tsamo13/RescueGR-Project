@@ -22,16 +22,7 @@
             <h2 class="list-title">Categories list</h2>
             <div class="list-container">
                 <ul class="category-list">
-                    <li class="category-item">Food</li>
-                    <li class="category-item">Water</li>
-                    <li class="category-item">Medical Supplies</li>
-                    <li class="category-item">Clothing</li>
-                    <li class="category-item">Shelter</li>
-                    <li class="category-item">Hygiene Products</li>
-                    <li class="category-item">Communication Devices</li>
-                    <li class="category-item">Fuel</li>
-                    <li class="category-item">Tools</li>
-                    <li class="category-item">First Aid Kits</li>
+                    <!-- No initial categories -->
                 </ul>
             </div>
 
@@ -55,59 +46,11 @@
                             <th>Name</th>
                             <th>Details</th>
                             <th>Quantity</th>
+                            <th>Category</th> <!-- Νέα στήλη -->
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Solar Charger</td>
-                            <td>Details 1</td>
-                            <td>10</td>
-                        </tr>
-                        <tr>
-                            <td>Solar-Powered Radio</td>
-                            <td>Details 2</td>
-                            <td>20</td>
-                        </tr>
-                        <tr>
-                            <td>Solar Torch</td>
-                            <td>Details 3</td>
-                            <td>15</td>
-                        </tr>
-                        <tr>
-                            <td>Stress Ball</td>
-                            <td>Details 4</td>
-                            <td>5</td>
-                        </tr>
-                        <tr>
-                            <td>Guided Meditation Audio</td>
-                            <td>Details 5</td>
-                            <td>12</td>
-                        </tr>
-                        <tr>
-                            <td>Water Bottle</td>
-                            <td>Details 6</td>
-                            <td>18</td>
-                        </tr>
-                        <tr>
-                            <td>Canned Beans</td>
-                            <td>Details 7</td>
-                            <td>8</td>
-                        </tr>
-                        <tr>
-                            <td>Portable Stove</td>
-                            <td>Details 8</td>
-                            <td>30</td>
-                        </tr>
-                        <tr>
-                            <td>Tent</td>
-                            <td>Details 9</td>
-                            <td>25</td>
-                        </tr>
-                        <tr>
-                            <td>Flashlight</td>
-                            <td>Details 10</td>
-                            <td>7</td>
-                        </tr>
+                        <!-- No initial products -->
                     </tbody>
                 </table>
             </div>
@@ -120,20 +63,44 @@
     </div>
 
     <!-- Pop-up window for adding a new category -->
-<div id="addCategoryModal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span> <!-- Close button -->
-        <h2>Add a new category</h2>
-        <form id="addCategoryForm">
-            <label for="categoryName">Category Name:</label>
-            <input type="text" id="categoryName" name="categoryName" required>
-            <label for="categoryId">Category ID:</label>
-            <input type="text" id="categoryId" name="categoryId" required>
-            <button type="submit" class="btn-bwm" id="saveCategoryBtn"><b>Save</b></button>
-            <p id="errorMessage" class="error-message"></p>
-        </form>
+    <div id="addCategoryModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span> <!-- Close button -->
+            <h2>Add a new category</h2>
+            <form id="addCategoryForm">
+                <label for="categoryName">Category Name:</label>
+                <input type="text" id="categoryName" name="categoryName" required>
+                <button type="submit" class="btn-bwm" id="saveCategoryBtn"><b>Save</b></button>
+                <p id="errorMessage" class="error-message"></p>
+            </form>
+        </div>
     </div>
-</div>
+
+    <!-- Pop-up window for adding a new product -->
+    <div id="addProductModal" class="modal">
+        <div class="modal-content">
+            <span class="close-product-modal">&times;</span> <!-- Close button -->
+            <h2>Add a new product</h2>
+            <form id="addProductForm">
+                <label for="productName">Name:</label>
+                <input type="text" id="productName" name="productName" required>
+
+                <label for="productDetails">Details:</label>
+                <input type="text" id="productDetails" name="productDetails" required>
+
+                <label for="productQuantity">Quantity:</label>
+                <input type="number" id="productQuantity" name="productQuantity" min="0" required>
+
+                <label for="productCategory">Category:</label>
+                <select id="productCategory" name="productCategory" required>
+                    <!-- Categories will be populated dynamically -->
+                </select>
+
+                <button type="submit" class="btn-bwm" id="saveProductBtn"><b>Save</b></button>
+                <p id="productErrorMessage" class="error-message"></p>
+            </form>
+        </div>
+    </div>
 
     <script src="/wareh_man/wareh_man.js"></script>
 </body>
