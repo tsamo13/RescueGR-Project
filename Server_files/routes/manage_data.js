@@ -161,6 +161,96 @@ router.post('/delete_category', (req, res) => {
     });
 });
 
+// Route to add a new product
+router.post('/add_product', (req, res) => {
+    const db = req.db;
+    const { name, details, quantity, category } = req.body;
+
+    // SQL query to insert the new product into the database
+    const sql = 'INSERT INTO item (item_name, description, quantity, category_id) VALUES (?, ?, ?, (SELECT category_id FROM category WHERE category_name = ?))';
+
+    db.query(sql, [name, details, quantity, category], (err, result) => {
+        if (err) {
+            console.error('Error adding product:', err);
+            return res.status(500).json({ success: false, message: 'Failed to add product' });
+        }
+
+        res.json({ success: true, message: 'Product added successfully' });
+    });
+});
+
+// Route to delete a specific product from the database
+router.post('/delete_product', (req, res) => {
+    const db = req.db;
+    const { productName } = req.body;
+
+    const deleteProductSql = 'DELETE FROM item WHERE item_name = ?';
+    
+    db.query(deleteProductSql, [productName], (err, result) => {
+        if (err) {
+            console.error('Error deleting product:', err);
+            return res.status(500).json({ success: false, message: 'Error deleting product' });
+        }
+
+        res.json({ success: true, message: 'Product deleted successfully' });
+    });
+});
+
+
+// Route to edit a product in the database
+router.post('/edit_product', (req, res) => {
+    const db = req.db;
+    const { originalProductName, newProductName, newProductDetails, newProductQuantity } = req.body;
+
+    const sql = 'UPDATE item SET item_name = ?, description = ?, quantity = ? WHERE item_name = ?';
+    db.query(sql, [newProductName, newProductDetails, newProductQuantity, originalProductName], (err, result) => {
+        if (err) {
+            console.error('Error updating product:', err);
+            return res.status(500).json({ success: false, message: 'Error updating product' });
+        }
+        res.json({ success: true, message: 'Product updated successfully' });
+    });
+});
+
+// Route to fetch all categories and items from the database
+router.get('/get_all_data', (req, res) => {
+    const db = req.db;
+
+    const fetchCategories = () => {
+        return new Promise((resolve, reject) => {
+            db.query('SELECT * FROM category', (err, categories) => {
+                if (err) return reject(err);
+                resolve(categories);
+            });
+        });
+    };
+
+    const fetchItems = () => {
+        return new Promise((resolve, reject) => {
+            const sql = `
+                SELECT i.item_name, i.description, i.quantity, c.category_name
+                FROM item i
+                JOIN category c ON i.category_id = c.category_id
+            `;
+            db.query(sql, (err, items) => {
+                if (err) return reject(err);
+                resolve(items);
+            });
+        });
+    };
+
+    Promise.all([fetchCategories(), fetchItems()])
+        .then(results => {
+            const [categories, items] = results;
+            res.json({ success: true, categories: categories, items: items });
+        })
+        .catch(err => {
+            console.error('Error fetching data:', err);
+            res.status(500).json({ success: false, message: 'Error fetching data' });
+        });
+});
+
+
 
 module.exports = router;
 

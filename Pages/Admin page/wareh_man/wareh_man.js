@@ -2,11 +2,17 @@
 
 const params = new URLSearchParams(window.location.search);
 const username = params.get('username');
+let allItems = [];                          // Global storage for all items
 
 if (username) {
     const mainPageLink = document.getElementById('mainPageLink');
     mainPageLink.href = `../admin_page.html?username=${encodeURIComponent(username)}`;
 }
+
+// Call the function to fetch and display categories and items on page load
+document.addEventListener('DOMContentLoaded', function() {
+    fetchAndDisplayData();
+});
 
 document.getElementById('loadProductsBtn').addEventListener('click', function() {
     fetch('/manage_data/insert_data', {
@@ -15,8 +21,10 @@ document.getElementById('loadProductsBtn').addEventListener('click', function() 
     .then(response => response.json())
     .then(data => {
         if (data.success) {
+            allItems = data.items; // Store all items globally
             populateCategoryList(data.categories);
-            populateProductList(data.items)
+            populateProductList(allItems)  // Initially populate with all items
+            addCategoryClickEvents(allItems); // Attach click events to categories
         } else {
             alert('Failed to load products');
         }
@@ -52,11 +60,15 @@ function populateCategoryList(categories) {
 }
 
 // Function to populate the products list
-function populateProductList(items) {
+function populateProductList(items, selectedCategory = null) {
     const productTableBody = document.querySelector('.product-table tbody');
     productTableBody.innerHTML = ''; // Clear any existing products
 
-    items.forEach(item => {
+    const filteredItems = selectedCategory 
+        ? items.filter(item => item.category_name === selectedCategory) 
+        : items;
+
+    filteredItems.forEach(item => {
         const tr = document.createElement('tr');
 
         const nameTd = document.createElement('td');
@@ -79,6 +91,36 @@ function populateProductList(items) {
     });
 }
 
+// Function to add event listeners to category items
+function addCategoryClickEvents(items) {
+    const categoryItems = document.querySelectorAll('.category-item');
+    
+    categoryItems.forEach(categoryItem => {
+        categoryItem.addEventListener('click', function() {
+            const selectedCategory = categoryItem.textContent;
+            populateProductList(items, selectedCategory);
+        });
+    });
+}
+
+
+// Function to fetch and display categories and items on page load
+function fetchAndDisplayData() {
+    fetch('/manage_data/get_all_data')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                populateCategoryList(data.categories);
+                populateProductList(data.items);
+                addCategoryClickEvents(data.items); // Reapply event listeners to category items
+            } else {
+                console.error('Failed to fetch data:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+}
 
 // Event listener for the "Clear Products" button
 document.getElementById('clearProductsBtn').addEventListener('click', function() {
@@ -206,7 +248,6 @@ document.querySelector('.btn-bwm + .btn-bwm').addEventListener('click', function
         })
         .then(response => response.json())
         .then(data => {
-            console.log('Delete category response:', data); // Log the response
             if (data.success) {
                 // Remove products that belong to the deleted category
                 const productRows = document.querySelectorAll('.product-table tbody tr');
@@ -292,24 +333,51 @@ document.getElementById('addProductForm').addEventListener('submit', function(ev
         errorMessage.textContent = 'Quantity must be a valid integer greater than or equal to 0.';
         errorMessage.style.display = 'block';
     } else {
-        // Add the new product to the list
-        const newRow = document.createElement('tr');
+       // Send product data to the server to add it to the database
+       fetch('/manage_data/add_product', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            name: productName,
+            details: productDetails,
+            quantity: productQuantity,
+            category: productCategory
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Add the new product to the list
+            const newRow = document.createElement('tr');
 
-        newRow.innerHTML = `
-            <td>${productName}</td>
-            <td>${productDetails}</td>
-            <td>${productQuantity}</td>
-            <td>${productCategory}</td>
-        `;
+            newRow.innerHTML = `
+                <td>${productName}</td>
+                <td>${productDetails}</td>
+                <td>${productQuantity}</td>
+                <td>${productCategory}</td>
+            `;
 
-        document.querySelector('.product-table tbody').appendChild(newRow);
+            document.querySelector('.product-table tbody').appendChild(newRow);
 
-        // Close the modal
-        document.getElementById('addProductModal').style.display = 'none';
+            // Close the modal
+            document.getElementById('addProductModal').style.display = 'none';
 
-        // Reset the form fields
-        document.getElementById('addProductForm').reset();
-    }
+            // Reset the form fields
+            document.getElementById('addProductForm').reset();
+        } else {
+            // Show error message if there was an issue adding the product
+            errorMessage.textContent = 'Failed to add product. Please try again.';
+            errorMessage.style.display = 'block';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        errorMessage.textContent = 'An error occurred. Please try again.';
+        errorMessage.style.display = 'block';
+    });
+}
 });
 
 // Event listener for the "Edit" button in the products table to edit the selected product
@@ -359,16 +427,45 @@ document.getElementById('editProductForm').addEventListener('submit', function(e
         errorMessage.textContent = 'Quantity must be a valid integer greater than or equal to 0.';
         errorMessage.style.display = 'block';
     } else {
-        // Update the product's information in the table
-        selectedProduct.querySelector('td:nth-child(1)').textContent = newProductName;
-        selectedProduct.querySelector('td:nth-child(2)').textContent = newProductDetails;
-        selectedProduct.querySelector('td:nth-child(3)').textContent = newProductQuantity;
+        // Send a POST request to update the product in the database
+        fetch('/manage_data/edit_product', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                originalProductName: originalProductName,
+                newProductName: newProductName,
+                newProductDetails: newProductDetails,
+                newProductQuantity: newProductQuantity
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update the product's information in the table only after the database is updated
+                selectedProduct.querySelector('td:nth-child(1)').textContent = newProductName;
+                selectedProduct.querySelector('td:nth-child(2)').textContent = newProductDetails;
+                selectedProduct.querySelector('td:nth-child(3)').textContent = newProductQuantity;
 
-        // Close the modal
-        document.getElementById('editProductModal').style.display = 'none';
+                console.log('Product updated successfully');
+                
+                // Close the modal
+                document.getElementById('editProductModal').style.display = 'none';
 
-        // Reset the form fields
-        document.getElementById('editProductForm').reset();
+                // Reset the form fields
+                document.getElementById('editProductForm').reset();
+            } else {
+                console.error('Failed to update product:', data.message);
+                errorMessage.textContent = 'Failed to update product.';
+                errorMessage.style.display = 'block';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            errorMessage.textContent = 'An error occurred while updating the product.';
+            errorMessage.style.display = 'block';
+        });
     }
 });
 
@@ -381,7 +478,27 @@ document.querySelector('.close-edit-modal').addEventListener('click', function()
 document.querySelector('.products-list-wrapper .btn-bwm + .btn-bwm').addEventListener('click', function() {
     const selectedProduct = document.querySelector('.product-table tbody tr.selected');
     if (selectedProduct) {
-        selectedProduct.remove();
+        const productName = selectedProduct.querySelector('td:first-child').textContent;
+
+        // Send a request to delete the product from the database
+        fetch('/manage_data/delete_product', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ productName: productName }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                selectedProduct.remove(); // Remove the selected product from the table
+            } else {
+                alert('Failed to delete the product');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
     } else {
         alert('Please select a product to delete.');
     }
