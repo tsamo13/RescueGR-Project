@@ -14,3 +14,7 @@ document.getElementById('warehouseBtn').addEventListener('click', function() {
         window.location.href = 'wareh_man/wareh_man.html';
     }
 });
+
+document.getElementById('mapViewBtn').addEventListener('click', function() {
+    window.location.href = 'map_view/map_view.html';
+});
