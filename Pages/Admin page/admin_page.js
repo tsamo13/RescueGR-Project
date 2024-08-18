@@ -15,8 +15,13 @@ document.getElementById('warehouseBtn').addEventListener('click', function() {
     }
 });
 
+
 document.getElementById('mapViewBtn').addEventListener('click', function() {
-    window.location.href = 'map_view/map_view.html';
+    if (username) {
+        window.location.href = `map_view/map_view.html?username=${encodeURIComponent(username)}`;
+    } else {
+        window.location.href = 'map_view/map_view.html';
+    }
 });
 
 

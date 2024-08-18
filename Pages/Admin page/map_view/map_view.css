@@ -1,0 +1,52 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom, #ADD8E6, #ffffff);
+    height: 100vh;
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+}
+
+.header-container h1 {
+    color: #000080;
+    margin: 0;
+    padding-left: 45%;
+    font-size: 2em;
+}
+
+.header-container .logo {
+    width: 180px;
+    height: auto;
+}
+
+.sidebar {
+    position: absolute;
+    top: 0px;
+    right: 20px;
+    text-align: right;
+    padding-top: 10px;
+}
+
+.sidebar .link {
+    display: block;
+    color: #000080;
+    text-decoration: none;
+    margin: 5px 0;
+}
+
+.sidebar .link:hover {
+    text-decoration: underline;
+}
+
+#map {
+    height: 500px; /* Κράτα το ύψος του χάρτη όπως επιθυμείς */
+    width: 900px;    /* Κράτα το πλάτος του χάρτη όπως επιθυμείς */
+    margin: 0 auto;
+    border: 1px solid #ccc; /* Προαιρετικό: Για να βάλεις ένα περίγραμμα γύρω από τον χάρτη */
+}
