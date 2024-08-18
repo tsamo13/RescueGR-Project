@@ -1,0 +1,117 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom, #ADD8E6, #ffffff);
+    height: 100vh;
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+}
+
+.header-container h1 {
+    color: #000080;
+    margin: 0;
+    padding-left: 35%;
+    font-size: 2em;
+}
+
+.header-container .logo {
+    width: 180px;
+    height: auto;
+}
+
+.sidebar {
+    position: absolute;
+    top: 0px;
+    right: 20px;
+    text-align: right;
+    padding-top: 10px;
+}
+
+.sidebar .link {
+    display: block;
+    color: #000080;
+    text-decoration: none;
+    margin: 5px 0;
+}
+
+.sidebar .link:hover {
+    text-decoration: underline;
+}
+
+.content-container {
+    display: flex;
+    justify-content: flex-start; /* Ευθυγράμμιση προς τα αριστερά */
+    align-items: flex-start;
+    padding-top: 10px;
+    gap: 90px; /* Μειώνει το κενό μεταξύ της φόρμας και της εικόνας */
+    padding-left: 300px;
+}
+
+.form-wrapper {
+    width: 30%;
+    background-color: #f0f8ff;
+    padding: 20px;
+    border: 1px solid #000080;
+    border-radius: 10px;
+}
+
+.image-wrapper {
+    margin-left: 0px; /* Αφαιρέθηκε το περιθώριο για να πλησιάσει η εικόνα στη φόρμα */
+}
+
+.rescuer-image {
+    border-radius: 5px;
+    max-width: 70%; /* Μείωση του μεγέθους της εικόνας στο 70% */
+    height: auto;
+    box-shadow: 0px 0px 15px 5px #FF7F50; /* Πλαίσιο που μοιάζει με αυτό στην admin page */
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-bottom: 10px;
+    color: #000080;
+}
+
+input[type="text"], input[type="password"], input[type="email"] {
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+.password-container {
+    display: flex;
+    align-items: center;
+}
+
+.password-container input[type="checkbox"] {
+    margin-left: 10px;
+}
+
+.btn {
+    background-color: #FF7F50;
+    border: none;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 8px;
+    width: 100%;
+}
+
+.btn:hover {
+    background-color: #FF6347;
+}

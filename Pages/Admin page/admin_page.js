@@ -18,3 +18,12 @@ document.getElementById('warehouseBtn').addEventListener('click', function() {
 document.getElementById('mapViewBtn').addEventListener('click', function() {
     window.location.href = 'map_view/map_view.html';
 });
+
+
+document.getElementById('rescueAccBtn').addEventListener('click', function() {
+    if (username) {
+        window.location.href = `cr_res_acc/cr_res_acc.html?username=${encodeURIComponent(username)}`;
+    } else {
+        window.location.href = 'cr_res_acc/cr_res_acc.html';
+    }
+});
