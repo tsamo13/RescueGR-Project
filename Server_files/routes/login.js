@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcrypt');
 
 // Login route
 router.post('/', (req, res) => {
@@ -21,12 +22,21 @@ router.post('/', (req, res) => {
     const user = results[0];
 
     
-    if (password === user.password) {
-    
-      res.json({ success: true, user_type: user.user_type });
-    } else {
-      res.json({ success: false, message: 'Invalid username or password' });
-    }
+    // Compare the provided password with the hashed password in the database
+    bcrypt.compare(password, user.password, (err, isMatch) => {
+      if (err) {
+        console.error('Error comparing passwords:', err);
+        return res.status(500).json({ success: false, message: 'Server error' });
+      }
+
+      if (isMatch) {
+        // Passwords match, login successful
+        res.json({ success: true, user_type: user.user_type });
+      } else {
+        // Passwords do not match
+        res.json({ success: false, message: 'Invalid username or password' });
+      }
+    });
   });
 });
 

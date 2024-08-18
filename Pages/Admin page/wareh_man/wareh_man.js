@@ -16,6 +16,7 @@ document.getElementById('loadProductsBtn').addEventListener('click', function() 
     .then(data => {
         if (data.success) {
             populateCategoryList(data.categories);
+            populateProductList(data.items)
         } else {
             alert('Failed to load products');
         }
@@ -49,6 +50,35 @@ function populateCategoryList(categories) {
         });
     });
 }
+
+// Function to populate the products list
+function populateProductList(items) {
+    const productTableBody = document.querySelector('.product-table tbody');
+    productTableBody.innerHTML = ''; // Clear any existing products
+
+    items.forEach(item => {
+        const tr = document.createElement('tr');
+
+        const nameTd = document.createElement('td');
+        nameTd.textContent = item.item_name;
+        tr.appendChild(nameTd);
+
+        const detailsTd = document.createElement('td');
+        detailsTd.textContent = item.description;
+        tr.appendChild(detailsTd);
+
+        const quantityTd = document.createElement('td');
+        quantityTd.textContent = item.quantity;
+        tr.appendChild(quantityTd);
+
+        const categoryTd = document.createElement('td');
+        categoryTd.textContent = item.category_name; // Display the category name
+        tr.appendChild(categoryTd);
+
+        productTableBody.appendChild(tr);
+    });
+}
+
 
 // Event listener for the "Clear Products" button
 document.getElementById('clearProductsBtn').addEventListener('click', function() {
@@ -109,29 +139,48 @@ document.getElementById('addCategoryForm').addEventListener('submit', function(e
         errorMessage.textContent = 'Category Name already exists.';
         errorMessage.style.display = 'block';
     } else {
-        // Add the new category to the list
-        const newCategory = document.createElement('li');
-        newCategory.className = 'category-item';
-        newCategory.textContent = categoryName;
-        document.querySelector('.category-list').appendChild(newCategory);
+        // Send POST request to add category to the database
+        fetch('/manage_data/add_category', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ categoryName: categoryName })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Add the new category to the list in the frontend
+                const newCategory = document.createElement('li');
+                newCategory.className = 'category-item';
+                newCategory.textContent = categoryName;
+                document.querySelector('.category-list').appendChild(newCategory);
 
-        // Add click event to select the new category
-        newCategory.addEventListener('click', function() {
-            // Remove 'selected' class from any previously selected item
-            const currentlySelected = document.querySelector('.category-item.selected');
-            if (currentlySelected) {
-                currentlySelected.classList.remove('selected');
+                // Add click event to select the new category
+                newCategory.addEventListener('click', function() {
+                    const currentlySelected = document.querySelector('.category-item.selected');
+                    if (currentlySelected) {
+                        currentlySelected.classList.remove('selected');
+                    }
+                    newCategory.classList.add('selected');
+                });
+
+                // Close the modal
+                document.getElementById('addCategoryModal').style.display = 'none';
+
+                // Reset the form fields
+                document.getElementById('addCategoryForm').reset();
+            } else {
+                // Show error message if adding category failed
+                errorMessage.textContent = data.message || 'Failed to add category.';
+                errorMessage.style.display = 'block';
             }
-
-            // Add 'selected' class to the clicked item
-            newCategory.classList.add('selected');
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            errorMessage.textContent = 'An error occurred. Please try again.';
+            errorMessage.style.display = 'block';
         });
-
-        // Close the modal
-        document.getElementById('addCategoryModal').style.display = 'none';
-
-        // Reset the form fields
-        document.getElementById('addCategoryForm').reset();
     }
 });
 
@@ -145,18 +194,39 @@ document.querySelector('.btn-bwm + .btn-bwm').addEventListener('click', function
     const selectedCategory = document.querySelector('.category-item.selected');
     if (selectedCategory) {
         const categoryName = selectedCategory.textContent;
+        console.log('Deleting category:', categoryName);
 
-        // Remove products that belong to the deleted category
-        const productRows = document.querySelectorAll('.product-table tbody tr');
-        productRows.forEach(row => {
-            const productCategory = row.querySelector('td:nth-child(4)').textContent;
-            if (productCategory === categoryName) {
-                row.remove();
+        // Send POST request to delete the category from the database
+        fetch('/manage_data/delete_category', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ categoryName: categoryName })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Delete category response:', data); // Log the response
+            if (data.success) {
+                // Remove products that belong to the deleted category
+                const productRows = document.querySelectorAll('.product-table tbody tr');
+                productRows.forEach(row => {
+                    const productCategory = row.querySelector('td:nth-child(4)').textContent;
+                    if (productCategory === categoryName) {
+                        row.remove();
+                    }
+                });
+
+                // Remove the selected category from the frontend
+                selectedCategory.remove();
+            } else {
+                alert('Failed to delete category: ' + (data.message || 'Unknown error'));
             }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
         });
-
-        // Remove the selected category
-        selectedCategory.remove();
     } else {
         alert('Please select a category to delete.');
     }
