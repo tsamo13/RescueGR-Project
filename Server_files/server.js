@@ -66,6 +66,9 @@ app.use('/manage_data', manageDataRoute);
 const loginRoute = require('./routes/login');
 app.use('/login', loginRoute);
 
+const createRescuerRoute = require('./routes/create_rescuer');
+app.use('/create_rescuer', createRescuerRoute);
+
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
