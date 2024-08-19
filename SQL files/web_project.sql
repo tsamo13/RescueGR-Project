@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS user (
     password VARCHAR(255) NOT NULL,
     name VARCHAR(100),
     phone VARCHAR(15),
+    user_type INT NOT NULL,
     role ENUM('Administrator', 'Rescuer', 'Civilian') NOT NULL,
     location POINT
 );
@@ -20,14 +21,14 @@ CREATE TABLE IF NOT EXISTS item (
     category_id INT,
     item_name VARCHAR(100) NOT NULL,
     description TEXT,
+    quantity INT NOT NULL,
     FOREIGN KEY (category_id) REFERENCES category(category_id)
 );
 
-
-CREATE TABLE IF NOT EXISTS vehicle (
-    vehicle_id INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS rescuer (
+    rescuer_id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT,
-    availability BOOLEAN DEFAULT TRUE,
+	availability BOOLEAN DEFAULT TRUE,
     active_task INT,
     FOREIGN KEY (user_id) REFERENCES user(user_id)
 );
@@ -39,10 +40,10 @@ CREATE TABLE IF NOT EXISTS request (
     quantity INT NOT NULL,
     status ENUM('Pending', 'Assigned', 'Completed') DEFAULT 'Pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    assigned_vehicle_id INT,
+    assigned_rescuer_id INT,
     FOREIGN KEY (user_id) REFERENCES user(user_id),
     FOREIGN KEY (item_id) REFERENCES item(item_id),
-    FOREIGN KEY (assigned_vehicle_id) REFERENCES vehicle(vehicle_id)
+    FOREIGN KEY (assigned_rescuer_id) REFERENCES rescuer(rescuer_id)
 );
 
 CREATE TABLE IF NOT EXISTS offer (
@@ -52,21 +53,21 @@ CREATE TABLE IF NOT EXISTS offer (
     quantity INT NOT NULL,
     status ENUM('Pending', 'Assigned', 'Completed') DEFAULT 'Pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    assigned_vehicle_id INT,
+    assigned_rescuer_id INT,
     FOREIGN KEY (user_id) REFERENCES User(user_id),
     FOREIGN KEY (item_id) REFERENCES Item(item_id),
-    FOREIGN KEY (assigned_vehicle_id) REFERENCES vehicle(vehicle_id)
+    FOREIGN KEY (assigned_rescuer_id) REFERENCES rescuer(rescuer_id)
 );
 
 CREATE TABLE IF NOT EXISTS task (
     task_id INT PRIMARY KEY AUTO_INCREMENT,
-    vehicle_id INT,
+    rescuer_id INT,
     type ENUM('Request', 'Offer') NOT NULL,
     request_id INT,
     offer_id INT,
     status ENUM('Pending', 'Completed', 'Canceled') DEFAULT 'Pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (vehicle_id) REFERENCES vehicle(vehicle_id),
+    FOREIGN KEY (rescuer_id) REFERENCES rescuer(rescuer_id),
     FOREIGN KEY (request_id) REFERENCES request(request_id),
     FOREIGN KEY (offer_id) REFERENCES offer(offer_id)
 );
@@ -93,25 +94,17 @@ CREATE TABLE IF NOT EXISTS civilian (
     FOREIGN KEY (user_id) REFERENCES user(user_id)
 );
 
-CREATE TABLE IF NOT EXISTS rescuer (
-    rescuer_id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT,
-    vehicle_id INT,
-    FOREIGN KEY (user_id) REFERENCES user(user_id),
-    FOREIGN KEY (vehicle_id) REFERENCES vehicle(vehicle_id)
-);
 
-alter table vehicle add foreign key (active_task) REFERENCES task(task_id);
 
--- Add the user_type column to the user table
-ALTER TABLE user ADD COLUMN user_type INT NOT NULL;
+alter table rescuer add foreign key (active_task) REFERENCES task(task_id);
+
+
 
 -- Update existing records with appropriate user_type values
 UPDATE user SET user_type = 1 WHERE role = 'Administrator';
 UPDATE user SET user_type = 2 WHERE role = 'Rescuer';
 UPDATE user SET user_type = 3 WHERE role = 'Civilian';
 
-ALTER TABLE item
-ADD COLUMN quantity INT NOT NULL;
+
 
 
