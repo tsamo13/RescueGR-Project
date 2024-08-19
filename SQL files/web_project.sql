@@ -95,9 +95,7 @@ CREATE TABLE IF NOT EXISTS civilian (
 );
 
 
-
 alter table rescuer add foreign key (active_task) REFERENCES task(task_id);
-
 
 
 -- Update existing records with appropriate user_type values
@@ -105,6 +103,17 @@ UPDATE user SET user_type = 1 WHERE role = 'Administrator';
 UPDATE user SET user_type = 2 WHERE role = 'Rescuer';
 UPDATE user SET user_type = 3 WHERE role = 'Civilian';
 
+SHOW CREATE TABLE rescuer;
+ALTER TABLE rescuer DROP FOREIGN KEY rescuer_ibfk_1, 
+ADD CONSTRAINT rescuer_ibfk_3 FOREIGN KEY (user_id) REFERENCES user(user_id)
+ON DELETE CASCADE ON UPDATE CASCADE;
 
+
+CREATE INDEX idx_item_name ON item(item_name);
+ALTER TABLE announcement
+DROP FOREIGN KEY announcement_ibfk_1,
+DROP COLUMN admin_id,
+ADD COLUMN item_name VARCHAR(100) NOT NULL,
+ADD CONSTRAINT fk_item_name FOREIGN KEY (item_name) REFERENCES item(item_name);
 
 

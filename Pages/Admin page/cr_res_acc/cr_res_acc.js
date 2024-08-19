@@ -21,7 +21,7 @@ if (username) {
 
 // Event listener for the form submission
 document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('rescuerAccountForm').addEventListener('submit', function(event) {
+    document.getElementById('rescuerAccountForm').addEventListener('submit', async function(event) {
         event.preventDefault(); // Prevent the default form submission behavior
 
         // Capture form data
@@ -30,35 +30,34 @@ document.addEventListener('DOMContentLoaded', function() {
         const name = document.getElementById('name').value.trim();
         const phone = document.getElementById('phone').value.trim();
 
+        try {
+            const response = await fetch('/create_rescuer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: rescuerUsername,
+                    password: password,
+                    name: name,
+                    phone: phone
+                })
+            });
 
-        // Send the POST request to create a rescuer account
-        fetch('/create_rescuer', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                username: rescuerUsername,
-                password: password,
-                name: name,
-                phone: phone
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
+            const data = await response.json();
+
             if (data.success) {
-                // Handle success
-                alert('Rescuer account created successfully!');
+                console.log('data: success');
+                alert(data.message);
                 document.getElementById('rescuerAccountForm').reset();
             } else {
-                // Handle error
                 alert(`Error: ${data.message}`);
             }
-        })
-        .catch(error => {
+        } catch (error) {
             console.error('Error:', error);
             alert('An error occurred while creating the account.');
-        });
+        }
     });
 });
+
 

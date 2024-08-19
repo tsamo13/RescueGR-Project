@@ -16,7 +16,7 @@ router.post('/', async (req, res) => {
         db.query(userQuery, [username, hashedPassword, name, phone, 2, 'Rescuer'], (err, result) => {
             if (err) {
                 console.error('Error inserting user:', err);
-                return res.status(500).json({success: false, message: 'Database error' });
+                return res.status(500).json({success: false, message: 'This username already exists' });
             }
 
             // Insert into the rescuer table using the inserted user ID
@@ -24,7 +24,7 @@ router.post('/', async (req, res) => {
             db.query(rescuerQuery, [result.insertId], (err) => {
                 if (err) {
                     console.error('Error inserting rescuer:', err);
-                    return res.status(500).json({success: false, message: 'Database error' });
+                    return res.status(500).json({success: false, message: 'This username already exists' });
                 }
                 res.status(201).json({success: true, message: 'Rescuer account created successfully' });
             });
