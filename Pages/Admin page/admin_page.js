@@ -32,3 +32,12 @@ document.getElementById('rescueAccBtn').addEventListener('click', function() {
         window.location.href = 'cr_res_acc/cr_res_acc.html';
     }
 });
+
+document.getElementById('createAnnBtn').addEventListener('click', function() {
+    if (username) {
+        window.location.href = `cr_an/cr_an.html?username=${encodeURIComponent(username)}`;
+    } else {
+        window.location.href = 'cr_an/cr_an.html';
+        
+    }
+});

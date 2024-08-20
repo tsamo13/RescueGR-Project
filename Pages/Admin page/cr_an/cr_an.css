@@ -1,0 +1,127 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom, #ADD8E6, #ffffff); /* Ίδιο background με το wareh_man.css */
+    height: 100vh;
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+}
+
+.header-container h1 {
+    color: #000080;
+    margin: 0;
+    padding-left: 35%;
+    font-size: 2em;
+}
+
+.header-container .logo {
+    width: 180px;
+    height: auto;
+}
+
+.sidebar {
+    position: absolute;
+    top: 0px;
+    right: 20px;
+    text-align: right;
+    padding-top: 10px;
+}
+
+.sidebar .link {
+    display: block;
+    color: #000080;
+    text-decoration: none;
+    margin: 5px 0;
+}
+
+.sidebar .link:hover {
+    text-decoration: underline;
+}
+
+.content-container {
+    padding-top: 0px; /* Μείωση του padding-top για να μειωθεί το ύψος */
+    text-align: center; /* Κεντραρισμένο περιεχόμενο */
+    padding-right: 70px;
+}
+
+form {
+    width: 50%; 
+    margin: 0 auto;
+    padding: 15px; /* Μείωση του padding για να μειωθεί το ύψος */
+    background-color: #f0f8ff;
+    border: 1px solid #000080;
+    border-radius: 10px;
+}
+
+.form-group {
+    margin-bottom: 10px; /* Μείωση του περιθωρίου για μείωση ύψους */
+}
+
+label {
+    display: block;
+    font-size: 1.2em;
+    color: #000080;
+    margin-bottom: 5px;
+}
+
+input[type="text"] {
+    width: 50%; /* Μικρότερο πλάτος του Title */
+    padding: 6px; 
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+textarea {
+    width: 60%; /* Μείωση του πλάτους του Description */
+    padding: 10px; /* Μείωση του padding */
+    font-size: 1.2em; /* Διατήρηση της μεγαλύτερης γραμματοσειράς */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    height: 100px; /* Μείωση του ύψους */
+    resize: vertical;
+}
+
+#productSearch {
+    width: 60%;
+    padding: 6px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#productSelect {
+    width: 60%;
+    padding: 6px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    height: 100px; /* Μείωση του ύψους της λίστας */
+    resize: vertical;
+    margin-bottom: 10px;
+}
+
+.submit-btn {
+    background-color: #FF7F50;
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 1.1em; 
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+    background-color: #FF6347;
+}

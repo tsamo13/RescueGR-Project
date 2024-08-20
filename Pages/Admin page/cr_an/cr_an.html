@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RescueGR - Create Announcements</title>
+    <link rel="stylesheet" href="cr_an.css"> <!-- Σύνδεση με το cr_an.css -->
+</head>
+<body>
+    <div class="header-container">
+        <h1><b>Create Announcements</b></h1> <!-- Τίτλος της σελίδας -->
+        <img src="/wareh_man/logo.ico" alt="Logo" class="logo">
+    </div>
+
+    <div class="sidebar">
+        <a href="#" id="mainPageLink" class="link">Main Page</a>
+        <a href="/login" class="link">Logout</a> <!-- Logout -->
+    </div>
+
+    <div class="content-container">
+        <form id="announcementForm">
+            <div class="form-group">
+                <label for="title">Title:</label>
+                <input type="text" id="title" name="title" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea id="description" name="description"></textarea> <!-- Το required αφαιρέθηκε για να γίνει προαιρετικό -->
+            </div>
+            <div class="form-group">
+                <label for="productSelect">Select Product:</label>
+                <select id="productSelect" name="product" size="5" required> <!-- Προστέθηκε το required για να γίνει υποχρεωτικό -->
+                    <!-- Προϊόντα θα προστεθούν από το JavaScript -->
+                </select>
+                <input type="text" id="productSearch" placeholder="Search for a product..." onkeyup="filterProducts()">
+            </div>
+            <button type="submit" class="submit-btn">Submit</button>
+        </form>
+    </div>
+    <script src="cr_an.js"></script>
+</body>
+</html>
