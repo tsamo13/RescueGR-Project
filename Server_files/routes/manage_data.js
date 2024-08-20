@@ -250,6 +250,27 @@ router.get('/get_all_data', (req, res) => {
         });
 });
 
+// Route to fetch all rescuers and their locations
+router.get('/fetch_rescuers', (req, res) => {
+    const db = req.db;
+
+    const sql = `
+        SELECT u.name, ST_X(u.location) AS lat, ST_Y(u.location) AS lng
+        FROM rescuer r
+        JOIN user u ON r.user_id = u.user_id
+        WHERE u.location IS NOT NULL
+    `;
+    
+    db.query(sql, (err, results) => {
+        if (err) {
+            console.error('Error fetching rescuers:', err);
+            return res.status(500).json({ success: false, message: 'Error fetching rescuers' });
+        }
+
+        res.json({ success: true, rescuers: results });
+    });
+});
+
 
 
 module.exports = router;

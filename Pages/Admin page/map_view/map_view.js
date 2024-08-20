@@ -46,10 +46,30 @@ if (username) {
     mainPageLink.href = `../admin_page.html?username=${encodeURIComponent(username)}`;
 }
 
-// Prevent form submission from doing anything and clear the form fields
-document.getElementById('rescuerAccountForm').addEventListener('submit', function(event) {
-    event.preventDefault(); // Αποτρέπει οποιαδήποτε ενέργεια να γίνει κατά την υποβολή της φόρμας
-
-    // Καθαρίζει όλα τα πεδία της φόρμας
-    document.getElementById('rescuerAccountForm').reset();
+// Define a custom red marker icon
+var redIcon = L.icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+    iconSize: [25, 41], // size of the icon
+    iconAnchor: [12, 41], // point of the icon which will correspond to marker's location
+    popupAnchor: [1, -34], // point from which the popup should open relative to the iconAnchor
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+    shadowSize: [41, 41] // size of the shadow
 });
+
+
+// Fetch rescuers data and add them to the map
+fetch('/manage_data/fetch_rescuers')
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            data.rescuers.forEach(rescuer => {
+                L.marker([rescuer.lat, rescuer.lng], { icon: redIcon })
+                    .addTo(map)
+                    .bindPopup(`Rescuer: ${rescuer.name}`)
+                    .openPopup();
+            });
+        } else {
+            console.error('Failed to fetch rescuers:', data.message);
+        }
+    })
+    .catch(error => console.error('Error:', error));
