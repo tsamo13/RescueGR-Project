@@ -44,7 +44,15 @@ document.addEventListener('DOMContentLoaded', function() {
     form.addEventListener('submit', function(event) {
         event.preventDefault(); // Αποτροπή της προεπιλεγμένης ενέργειας υποβολής
         form.reset(); // Καθαρισμός της φόρμας
+        resetProductList(); // Επαναφορά της πλήρους λίστας προϊόντων
     });
+
+    function resetProductList() {
+        // Επαναφορά της εμφάνισης όλων των προϊόντων στη λίστα
+        for (let i = 0; i < productSelect.options.length; i++) {
+            productSelect.options[i].style.display = ""; // Εμφανίζει όλα τα προϊόντα
+        }
+    }
 });
 
 function filterProducts() {
