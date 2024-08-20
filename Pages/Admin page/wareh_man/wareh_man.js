@@ -26,7 +26,7 @@ document.getElementById('loadProductsBtn').addEventListener('click', function() 
             populateProductList(allItems)  // Initially populate with all items
             addCategoryClickEvents(allItems); // Attach click events to categories
         } else {
-            alert('Failed to load products');
+            Swal.fire('Failed to load products!');
         }
     })
     .catch((error) => {
@@ -135,7 +135,7 @@ document.getElementById('clearProductsBtn').addEventListener('click', function()
             // Clear all products from the products table
             clearProductTable();
         } else {
-            alert('Failed to clear products');
+            Swal.fire('Failed to clear products!');
         }
     })
     .catch((error) => {
@@ -266,10 +266,10 @@ document.querySelector('.btn-bwm + .btn-bwm').addEventListener('click', function
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('An error occurred. Please try again.');
+            Swal.fire('An error occurred! Please try again.');
         });
     } else {
-        alert('Please select a category to delete.');
+        Swal.fire('Please select a category to delete!');
     }
 });
 
@@ -399,7 +399,7 @@ document.querySelector('.products-list-wrapper .btn-bwm + .btn-bwm + .btn-bwm').
         // Display the modal
         document.getElementById('editProductModal').style.display = 'flex';
     } else {
-        alert('Please select a product to edit.');
+        Swal.fire('Please select a product to edit!');
     }
 });
 
@@ -493,14 +493,14 @@ document.querySelector('.products-list-wrapper .btn-bwm + .btn-bwm').addEventLis
             if (data.success) {
                 selectedProduct.remove(); // Remove the selected product from the table
             } else {
-                alert('Failed to delete the product');
+                Swal.fire('Failed to delete the product!');
             }
         })
         .catch(error => {
             console.error('Error:', error);
         });
     } else {
-        alert('Please select a product to delete.');
+        Swal.fire('Please select a product to delete!');
     }
 });
 

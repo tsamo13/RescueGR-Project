@@ -32,7 +32,8 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
                 window.location.href = 'civilian_page.html';
             }
         } else {
-            alert('Invalid login credentials');
+            Swal.fire({title: 'Error!', text:'Invalid login credentials', icon: 'error', confirmButtonText: 'OK'});
+            document.getElementById('loginForm').reset();
         }
     })
     .catch((error) => {

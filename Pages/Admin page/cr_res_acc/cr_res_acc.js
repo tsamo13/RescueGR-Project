@@ -47,15 +47,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
 
             if (data.success) {
-                console.log('data: success');
-                alert(data.message);
+                Swal.fire({title: 'Success!', text:'Rescuer account created successfully!', icon: 'success', confirmButtonText: 'OK'});
                 document.getElementById('rescuerAccountForm').reset();
             } else {
-                alert(`Error: ${data.message}`);
+                Swal.fire({title: 'Error!', text:'This username already exists!', icon: 'error', confirmButtonText: 'OK'});
             }
         } catch (error) {
             console.error('Error:', error);
-            alert('An error occurred while creating the account.');
+            Swal.fire({title: 'Error!', text:'An error occurred while creating the account. Please try again', icon: 'error', confirmButtonText: 'OK'});
         }
     });
 });
