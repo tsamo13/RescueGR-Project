@@ -84,6 +84,9 @@ const logoutRoute = require('./routes/logout');
 app.use('/logout', logoutRoute);
 
 
+const announcementsRoutes = require('./routes/announcements');
+app.use('/announcements', announcementsRoutes);
+
 function ensureAuthenticated(req, res, next) {
   if (req.session) {
       return next(); // User is authenticated, proceed to the next middleware

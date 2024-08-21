@@ -272,6 +272,20 @@ router.get('/fetch_rescuers', (req, res) => {
 });
 
 
+router.get('/get_products', (req, res) => {
+    const sql = 'SELECT item_id AS id, item_name AS name FROM item';
+    req.db.query(sql, (err, results) => {
+        if (err) {
+            console.error('Error fetching products:', err);
+            res.status(500).json({ success: false, message: 'Error fetching products' });
+            return;
+        }
+
+        res.json({ success: true, products: results });
+    });
+});
+
+
 
 module.exports = router;
 
