@@ -7,6 +7,7 @@ const app = express();
 const port = 3000; 
 require('dotenv').config();
 
+
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root', 
@@ -57,10 +58,25 @@ app.get('/admin_page', ensureAuthenticated, (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'pages', 'Admin page', 'admin_page.html'));
 });
 
-app.get('/admin_page/wareh_man', (req, res) => {
+// Serve the Base Warehouse Management page with authentication check
+app.get('/admin_page/wareh_man', ensureAuthenticated,(req, res) => {
   res.sendFile(path.join(__dirname, '..', 'pages', 'Admin page', 'wareh_man', 'wareh_man.html'));
 });
 
+// Serve the Create Rescuer Account page with authentication check
+app.get('/admin_page/cr_res_acc', ensureAuthenticated, (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'pages', 'Admin page', 'cr_res_acc', 'cr_res_acc.html'));
+});
+
+// Serve the Map View page with authentication check
+app.get('/admin_page/map_view', ensureAuthenticated, (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'pages', 'Admin page', 'map_view', 'map_view.html'));
+});
+
+// Serve the Create Announcement page with authentication check
+app.get('/admin_page/cr_an', ensureAuthenticated, (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'pages', 'Admin page', 'cr_an', 'cr_an.html'));
+});
 
 app.use((req, res, next) => {
   req.db = db;
@@ -88,10 +104,10 @@ const announcementsRoutes = require('./routes/announcements');
 app.use('/announcements', announcementsRoutes);
 
 function ensureAuthenticated(req, res, next) {
-  if (req.session) {
-      return next(); // User is authenticated, proceed to the next middleware
+  if (req.session && req.session.user) {
+      return next();                  // User is authenticated, proceed to the next middleware
   } else {
-      res.redirect('/login'); // Redirect to the login page if not authenticated
+      res.redirect('/login');         // Redirect to the login page if not authenticated
   }
 }
 

@@ -38,7 +38,6 @@ router.post('/', (req, res) => {
           username: user.username,
           user_type: user.user_type
       };
-        console.log('Login successful:', { username, userType: user.user_type });
         res.json({ success: true, user_type: user.user_type });
       } else {
         // Passwords do not match

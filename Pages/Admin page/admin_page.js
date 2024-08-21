@@ -11,34 +11,33 @@ document.getElementById('warehouseBtn').addEventListener('click', function() {
     if (username) {
         window.location.href = `admin_page/wareh_man?username=${encodeURIComponent(username)}`;
     } else {
-        window.location.href = 'wareh_man/wareh_man.html';
+        window.location.href = 'admin_page/wareh_man';
     }
 });
 
 
 document.getElementById('mapViewBtn').addEventListener('click', function() {
     if (username) {
-        window.location.href = `map_view/map_view.html?username=${encodeURIComponent(username)}`;
+        window.location.href = `/admin_page/map_view?username=${encodeURIComponent(username)}`;
     } else {
-        window.location.href = 'map_view/map_view.html';
+        window.location.href = '/admin_page/map_view';
     }
 });
 
 
 document.getElementById('rescueAccBtn').addEventListener('click', function() {
     if (username) {
-        window.location.href = `cr_res_acc/cr_res_acc.html?username=${encodeURIComponent(username)}`;
+        window.location.href = `/admin_page/cr_res_acc?username=${encodeURIComponent(username)}`;
     } else {
-        window.location.href = 'cr_res_acc/cr_res_acc.html';
+        window.location.href = '/admin_page/cr_res_acc';
     }
 });
 
 document.getElementById('createAnnBtn').addEventListener('click', function() {
     if (username) {
-        window.location.href = `cr_an/cr_an.html?username=${encodeURIComponent(username)}`;
+        window.location.href = `/admin_page/cr_an?username=${encodeURIComponent(username)}`;
     } else {
-        window.location.href = 'cr_an/cr_an.html';
-        
+        window.location.href = '/admin_page/cr_an'; 
     }
 });
 
