@@ -71,11 +71,21 @@ document.addEventListener('DOMContentLoaded', function () {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            alert('Announcement created successfully!');
+            Swal.fire({
+                title: 'Success!',
+                text: 'Announcement created successfully!',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
             form.reset(); // Reset the form
             resetProductList(); // Reset the product list display
         } else {
-            alert('Failed to create announcement: ' + data.message);
+           Swal.fire({
+            title: 'Error!',
+            text: 'Failed to create announcement: ' + data.message,
+            icon: 'error',
+            confirmButtonText: 'OK'
+           });
         }
     })
     .catch(error => {
