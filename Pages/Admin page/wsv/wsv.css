@@ -1,0 +1,154 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom, #ADD8E6, #ffffff); /* Same background as cr_an */
+    height: 100vh;
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+}
+
+.header-container h1 {
+    color: #000080;
+    margin: 0;
+    padding-left: 37%;
+    font-size: 2em;
+}
+
+.header-container .logo {
+    width: 180px;
+    height: auto;
+}
+
+.sidebar {
+    position: absolute;
+    top: 0px;
+    right: 20px;
+    text-align: right;
+    padding-top: 10px;
+}
+
+.sidebar .link {
+    display: block;
+    color: #000080;
+    text-decoration: none;
+    margin: 5px 0;
+}
+
+.sidebar .link:hover {
+    text-decoration: underline;
+}
+
+.content-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px auto;
+    width: 80%;  /* Adjusted width */
+}
+
+.list-wrapper {
+    width: 30%;  /* Reduced width for categories */
+    margin-right: 20px;  /* Space between categories and table */
+}
+
+.list-title {
+    color: #000080;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.list-container {
+    max-height: 250px;
+    overflow-y: auto;
+    background-color: transparent;
+    padding: 0;
+    border: 1px solid #000080;  /* Border around the list */
+    background-color: #f0f8ff;  /* Light blue background */
+    border-radius: 5px;  /* Rounded corners */
+}
+
+.category-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.category-item {
+    padding: 8px;
+    background-color: #f0f8ff;
+    margin-bottom: 5px;
+    border: 1px solid #000080;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+}
+
+.category-item:hover {
+    background-color: #ADD8E6;
+}
+
+.table-wrapper {
+    width: 65%;  /* Reduced width for the table */
+}
+
+.table-title {
+    color: #000080;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.product-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+}
+
+.product-table th,
+.product-table td {
+    border: 1px solid #000080;
+    padding: 6px;  /* Reduced padding */
+    text-align: left;
+}
+
+.product-table th {
+    background-color: #f0f8ff;
+    color: #000080;
+    position: sticky;
+    top: 0;
+}
+
+.product-table tbody tr:hover {
+    background-color: #ADD8E6;
+    cursor: default;  /* Set cursor to default */
+}
+
+.product-table th:nth-child(1),
+.product-table td:nth-child(1) {
+    width: 25%;  /* Set to 25% for Name */
+}
+
+.product-table th:nth-child(2),
+.product-table td:nth-child(2) {
+    width: 25%;  /* Set to 25% for Category */
+}
+
+.product-table th:nth-child(3),
+.product-table td:nth-child(3),
+.product-table th:nth-child(4),
+.product-table td:nth-child(4),
+.product-table th:nth-child(5),
+.product-table td:nth-child(5) {
+    width: 16.67%;  /* Remaining space split equally between the other columns */
+}
+
+.category-item.selected {
+    background-color: #ADD8E6; /* Blue background for selected categories */
+    color: rgb(0, 0, 0); /* White text for better contrast */
+}

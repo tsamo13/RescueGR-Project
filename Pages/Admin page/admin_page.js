@@ -42,6 +42,25 @@ document.getElementById('createAnnBtn').addEventListener('click', function() {
     }
 });
 
+
+document.getElementById('WSVBtn').addEventListener('click', function() {
+    if (username) {
+        window.location.href = `wsv/wsv.html?username=${encodeURIComponent(username)}`;
+    } else {
+        window.location.href = 'wsv/wsv.html';
+        
+    }
+});
+
+document.getElementById('ssBtn').addEventListener('click', function() {
+    if (username) {
+        window.location.href = `ss/ss.html?username=${encodeURIComponent(username)}`;
+    } else {
+        window.location.href = 'ss/ss.html';
+        
+    }
+});
+
 document.addEventListener('DOMContentLoaded', function() {
     // Handle the logout button click event
     const logoutButton = document.getElementById('logoutButton');
