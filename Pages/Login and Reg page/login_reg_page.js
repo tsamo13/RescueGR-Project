@@ -22,7 +22,6 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
        
         if (data.success) {
             if (data.user_type == 1){
-                
                 window.location.href = `http://localhost:3000/admin_page?username=${encodeURIComponent(username)}`;
             }
             else if (data.user_type == 2) {

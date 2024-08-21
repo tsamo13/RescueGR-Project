@@ -96,3 +96,12 @@ body {
     width: 50%; 
     align-self: flex-start; 
 }
+
+.logout-button {
+    background: none;
+    border: none;
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: inherit;
+}

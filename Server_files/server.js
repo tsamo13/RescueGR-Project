@@ -2,11 +2,10 @@ const express = require('express');
 const mysql = require('mysql'); 
 const bodyParser = require('body-parser'); 
 const path = require('path');
-
+const session = require('express-session'); 
 const app = express(); 
 const port = 3000; 
-
-
+require('dotenv').config();
 
 const db = mysql.createConnection({
     host: 'localhost',
@@ -22,6 +21,17 @@ const db = mysql.createConnection({
     console.log('Connected to database');
   });
 
+
+// Set up session middleware
+app.use(session({
+  secret:process.env.SESSION_SECRET, 
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    maxAge: 1800000,  // Session expires after 30 minutes
+    secure: false 
+    } 
+}));
 
 
 app.use(bodyParser.json()); 
@@ -43,13 +53,14 @@ app.get('/login', (req, res) => {
 });
 
 // Serve the admin page when /admin_page is requested
-app.get('/admin_page', (req, res) => {
+app.get('/admin_page', ensureAuthenticated, (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'pages', 'Admin page', 'admin_page.html'));
 });
 
 app.get('/admin_page/wareh_man', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'pages', 'Admin page', 'wareh_man', 'wareh_man.html'));
 });
+
 
 app.use((req, res, next) => {
   req.db = db;
@@ -69,6 +80,17 @@ app.use('/login', loginRoute);
 const createRescuerRoute = require('./routes/create_rescuer');
 app.use('/create_rescuer', createRescuerRoute);
 
+const logoutRoute = require('./routes/logout');
+app.use('/logout', logoutRoute);
+
+
+function ensureAuthenticated(req, res, next) {
+  if (req.session) {
+      return next(); // User is authenticated, proceed to the next middleware
+  } else {
+      res.redirect('/login'); // Redirect to the login page if not authenticated
+  }
+}
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
