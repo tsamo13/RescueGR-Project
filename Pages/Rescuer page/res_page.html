@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RescueGR - Rescuer Page</title>
+    <link rel="stylesheet" href="res_page.css"> <!-- Linking to the new CSS file -->
+</head>
+<body>
+    <div class="header">
+        <div class="logo-container">
+            <img src="logo.ico" alt="RescueGR Logo">
+        </div>
+        <div class="vertical-border"></div>
+        <div class="admin-info">
+            <p>Type of user: Rescuer</p> <!-- Changed from Admin to Rescuer -->
+            <p id="usernameDisplay">Username: </p> 
+            <button id="logoutButton" class="logout-button">Logout</button>
+        </div>
+        <div class="top-border"></div>
+    </div>
+
+    <div class="main-content">
+        <div class="left-panel">
+            <img src="rescuer1.png" alt="Rescuer Image" class="rescuer-image">
+        </div>
+        <div class="right-panel">
+            <div class="rescuer-menu">
+                <button class="btn-rescuer" id="loadHandlingBtn"><b>Load Handling</b></button>
+                <button class="btn-rescuer" id="mapViewBtn"><b>Map View</b></button>
+            </div>
+        </div>
+    </div>
+    <script src="res_page.js"></script> <!-- Linking to the new JS file -->
+</body>
+</html>
