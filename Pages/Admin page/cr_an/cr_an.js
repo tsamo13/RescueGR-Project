@@ -1,3 +1,5 @@
+// Existing code
+
 const params = new URLSearchParams(window.location.search);
 const username = params.get('username');
 let allItems = []; // Global storage for all items
@@ -137,5 +139,39 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => {
             console.error('Error during logout:', error);
         });
+    });
+});
+
+// New code added for row selection and deletion
+
+document.addEventListener('DOMContentLoaded', function() {
+    const announcementTableBody = document.getElementById('announcementTableBody');
+    let selectedRow = null;
+
+    // Function to handle row click
+    announcementTableBody.addEventListener('click', function(e) {
+        const targetRow = e.target.closest('tr');
+
+        if (selectedRow) {
+            selectedRow.classList.remove('selected'); // Deselect the previously selected row
+        }
+
+        if (targetRow && targetRow !== selectedRow) {
+            targetRow.classList.add('selected'); // Select the new row
+            selectedRow = targetRow;
+        } else {
+            selectedRow = null; // Deselect if the same row is clicked
+        }
+    });
+
+    // Function to handle Delete button click
+    const deleteButton = document.getElementById('deleteButton');
+    deleteButton.addEventListener('click', function() {
+        if (selectedRow) {
+            selectedRow.remove(); // Remove the selected row from the table
+            selectedRow = null; // Reset the selected row
+        } else {
+            alert('Please select an announcement to delete.');
+        }
     });
 });

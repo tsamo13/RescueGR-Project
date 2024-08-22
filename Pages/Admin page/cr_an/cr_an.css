@@ -2,7 +2,7 @@ body {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-    background: linear-gradient(to bottom, #ADD8E6, #ffffff); /* Ίδιο background με το wareh_man.css */
+    background: linear-gradient(to bottom, #ADD8E6, #ffffff);
     height: 100vh;
 }
 
@@ -45,22 +45,30 @@ body {
 }
 
 .content-container {
-    padding-top: 0px; /* Μείωση του padding-top για να μειωθεί το ύψος */
-    text-align: center; /* Κεντραρισμένο περιεχόμενο */
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-top: 0px;
+    text-align: center;
     padding-right: 70px;
+    padding-left: 70px; /* Adjusted for left padding */
+}
+
+.form-container {
+    width: 50%;
 }
 
 form {
-    width: 50%; 
+    width: 100%; 
     margin: 0 auto;
-    padding: 15px; /* Μείωση του padding για να μειωθεί το ύψος */
+    padding: 15px;
     background-color: #f0f8ff;
     border: 1px solid #000080;
     border-radius: 10px;
 }
 
 .form-group {
-    margin-bottom: 10px; /* Μείωση του περιθωρίου για μείωση ύψους */
+    margin-bottom: 10px;
 }
 
 label {
@@ -71,7 +79,7 @@ label {
 }
 
 input[type="text"] {
-    width: 50%; /* Μικρότερο πλάτος του Title */
+    width: 50%;
     padding: 6px; 
     font-size: 1em;
     border: 1px solid #ccc;
@@ -79,12 +87,12 @@ input[type="text"] {
 }
 
 textarea {
-    width: 60%; /* Μείωση του πλάτους του Description */
-    padding: 10px; /* Μείωση του padding */
-    font-size: 1.2em; /* Διατήρηση της μεγαλύτερης γραμματοσειράς */
+    width: 60%;
+    padding: 10px;
+    font-size: 1.2em;
     border: 1px solid #ccc;
     border-radius: 5px;
-    height: 100px; /* Μείωση του ύψους */
+    height: 100px;
     resize: vertical;
 }
 
@@ -104,7 +112,7 @@ textarea {
     font-size: 1em;
     border: 1px solid #ccc;
     border-radius: 5px;
-    height: 100px; /* Μείωση του ύψους της λίστας */
+    height: 100px;
     resize: vertical;
     margin-bottom: 10px;
 }
@@ -133,4 +141,60 @@ textarea {
     text-decoration: underline;
     cursor: pointer;
     font-size: inherit;
+}
+
+.announcements-container {
+    width: 40%;
+    margin-left: 20px; /* Spacing between form and announcements */
+}
+
+.announcements-title {
+    color: #000080; /* Matching the color of "Create Announcements" */
+    font-size: 1.8em;
+    margin-bottom: 10px;
+}
+
+.announcements-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    margin-bottom: 15px; /* Space for the Delete button */
+}
+
+.announcements-table th,
+.announcements-table td {
+    border: 1px solid #000080;
+    padding: 6px;
+    text-align: left;
+}
+
+.announcements-table th {
+    background-color: #f0f8ff;
+    color: #000080;
+}
+
+.announcements-table tbody tr:hover {
+    background-color: #ADD8E6;
+    cursor: pointer;
+}
+
+.announcements-table tbody tr.selected {
+    background-color: #87CEEB; /* A slightly darker blue for selected rows */
+}
+
+.delete-btn {
+    background-color: #FF7F50;
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 1.1em;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.delete-btn:hover {
+    background-color: #FF6347;
 }
