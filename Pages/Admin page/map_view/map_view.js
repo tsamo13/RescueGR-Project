@@ -56,6 +56,15 @@ var redIcon = L.icon({
     shadowSize: [41, 41] // size of the shadow
 });
 
+var lightGrayIcon = L.icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-grey.png', // Replace with the actual URL
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+    shadowSize: [41, 41]
+});
+
 
 // Fetch rescuers data and add them to the map
 fetch('/manage_data/fetch_rescuers')
@@ -119,3 +128,20 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+
+    // Fetch civilian locations from the server
+    fetch('/civilians/locations')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                data.locations.forEach(civilian => {
+                    // Create a marker for each civilian location
+                    const marker = L.marker([civilian.latitude, civilian.longitude],{icon:lightGrayIcon}).addTo(map);
+                    marker.bindPopup(`<b>${civilian.name}</b>`); // Show the civilian's name when the marker is clicked
+                });
+            } else {
+                console.error('Failed to load civilian locations:', data.message);
+            }
+        })
+        .catch(error => console.error('Error fetching locations:', error));

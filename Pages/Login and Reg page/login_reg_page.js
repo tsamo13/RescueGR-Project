@@ -28,7 +28,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
                 window.location.href = `http://localhost:3000/res_page?username=${encodeURIComponent(username)}`;
             }   
             else if (data.user_type == 3){
-                window.location.href = 'civilian_page.html';
+                window.location.href = 'Civilian_page.html';
             }
         } else {
             Swal.fire({title: 'Error!', text:'Invalid login credentials', icon: 'error', confirmButtonText: 'OK'});
@@ -37,5 +37,16 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     })
     .catch((error) => {
         console.error('Error:', error);
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Get the Sign Up button
+    const signUpButton = document.getElementById('signUpButton');
+
+    // Add click event listener to the Sign Up button
+    signUpButton.addEventListener('click', function () {
+        // Redirect to the civilian sign-up page
+        window.location.href = '/sign_up.html';
     });
 });

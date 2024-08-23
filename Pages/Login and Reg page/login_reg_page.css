@@ -80,7 +80,7 @@ input[type="text"], input[type="password"] {
     font-size: 16px; 
 }
 
-.btn {
+.btn, .sign-up-btn {
     background-color: #FF7F50;
     border: none;
     color: white;

@@ -42,6 +42,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '..', 'pages', 'Login and Reg Page')));
 app.use(express.static(path.join(__dirname, '..', 'pages', 'Admin page')));
 app.use(express.static(path.join(__dirname, '..', 'pages', 'Rescuer page')));
+app.use(express.static(path.join(__dirname, '..', 'pages', 'Sign_up page')));
 
 // Redirect root path to the login page
 app.get('/', (req, res) => {
@@ -108,6 +109,9 @@ app.use('/logout', logoutRoute);
 const announcementsRoutes = require('./routes/announcements');
 app.use('/announcements', announcementsRoutes);
 
+const civiliansRoute = require('./routes/civilians');
+app.use('/civilians', civiliansRoute);
+
 function ensureAuthenticated(req, res, next) {
   if (req.session && req.session.user) {
       return next();                  // User is authenticated, proceed to the next middleware
@@ -119,3 +123,5 @@ function ensureAuthenticated(req, res, next) {
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
+
+
