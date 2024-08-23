@@ -5,18 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RescueGR - Warehouse Status View</title>
-    <link rel="stylesheet" href="wsv.css">
+    <link rel="stylesheet" href="/wsv/wsv.css">
 </head>
 
 <body>
     <div class="header-container">
         <h1><b>Warehouse Status View</b></h1>
-        <img src="logo.ico" alt="RescueGR Logo" class="logo">
+        <img src="/wsv/logo.ico" alt="RescueGR Logo" class="logo">
     </div>
 
     <div class="sidebar">
-        <a href="admin_page.html" id="mainPageLink" class="link">Main Page</a>
-        <a href="/login" class="link">Logout</a>
+        <a href="admin_page?username=${encodeURIComponent(username)}" id="mainPageLink" class="link">Main Page</a>
+        <button id="logoutButton" class="logout-button">Logout</button>
     </div>
 
     <div class="content-container">
@@ -24,12 +24,7 @@
             <h2 class="list-title">Categories</h2>
             <div class="list-container">
                 <ul class="category-list">
-                    <li class="category-item">Food & Drink</li>
-                    <li class="category-item">Medical Supplies</li>
-                    <li class="category-item">Clothing & Shelter</li>
-                    <li class="category-item">Electrical</li>
-                    <li class="category-item">Baby Supplies</li>
-                    <li class="category-item">Hygiene</li>
+                   
                 </ul>
             </div>
         </div>
@@ -48,83 +43,14 @@
                         </tr>
                     </thead>
                     <tbody id="productTableBody">
-                        <tr>
-                            <td>Water Bottles</td>
-                            <td>Food & Drink</td>
-                            <td>200</td>
-                            <td>50</td>
-                            <td>30</td>
-                        </tr>
-                        <tr>
-                            <td>Canned Beans</td>
-                            <td>Food & Drink</td>
-                            <td>150</td>
-                            <td>20</td>
-                            <td>10</td>
-                        </tr>
-                        <tr>
-                            <td>First Aid Kits</td>
-                            <td>Medical Supplies</td>
-                            <td>100</td>
-                            <td>10</td>
-                            <td>5</td>
-                        </tr>
-                        <tr>
-                            <td>Blankets</td>
-                            <td>Clothing & Shelter</td>
-                            <td>75</td>
-                            <td>15</td>
-                            <td>10</td>
-                        </tr>
-                        <tr>
-                            <td>Batteries</td>
-                            <td>Electrical</td>
-                            <td>300</td>
-                            <td>40</td>
-                            <td>20</td>
-                        </tr>
-                        <tr>
-                            <td>Flashlights</td>
-                            <td>Electrical</td>
-                            <td>120</td>
-                            <td>30</td>
-                            <td>15</td>
-                        </tr>
-                        <tr>
-                            <td>Diapers</td>
-                            <td>Baby Supplies</td>
-                            <td>200</td>
-                            <td>25</td>
-                            <td>10</td>
-                        </tr>
-                        <tr>
-                            <td>Soap</td>
-                            <td>Hygiene</td>
-                            <td>400</td>
-                            <td>60</td>
-                            <td>35</td>
-                        </tr>
-                        <tr>
-                            <td>Toothpaste</td>
-                            <td>Hygiene</td>
-                            <td>250</td>
-                            <td>30</td>
-                            <td>20</td>
-                        </tr>
-                        <tr>
-                            <td>Sleeping Bags</td>
-                            <td>Clothing & Shelter</td>
-                            <td>80</td>
-                            <td>10</td>
-                            <td>5</td>
-                        </tr>
+                        
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <script src="wsv.js"></script>
+    <script src="/wsv/wsv.js"></script>
 </body>
 
 </html>

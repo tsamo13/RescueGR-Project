@@ -84,6 +84,17 @@ app.get('/admin_page/cr_an', ensureAuthenticated, (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'pages', 'Admin page', 'cr_an', 'cr_an.html'));
 });
 
+// Serve the Warehouse Status View page with authentication check
+app.get('/admin_page/wsv', ensureAuthenticated, (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'pages', 'Admin page', 'wsv', 'wsv.html'));
+});
+
+// Serve the Service Statistics page with authentication check
+app.get('/admin_page/ss', ensureAuthenticated, (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'pages', 'Admin page', 'ss', 'ss.html'));
+});
+
+
 app.use((req, res, next) => {
   req.db = db;
   next();
@@ -105,12 +116,14 @@ app.use('/create_rescuer', createRescuerRoute);
 const logoutRoute = require('./routes/logout');
 app.use('/logout', logoutRoute);
 
-
 const announcementsRoutes = require('./routes/announcements');
 app.use('/announcements', announcementsRoutes);
 
 const civiliansRoute = require('./routes/civilians');
 app.use('/civilians', civiliansRoute);
+const warehouseStatusRoute = require('./routes/warehouse_status');
+app.use('/warehouse_status', warehouseStatusRoute);
+
 
 function ensureAuthenticated(req, res, next) {
   if (req.session && req.session.user) {

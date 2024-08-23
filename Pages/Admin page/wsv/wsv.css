@@ -152,3 +152,12 @@ body {
     background-color: #ADD8E6; /* Blue background for selected categories */
     color: rgb(0, 0, 0); /* White text for better contrast */
 }
+
+.logout-button {
+    background: none;
+    border: none;
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: inherit;
+}

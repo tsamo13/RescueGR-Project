@@ -44,18 +44,18 @@ document.getElementById('createAnnBtn').addEventListener('click', function() {
 
 document.getElementById('WSVBtn').addEventListener('click', function() {
     if (username) {
-        window.location.href = `wsv/wsv.html?username=${encodeURIComponent(username)}`;
+        window.location.href = `admin_page/wsv?username=${encodeURIComponent(username)}`;
     } else {
-        window.location.href = 'wsv/wsv.html';
+        window.location.href = 'admin_page/wsv';
         
     }
 });
 
 document.getElementById('ssBtn').addEventListener('click', function() {
     if (username) {
-        window.location.href = `ss/ss.html?username=${encodeURIComponent(username)}`;
+        window.location.href = `admin_page/ss?username=${encodeURIComponent(username)}`;
     } else {
-        window.location.href = 'ss/ss.html';
+        window.location.href = 'admin_page/ss';
         
     }
 });
