@@ -6,7 +6,7 @@ let allItems = [];                          // Global storage for all items
 
 if (username) {
     const mainPageLink = document.getElementById('mainPageLink');
-    mainPageLink.href = `../admin_page.html?username=${encodeURIComponent(username)}`;
+    mainPageLink.href = `../admin_page?username=${encodeURIComponent(username)}`;
 }
 
 // Call the function to fetch and display categories and items on page load
@@ -197,6 +197,7 @@ document.getElementById('addCategoryForm').addEventListener('submit', function(e
                 newCategory.className = 'category-item';
                 newCategory.textContent = categoryName;
                 document.querySelector('.category-list').appendChild(newCategory);
+                Swal.fire({title: 'Success!', text:'The category was successfully added!', icon: 'success', confirmButtonText: 'OK'});
 
                 // Add click event to select the new category
                 newCategory.addEventListener('click', function() {
@@ -260,8 +261,9 @@ document.querySelector('.btn-bwm + .btn-bwm').addEventListener('click', function
 
                 // Remove the selected category from the frontend
                 selectedCategory.remove();
+                Swal.fire('The category was deleted!');
             } else {
-                alert('Failed to delete category: ' + (data.message || 'Unknown error'));
+                Swal.fire('Failed to delete category: ' + (data.message || 'Unknown error'));
             }
         })
         .catch(error => {
@@ -366,6 +368,7 @@ document.getElementById('addProductForm').addEventListener('submit', function(ev
 
             // Reset the form fields
             document.getElementById('addProductForm').reset();
+            Swal.fire({title: 'Success!', text:'The item was successfully added!', icon: 'success', confirmButtonText: 'OK'});
         } else {
             // Show error message if there was an issue adding the product
             errorMessage.textContent = 'Failed to add product. Please try again.';
@@ -492,6 +495,7 @@ document.querySelector('.products-list-wrapper .btn-bwm + .btn-bwm').addEventLis
         .then(data => {
             if (data.success) {
                 selectedProduct.remove(); // Remove the selected product from the table
+                Swal.fire('The item was deleted!');
             } else {
                 Swal.fire('Failed to delete the product!');
             }

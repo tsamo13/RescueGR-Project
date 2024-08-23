@@ -6,7 +6,7 @@ let allItems = []; // Global storage for all items
 
 if (username) {
     const mainPageLink = document.getElementById('mainPageLink');
-    mainPageLink.href = `../admin_page.html?username=${encodeURIComponent(username)}`;
+    mainPageLink.href = `../admin_page?username=${encodeURIComponent(username)}`;
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function () {
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('An error occurred while creating the announcement.');
+        Swal.fire({title: 'Error!', text:'An error occurred while creating the anouncement!', icon: 'error', confirmButtonText: 'OK'});
     });
 });
 
@@ -142,13 +142,37 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// New code added for row selection and deletion
+
 
 document.addEventListener('DOMContentLoaded', function() {
     const announcementTableBody = document.getElementById('announcementTableBody');
     let selectedRow = null;
 
-    // Function to handle row click
+    // Fetch and display announcements
+    fetch('/announcements/get_announcements')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                data.announcements.forEach(announcement => {
+                    const tr = document.createElement('tr');
+
+                    const titleTd = document.createElement('td');
+                    titleTd.textContent = announcement.title;
+                    tr.appendChild(titleTd);
+
+                    const productTd = document.createElement('td');
+                    productTd.textContent = announcement.item_name;
+                    tr.appendChild(productTd);
+
+                    announcementTableBody.appendChild(tr);
+                });
+            } else {
+                console.error('Failed to load announcements:', data.message);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+
+    // Handle row selection for deletion
     announcementTableBody.addEventListener('click', function(e) {
         const targetRow = e.target.closest('tr');
 
@@ -164,14 +188,35 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Function to handle Delete button click
+    // Handle Delete button click
     const deleteButton = document.getElementById('deleteButton');
     deleteButton.addEventListener('click', function() {
         if (selectedRow) {
-            selectedRow.remove(); // Remove the selected row from the table
-            selectedRow = null; // Reset the selected row
+            const title = selectedRow.querySelector('td:first-child').textContent;
+    
+            fetch('/announcements/delete_announcement', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ title })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    selectedRow.remove(); // Remove the selected row from the table
+                    selectedRow = null; // Reset the selected row
+                    Swal.fire('Announcement deleted successfully!');
+                } else {
+                    Swal.fire({title: 'Error!', text:'Failed to delete announcement!', icon: 'error', confirmButtonText: 'OK'});
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting announcement:', error);
+                Swal.fire({title: 'Error!', text:'An error occurred while deleting the announcement!', icon: 'error', confirmButtonText: 'OK'});
+            });
         } else {
-            alert('Please select an announcement to delete.');
+            Swal.fire('Please select an announcement to delete!');
         }
     });
 });
