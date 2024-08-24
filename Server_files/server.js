@@ -100,6 +100,10 @@ app.get('/admin_page/ss', ensureAuthenticated, (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'pages', 'Admin page', 'ss', 'ss.html'));
 });
 
+// Serve the Requests Management page with authentication check
+app.get('/civilians_page/req_man', ensureAuthenticated, (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'pages', 'Civilians_page', 'req_man', 'req_man.html'));
+});
 
 app.use((req, res, next) => {
   req.db = db;

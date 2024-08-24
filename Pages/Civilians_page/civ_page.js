@@ -6,11 +6,11 @@ function getUsernameFromURL() {
 const username = getUsernameFromURL();
 document.getElementById('usernameDisplay').textContent = `Username: ${username}`;
 
-document.getElementById('bot1').addEventListener('click', function() {
+document.getElementById('RMBtn').addEventListener('click', function() {
     if (username) {
-        window.location.href = `civilian_page/bot1_action?username=${encodeURIComponent(username)}`;
+        window.location.href = `civilians_page/req_man?username=${encodeURIComponent(username)}`;
     } else {
-        window.location.href = 'civilian_page/bot1_action';
+        window.location.href = 'civilians_page/req_man';
     }
 });
 
