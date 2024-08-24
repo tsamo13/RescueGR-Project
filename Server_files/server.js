@@ -42,6 +42,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '..', 'pages', 'Login and Reg Page')));
 app.use(express.static(path.join(__dirname, '..', 'pages', 'Admin page')));
 app.use(express.static(path.join(__dirname, '..', 'pages', 'Rescuer page')));
+app.use(express.static(path.join(__dirname, '..', 'pages', 'Civilians_page')));
 app.use(express.static(path.join(__dirname, '..', 'pages', 'Sign_up page')));
 
 // Redirect root path to the login page
@@ -62,6 +63,11 @@ app.get('/admin_page', ensureAuthenticated, (req, res) => {
 // Serve the rescuer page when /res_page is requested
 app.get('/res_page', ensureAuthenticated, (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'pages', 'Rescuer page', 'res_page.html'));
+});
+
+// Serve the civilians page when /civ_page is requested
+app.get('/civ_page', ensureAuthenticated, (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'pages', 'Civilians_page', 'civ_page.html'));
 });
 
 // Serve the Base Warehouse Management page with authentication check

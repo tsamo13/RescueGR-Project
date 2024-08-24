@@ -28,7 +28,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
                 window.location.href = `http://localhost:3000/res_page?username=${encodeURIComponent(username)}`;
             }   
             else if (data.user_type == 3){
-                window.location.href = 'Civilian_page.html';
+                window.location.href = `http://localhost:3000/civ_page?username=${encodeURIComponent(username)}`;
             }
         } else {
             Swal.fire({title: 'Error!', text:'Invalid login credentials', icon: 'error', confirmButtonText: 'OK'});
