@@ -117,3 +117,28 @@ ADD COLUMN item_name VARCHAR(100) NOT NULL,
 ADD CONSTRAINT fk_item_name FOREIGN KEY (item_name) REFERENCES item(item_name);
 
 
+SHOW CREATE TABLE task;
+ALTER TABLE task
+DROP FOREIGN KEY task_ibfk_1,
+DROP FOREIGN KEY task_ibfk_2,
+DROP FOREIGN KEY task_ibfk_3;
+
+-- Step 1: Drop the existing request table if it exists
+DROP TABLE IF EXISTS request;
+
+-- Step 2: Create the new request table with the specified fields
+CREATE TABLE IF NOT EXISTS request (
+    request_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
+    item_name VARCHAR(100) NOT NULL,
+    quantity INT NOT NULL,
+    status ENUM('Pending', 'Assigned', 'Completed') DEFAULT 'Pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    accepted_at TIMESTAMP NULL,  -- Allows null initially, will be populated when accepted
+    completed_at TIMESTAMP NULL, -- Allows null initially, will be populated when completed
+    assigned_rescuer_id INT,
+    FOREIGN KEY (user_id) REFERENCES user(user_id),
+    FOREIGN KEY (item_name) REFERENCES item(item_name),
+    FOREIGN KEY (assigned_rescuer_id) REFERENCES rescuer(rescuer_id)
+);
+
