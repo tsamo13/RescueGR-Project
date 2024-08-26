@@ -131,8 +131,13 @@ app.use('/announcements', announcementsRoutes);
 
 const civiliansRoute = require('./routes/civilians');
 app.use('/civilians', civiliansRoute);
+
 const warehouseStatusRoute = require('./routes/warehouse_status');
 app.use('/warehouse_status', warehouseStatusRoute);
+
+const requestsRoute = require('./routes/requests');
+app.use('/requests', requestsRoute);
+
 
 
 function ensureAuthenticated(req, res, next) {
