@@ -29,8 +29,19 @@ router.post('/sign_up', async (req, res) => {
                 return res.status(500).json({ success: false, message: 'Database error' });
             }
 
-            // On success, send a positive response
-            res.json({ success: true, message: 'Civilian account created successfully!' });
+
+            //Insert the new civilian into the civilian table
+            const civilianSql = 'INSERT INTO civilian (user_id) VALUES (?)';
+            db.query(civilianSql, [result.insertId], (err,result) => {
+                if (err) {
+                    console.error('Error inserting into civilian table:', err);
+                    return res.status(500).json({ success: false, message: 'Database error' });
+                }
+
+
+                // On success, send a positive response
+                res.json({ success: true, message: 'Civilian account created successfully!' });
+            });
         });
     } catch (error) {
         console.error('Error handling sign-up:', error);

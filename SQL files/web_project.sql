@@ -92,6 +92,7 @@ CREATE TABLE IF NOT EXISTS civilian (
     civilian_id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT,
     FOREIGN KEY (user_id) REFERENCES user(user_id)
+    ON DELETE cascade
 );
 
 
