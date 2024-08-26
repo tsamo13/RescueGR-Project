@@ -14,7 +14,7 @@ document.getElementById('RMBtn').addEventListener('click', function() {
     }
 });
 
-document.getElementById('bot2').addEventListener('click', function() {
+document.getElementById('AOMBtn').addEventListener('click', function() {
     if (username) {
         window.location.href = `civilian_page/bot2_action?username=${encodeURIComponent(username)}`;
     } else {

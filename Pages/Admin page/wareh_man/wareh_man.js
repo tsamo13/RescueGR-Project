@@ -23,7 +23,7 @@ document.getElementById('loadProductsBtn').addEventListener('click', function() 
         if (data.success) {
             allItems = data.items; // Store all items globally
             populateCategoryList(data.categories);
-            populateProductList(allItems)  // Initially populate with all items
+            populateProductList(allItems);  // Initially populate with all items
             addCategoryClickEvents(allItems); // Attach click events to categories
         } else {
             Swal.fire('Failed to load products!');
@@ -45,16 +45,23 @@ function populateCategoryList(categories) {
         li.textContent = category.category_name;
         categoryList.appendChild(li);
 
-        // Add click event to select the category
+        // Add click event to select or unselect the category
         li.addEventListener('click', function() {
-            // Remove 'selected' class from any previously selected item
-            const currentlySelected = document.querySelector('.category-item.selected');
-            if (currentlySelected) {
-                currentlySelected.classList.remove('selected');
-            }
+            if (li.classList.contains('selected')) {
+                // If the category is already selected, unselect it
+                li.classList.remove('selected');
+                populateProductList(allItems); // Re-populate the product list with all items
+            } else {
+                // Remove 'selected' class from any previously selected item
+                const currentlySelected = document.querySelector('.category-item.selected');
+                if (currentlySelected) {
+                    currentlySelected.classList.remove('selected');
+                }
 
-            // Add 'selected' class to the clicked item
-            li.classList.add('selected');
+                // Add 'selected' class to the clicked item
+                li.classList.add('selected');
+                populateProductList(allItems, li.textContent); // Populate with items from the selected category
+            }
         });
     });
 }
@@ -98,21 +105,29 @@ function addCategoryClickEvents(items) {
     categoryItems.forEach(categoryItem => {
         categoryItem.addEventListener('click', function() {
             const selectedCategory = categoryItem.textContent;
-            populateProductList(items, selectedCategory);
+            if (categoryItem.classList.contains('selected')) {
+                // Unselect category and show all products
+                categoryItem.classList.remove('selected');
+                populateProductList(items);
+            } else {
+                // Select category and show only products from that category
+                categoryItems.forEach(item => item.classList.remove('selected'));
+                categoryItem.classList.add('selected');
+                populateProductList(items, selectedCategory);
+            }
         });
     });
 }
 
-
-// Function to fetch and display categories and items on page load
+// Function to fetch and display data on page load
 function fetchAndDisplayData() {
     fetch('/manage_data/get_all_data')
         .then(response => response.json())
         .then(data => {
             if (data.success) {
+                allItems = data.items; // Store all items globally
                 populateCategoryList(data.categories);
-                populateProductList(data.items);
-                addCategoryClickEvents(data.items); // Reapply event listeners to category items
+                populateProductList(allItems); // Initially populate with all items
             } else {
                 console.error('Failed to fetch data:', data.message);
             }
