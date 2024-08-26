@@ -60,9 +60,18 @@ label {
 }
 
 input[type="text"],
-input[type="password"],
+
 input[type="tel"] {
     width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 18px;
+}
+
+input[type="password"]{
+    width: 70%;
     padding: 12px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -77,6 +86,8 @@ input[type="tel"] {
     width: 100%;
     border-radius: 5px;
     margin-top: 10px;
+    font-size: 1em;
+    margin-bottom: 20px;
 }
 
 .submit-btn {
@@ -91,7 +102,7 @@ input[type="tel"] {
 }
 
 .submit-btn:hover {
-    background-color: #FFA500;
+    background-color: #FF6347;
 }
 
 
@@ -104,4 +115,13 @@ input[type="tel"] {
     border-radius: 5px;
     max-width: 70%; /* Μείωση του μεγέθους της εικόνας στο 70% */
     height: auto;
+}
+
+.password-container {
+    display: flex;
+    align-items: center;
+}
+
+.password-container input[type="checkbox"] {
+    margin-left: 10px;
 }

@@ -1,3 +1,14 @@
+// Function to toggle password visibility
+function togglePasswordVisibility() {
+    const passwordField = document.getElementById('password');
+    const showPasswordCheckbox = document.getElementById('showPassword');
+    if (showPasswordCheckbox.checked) {
+        passwordField.type = 'text';
+    } else {
+        passwordField.type = 'password';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     // Step 1.2: Initialize the map and set its view to a default location and zoom level
     const map = L.map('mapContainer').setView([38.2466, 21.7346], 13);
