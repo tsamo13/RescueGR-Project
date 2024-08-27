@@ -18,8 +18,138 @@
     </div>
 
     <div class="main-content">
-        <!-- Το περιεχόμενο της σελίδας θα τοποθετηθεί εδώ -->
+        <div class="content-wrapper">
+            <div class="table-wrapper">
+                <h2 class="table-title">Announcements</h2>
+                <table class="a-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th>Item</th>
+                            <th>Created at</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Announcement Title 1</td>
+                            <td>Details about announcement 1</td>
+                            <td>Item 1</td>
+                            <td>2024-08-20</td>
+                        </tr>
+                        <tr>
+                            <td>Announcement Title 2</td>
+                            <td>Details about announcement 2</td>
+                            <td>Item 2</td>
+                            <td>2024-08-19</td>
+                        </tr>
+                        <tr>
+                            <td>Announcement Title 3</td>
+                            <td>Details about announcement 3</td>
+                            <td>Item 3</td>
+                            <td>2024-08-18</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!-- Δύο κουμπιά κάτω από τον πίνακα -->
+                <button class="offer-button">Make an offer</button>
+                <button class="history-button">Offers history</button>
+            </div>
+            <div class="image-wrapper">
+                <img src="/aom_page/don.png" alt="Donation Image" class="donation-image">
+            </div>
+        </div>
     </div>
+
+    <!-- Pop-up window for "Make an offer" -->
+    <div id="makeOfferPopup" class="modal">
+        <div class="modal-content">
+            <span class="close-popup-btn">&times;</span>
+            <h2 class="popup-title">Make an Offer</h2>
+            <div class="popup-content">
+                <form id="offerForm">
+                    <div class="form-group">
+                        <label for="selectedItem"><b>Item:</b></label>
+                        <input type="text" id="selectedItem" name="selectedItem" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="offerQuantity"><b>Quantity:</b></label>
+                        <input type="number" id="offerQuantity" name="offerQuantity" min="1" required>
+                    </div>
+                    <button type="submit" class="submit-btn"><b>Submit</b></button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pop-up window for "Offers history" -->
+<div id="offersHistoryPopup" class="modal1">
+    <div class="modal-content1">
+        <span class="close-history-popup-btn">&times;</span>
+        <h2 class="popup-title">Offers History</h2>
+        <div class="popup-content">
+            <div class="history-table-wrapper">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Quantity</th>
+                            <th>Status</th>
+                            <th>Created At</th>
+                            <th>Accepted At</th>
+                            <th>Completed At</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Xanax</td>
+                            <td>5</td>
+                            <td>Pending</td>
+                            <td>08/27/2024, 22:14:31</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Rice</td>
+                            <td>1</td>
+                            <td>Pending</td>
+                            <td>08/27/2024, 20:33:15</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Biscuits</td>
+                            <td>1</td>
+                            <td>Pending</td>
+                            <td>08/27/2024, 20:33:05</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Durex</td>
+                            <td>1</td>
+                            <td>Accepted</td>
+                            <td>08/27/2024, 20:33:05</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Dildo</td>
+                            <td>1</td>
+                            <td>Completed</td>
+                            <td>08/27/2024, 20:33:05</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- Τοποθέτηση του κουμπιού "Cancel offer" στο κάτω δεξί μέρος -->
+            <button id="cancelOfferButton" class="cancel-offer-btn"><b>Cancel offer</b></button>
+        </div>
+    </div>
+</div>
+
     <script src="/aom_page/aom.js"></script>
 </body>
 </html>

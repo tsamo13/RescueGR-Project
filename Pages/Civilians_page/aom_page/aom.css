@@ -2,9 +2,9 @@ body {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-    background: linear-gradient(to bottom, #ADD8E6, #ffffff); /* Same background as req_man */
+    background: linear-gradient(to bottom, #ADD8E6, #ffffff);
     height: 100vh;
-    overflow: hidden; /* Αποφυγή scrolling */
+    overflow: hidden;
 }
 
 .header-container {
@@ -12,7 +12,6 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 10px;
-   
 }
 
 .header-container h1 {
@@ -20,6 +19,10 @@ body {
     margin: 0;
     padding-left: 30%;
     font-size: 2em;
+}
+
+.main-content h2 {
+    color: #000080;
 }
 
 .header-container .logo {
@@ -57,12 +60,302 @@ body {
 
 .main-content {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    height: calc(100vh - 60px); /* Adjust height to fit the screen without scrolling */
-    box-sizing: border-box; /* Ensure padding and border are included in element's total width and height */
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    height: calc(100vh - 60px);
+    box-sizing: border-box;
+    padding-left: 5%;
+    padding-top: 20px;
 }
 
-h1 {
+.content-wrapper {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.table-wrapper {
+    width: 60%;
+    position: relative; /* Για την τοποθέτηση των κουμπιών */
+}
+
+.a-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+}
+
+.a-table th,
+.a-table td {
+    border: 1px solid #000080;
+    padding: 8px;
+    text-align: left;
+    background-color: #ffffff;
+}
+
+.a-table th {
+    background-color: #f0f8ff;
     color: #000080;
+}
+
+/* Προσαρμογή πλάτους στηλών */
+.a-table th:nth-child(1),
+.a-table td:nth-child(1) {
+    width: 20%;
+}
+
+.a-table th:nth-child(2),
+.a-table td:nth-child(2) {
+    width: 50%;
+}
+
+.a-table th:nth-child(3),
+.a-table td:nth-child(3),
+.a-table th:nth-child(4),
+.a-table td:nth-child(4) {
+    width: 15%;
+}
+
+/* Στυλ για hover σε όλα τα κελιά της γραμμής */
+.a-table tbody tr:hover td {
+    background-color: #add8e6;  /* Ανοιχτό μπλε για το hover σε όλα τα κελιά της γραμμής */
+    cursor: pointer;  /* Αλλάζει το ποντίκι σε χεράκι */
+}
+
+.a-table tbody tr.selected td {
+    background-color: #87cefa;  /* Χρώμα επιλογής για την επιλεγμένη γραμμή */
+}
+
+.image-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-right: 180px;
+}
+
+.donation-image {
+    max-width: 300px;
+    height: auto;
+    border: 4px solid #FF7F50;
+    box-shadow: 0px 0px 15px 2px #FF7F50;
+    border-radius: 5px;
+    
+}
+
+.offer-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #FF7F50; /* Χρώμα για το κουμπί "Make an offer" */
+    color: #ffffff; /* Λευκό κείμενο */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    position: absolute;
+    right: 150px; /* Μετακινεί το κουμπί λίγο πιο αριστερά */
+}
+
+.offer-button:hover {
+    background-color: #FF6347; /* Χρώμα στο hover */
+}
+
+.history-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #FF7F50; /* Χρώμα για το κουμπί "Offers history" */
+    color: #ffffff; /* Λευκό κείμενο */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    position: absolute;
+    right: 0px; /* Τοποθετεί το κουμπί στο δεξί άκρο */
+}
+
+.history-button:hover {
+    background-color: #FF6347; /* Χρώμα στο hover */
+}
+
+/* Styles for the modal pop-up */
+.modal {
+    display: none; /* Αρχικά κρυφό */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    justify-content: center;
+    align-items: center;
+}
+
+/* Styles for the modal pop-up */
+.modal1 {
+    display: none; /* Αρχικά κρυφό */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    justify-content: center;
+    align-items: center;
+}
+
+
+.modal-content {
+    background-color: #ADD8E6;
+    margin: auto;
+    padding: 30px;
+    border: 4px solid #808080;
+    width: 650px; /* Αυξημένο πλάτος για το παράθυρο */
+    height: 300px;
+    text-align: center;
+    position: relative;
+    
+}
+
+.modal-content1 {
+    background-color: #ADD8E6;
+    margin: auto;
+    padding: 30px;
+    border: 4px solid #808080;
+    width: 1000px; /* Ακόμα μεγαλύτερο πλάτος για να χωρέσει περισσότερα δεδομένα */
+    height: 500px;
+    text-align: center;
+    position: relative;
+    overflow-y: auto; /* Scroll αν χρειαστεί */
+    
+}
+
+.close-popup-btn,
+.close-history-popup-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    color: #000080;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-popup-btn:hover,
+.close-popup-btn:focus,
+.close-history-popup-btn:hover,
+.close-history-popup-btn:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.popup-title {
+    font-size: 1.8em;
+    color: #000080; /* Τίτλος σε μπλε χρώμα */
+    margin-bottom: 50px;
+}
+
+.popup-content .form-group {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.popup-content label {
+    color: #000080; /* Χρώμα τίτλου φόρμας ίδιο με τον τίτλο "Make an Offer" */
+   margin-left: 160px;
+    font-size: 1.2em;
+    
+}
+
+.popup-content input[type="text"],
+.popup-content input[type="number"] {
+    width: 35%; /* Μείωση πλάτους του input για καλύτερη στοίχιση */
+    padding: 6px;
+   
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    text-align: left;
+    margin-right: 100px;
+}
+
+.popup-content .submit-btn {
+    background-color: #FF7F50;
+    border: none;
+    color: white;
+    padding: 8px 10px; /* Μικρότερο κουμπί */
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 8px;
+    width: 30%; /* Μείωση πλάτους κουμπιού στο 50% */
+    margin-top: 20px;
+}
+
+.popup-content .submit-btn:disabled {
+    background-color: #d3d3d3;
+    cursor: not-allowed;
+}
+
+.history-table-wrapper {
+    height: auto; /* Σταθερό ύψος για το wrapper του πίνακα */
+    overflow-y: auto; /* Scroll μόνο για τον πίνακα */
+   
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.history-table th,
+.history-table td {
+    border: 1px solid #000080;
+    padding: 8px;
+    text-align: left;
+    background-color: #ffffff; /* Λευκό χρώμα για όλες τις γραμμές */
+}
+
+.history-table th {
+    background-color: #f0f8ff;
+    color: #000080;
+}
+
+/* Στυλ για το κουμπί "Cancel offer" */
+.cancel-offer-btn {
+    background-color: #FF6347;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 5px;
+    position: absolute;
+    bottom: 20px; /* Τοποθετεί το κουμπί 20px πάνω από το κάτω μέρος του παραθύρου */
+    right: 20px; /* Τοποθετεί το κουμπί 20px αριστερά από το δεξί άκρο του παραθύρου */
+}
+.cancel-offer-btn:hover {
+    background-color: #FF4500; /* Σκούρο πορτοκαλί χρώμα στο hover */
+}
+
+
+/* Στυλ για επιλογή γραμμής στον πίνακα "Offers history" */
+.history-table tbody tr:hover td {
+    background-color: #add8e6;  /* Ανοιχτό μπλε για το hover σε όλα τα κελιά της γραμμής */
+    cursor: pointer;  /* Αλλάζει το ποντίκι σε χεράκι */
+}
+
+.history-table tbody tr.selected td {
+    background-color: #87cefa;  /* Χρώμα επιλογής για την επιλεγμένη γραμμή */
 }
