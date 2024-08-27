@@ -143,3 +143,14 @@ CREATE TABLE IF NOT EXISTS request (
     FOREIGN KEY (assigned_rescuer_id) REFERENCES rescuer(rescuer_id)
 );
 
+
+SHOW CREATE TABLE offer;
+ALTER TABLE offer
+DROP FOREIGN KEY offer_ibfk_2,
+DROP COLUMN item_id,
+ADD COLUMN item_name VARCHAR(100) NOT NULL,
+ADD COLUMN accepted_at TIMESTAMP NULL,  -- Allows null initially, will be populated when accepted
+ADD COLUMN completed_at TIMESTAMP NULL, -- Allows null initially, will be populated when completed
+ADD CONSTRAINT fk_item_name_2 FOREIGN KEY (item_name) REFERENCES item(item_name);
+
+

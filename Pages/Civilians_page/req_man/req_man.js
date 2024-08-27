@@ -212,15 +212,39 @@ document.addEventListener('DOMContentLoaded', function() {
                         row.appendChild(statusCell);
 
                         const createdAtCell = document.createElement('td');
-                        createdAtCell.textContent = request.created_at ? new Date(request.created_at).toLocaleDateString() : '';
+                        createdAtCell.textContent = request.created_at ? new Date(request.created_at).toLocaleString('en-US', {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                            hour12: false,
+                        }) : '';
                         row.appendChild(createdAtCell);
 
                         const acceptedAtCell = document.createElement('td');
-                        acceptedAtCell.textContent = request.accepted_at ? new Date(request.accepted_at).toLocaleDateString() : '';
+                        acceptedAtCell.textContent = request.accepted_at ? new Date(request.accepted_at).toLocaleString('en-US', {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                            hour12: false,
+                        }) : '';
                         row.appendChild(acceptedAtCell);
 
                         const completedAtCell = document.createElement('td');
-                        completedAtCell.textContent = request.completed_at ? new Date(request.completed_at).toLocaleDateString() : '';
+                        completedAtCell.textContent = request.completed_at ? new Date(request.completed_at).toLocaleString('en-US', {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                            hour12: false,
+                        }) : '';
                         row.appendChild(completedAtCell);
 
                         historyTableBody.appendChild(row);
