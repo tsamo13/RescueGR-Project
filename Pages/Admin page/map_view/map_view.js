@@ -130,6 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
+/*
     // Fetch civilian locations from the server
     fetch('/civilians/locations')
         .then(response => response.json())
@@ -145,3 +146,32 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         })
         .catch(error => console.error('Error fetching locations:', error));
+
+        */
+
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/requests/get_request_locations')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        data.requests.forEach(request => {
+                            if (request.latitude && request.longitude) {
+                                const marker = L.marker([request.latitude, request.longitude],{icon:lightGrayIcon}).addTo(map);
+                                marker.bindPopup(`
+                                    <h1>Request</h1><br>
+                                    <b>Name:</b> ${request.name}<br>
+                                    <b>Phone:</b> ${request.phone}<br>
+                                    <b>Created At:</b> ${new Date(request.created_at).toLocaleString()}<br>
+                                    <b>Item:</b> ${request.item_name}<br>
+                                    <b>Quantity:</b> ${request.quantity}<br>
+                                    <b>Status:</b> ${request.status}
+                                `);
+                            }
+                        });
+                    } else {
+                        console.error('Failed to load requests');
+                    }
+                })
+                .catch(error => console.error('Error fetching requests:', error));
+        });
+       

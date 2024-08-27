@@ -71,4 +71,35 @@ router.get('/get_request_history', (req, res) => {
     });
 });
 
+
+
+// New route to get request locations of the civilians
+router.get('/get_request_locations', (req, res) => {
+    const query = `
+        SELECT 
+            r.request_id,
+            u.name,
+            u.phone,
+            r.item_name,
+            r.quantity,
+            r.status,
+            r.created_at,
+            ST_Y(u.location) AS latitude,
+            ST_X(u.location) AS longitude
+        FROM 
+            request r
+        JOIN 
+            user u ON r.user_id = u.user_id
+    `;
+
+    req.db.query(query, (error, results) => {
+        if (error) {
+            return res.status(500).json({ success: false, message: 'Database error.' });
+        }
+        res.json({ success: true, requests: results });
+    });
+});
+
+
+
 module.exports = router;

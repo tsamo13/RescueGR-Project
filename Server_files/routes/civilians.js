@@ -49,6 +49,8 @@ router.post('/sign_up', async (req, res) => {
     }
 });
 
+/*
+
 router.get('/locations', (req, res) => {
     const db = req.db;
     const sql = 'SELECT name, ST_AsText(location) as location FROM user WHERE user_type = 3'; // Assuming user_type = 3 represents civilians
@@ -72,5 +74,7 @@ router.get('/locations', (req, res) => {
         res.json({ success: true, locations });
     });
 });
+
+*/
 
 module.exports = router;
