@@ -105,6 +105,11 @@ app.get('/civilians_page/req_man', ensureAuthenticated, (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'pages', 'Civilians_page', 'req_man', 'req_man.html'));
 });
 
+// Serve the Announcements and Offers Management page with authentication check
+app.get('/civilians_page/aom', ensureAuthenticated, (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'pages', 'Civilians_page', 'aom_page', 'aom.html'));
+});
+
 app.use((req, res, next) => {
   req.db = db;
   next();

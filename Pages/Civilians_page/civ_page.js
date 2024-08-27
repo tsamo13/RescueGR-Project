@@ -16,9 +16,9 @@ document.getElementById('RMBtn').addEventListener('click', function() {
 
 document.getElementById('AOMBtn').addEventListener('click', function() {
     if (username) {
-        window.location.href = `civilian_page/bot2_action?username=${encodeURIComponent(username)}`;
+        window.location.href = `civilians_page/aom?username=${encodeURIComponent(username)}`;
     } else {
-        window.location.href = 'civilian_page/bot2_action';
+        window.location.href = 'civilians_page/aom';
     }
 });
 
