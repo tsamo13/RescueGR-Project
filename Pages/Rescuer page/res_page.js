@@ -6,19 +6,13 @@ function getUsernameFromURL() {
 const username = getUsernameFromURL();
 document.getElementById('usernameDisplay').textContent = `Username: ${username}`;
 
-document.getElementById('loadHandlingBtn').addEventListener('click', function() {
-    if (username) {
-        window.location.href = `rescuer_page/load_handling?username=${encodeURIComponent(username)}`;
-    } else {
-        window.location.href = 'rescuer_page/load_handling';
-    }
-});
+
 
 document.getElementById('mapViewBtn').addEventListener('click', function() {
     if (username) {
-        window.location.href = `/rescuer_page/map_view?username=${encodeURIComponent(username)}`;
+        window.location.href = `/rescuer_page/map_viewR?username=${encodeURIComponent(username)}`;
     } else {
-        window.location.href = '/rescuer_page/map_view';
+        window.location.href = '/rescuer_page/map_viewR';
     }
 });
 

@@ -110,6 +110,11 @@ app.get('/civilians_page/aom', ensureAuthenticated, (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'pages', 'Civilians_page', 'aom_page', 'aom.html'));
 });
 
+// Serve the Rescuer Map View page with authentication check
+app.get('/rescuer_page/map_viewR', ensureAuthenticated, (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'pages', 'Rescuer Page', 'map_viewR', 'map_viewR.html'));
+});
+
 app.use((req, res, next) => {
   req.db = db;
   next();
