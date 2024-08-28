@@ -65,6 +65,14 @@ var lightGrayIcon = L.icon({
     shadowSize: [41, 41]
 });
 
+var squareIcon = L.divIcon({
+    className: 'custom-square-marker',
+    html: '<div style="width: 15px; height: 15px; background-color: red; border: 2px solid #555;"></div>',
+    iconSize: [24, 24], // size of the icon
+    iconAnchor: [12, 12], // point of the icon which will correspond to marker's location
+    popupAnchor: [0, -12] // point from which the popup should open relative to the iconAnchor
+});
+
 
 // Fetch rescuers data and add them to the map
 fetch('/manage_data/fetch_rescuers')
@@ -156,7 +164,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (data.success) {
                         data.requests.forEach(request => {
                             if (request.latitude && request.longitude) {
-                                const marker = L.marker([request.latitude, request.longitude],{icon:lightGrayIcon}).addTo(map);
+                                const marker = L.marker([request.latitude, request.longitude],{icon:squareIcon}).addTo(map);
                                 marker.bindPopup(`
                                     <h1>Request</h1><br>
                                     <b>Name:</b> ${request.name}<br>
