@@ -1,3 +1,17 @@
+document.addEventListener('DOMContentLoaded', function() {
+    const tableRows = document.querySelectorAll('.a-table tbody tr');
+
+    tableRows.forEach(function(row) {
+        row.addEventListener('click', function() {
+            // Αφαίρεση της κλάσης 'selected' από όλες τις γραμμές
+            tableRows.forEach(r => r.classList.remove('selected'));
+            
+            // Προσθήκη της κλάσης 'selected' στη γραμμή που κλικάρεται
+            row.classList.add('selected');
+        });
+    });
+});
+
 // Initialize the map and set its view to Patras, Greece
 var map = L.map('map').setView([38.2466, 21.7346], 13);
 

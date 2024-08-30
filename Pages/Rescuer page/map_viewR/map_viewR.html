@@ -6,7 +6,6 @@
     <title>RescueGR - Map View</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="/map_viewR/map_viewR.css" /> <!-- Προσθήκη του νέου CSS αρχείου -->
-
 </head>
 <body>
     <div class="header-container">
@@ -19,7 +18,55 @@
         <button id="logoutButton" class="logout-button">Logout</button>
     </div>
 
-    <div id="map"></div>
+    <div class="content-wrapper">
+        <div id="map"></div>
+        <div class="table-wrapper">
+            <h2 class="table-title">Current Tasks</h2>
+            <table class="a-table">
+                <thead>
+                    <tr>
+                        <th>Civilian's Name</th>
+                        <th>Civilian's Phone Number</th>
+                        <th>Created at</th>
+                        <th>Type</th>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>John Doe</td>
+                        <td>+30 123 456 7890</td>
+                        <td>2024-08-30 12:45:00</td>
+                        <td>Food</td>
+                        <td>Rice</td>
+                        <td>2</td>
+                    </tr>
+                    <tr>
+                        <td>Jane Smith</td>
+                        <td>+30 987 654 3210</td>
+                        <td>2024-08-29 08:30:00</td>
+                        <td>Medicine</td>
+                        <td>Aspirin</td>
+                        <td>5</td>
+                    </tr>
+                    <tr>
+                        <td>Maria Papadopoulos</td>
+                        <td>+30 698 123 4567</td>
+                        <td>2024-08-28 14:20:00</td>
+                        <td>Clothing</td>
+                        <td>Blankets</td>
+                        <td>3</td>
+                    </tr>
+                </tbody>
+            </table>
+        
+            <!-- Προσθήκη κουμπιών κάτω από τον πίνακα -->
+            <button class="complete-task-btn">Complete task</button>
+            <button class="cancel-task-btn">Cancel task</button>
+        </div>
+        
+    </div>
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="/map_viewR/map_viewR.js"></script>

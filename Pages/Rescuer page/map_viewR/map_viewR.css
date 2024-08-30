@@ -25,6 +25,7 @@ body {
     height: auto;
 }
 
+
 .sidebar {
     position: absolute;
     top: 0px;
@@ -44,13 +45,6 @@ body {
     text-decoration: underline;
 }
 
-#map {
-    height: 550px; /* Κράτα το ύψος του χάρτη όπως επιθυμείς */
-    width: 950px;    /* Κράτα το πλάτος του χάρτη όπως επιθυμείς */
-    margin: 0 auto;
-    border: 1px solid #ccc; /* Προαιρετικό: Για να βάλεις ένα περίγραμμα γύρω από τον χάρτη */
-}
-
 .logout-button {
     background: none;
     border: none;
@@ -58,4 +52,117 @@ body {
     text-decoration: underline;
     cursor: pointer;
     font-size: inherit;
+}
+
+.content-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 20px;
+}
+
+#map {
+    height: 450px; /* Ύψος του χάρτη */
+    width: 50%;    /* Μείωση του πλάτους του χάρτη */
+    margin-left: 3%;
+    border: 1px solid #ccc; /* Προαιρετικό: Για να βάλεις ένα περίγραμμα γύρω από τον χάρτη */
+}
+
+.table-wrapper {
+    width: 38%;
+    margin-right: 2%;
+}
+
+.a-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+}
+
+.a-table th,
+.a-table td {
+    border: 1px solid #000080;
+    padding: 8px;
+    text-align: left;
+    background-color: #ffffff;
+}
+
+.a-table th {
+    background-color: #f0f8ff;
+    color: #000080;
+}
+
+/* Προσαρμογή πλάτους στηλών */
+.a-table th:nth-child(1),
+.a-table td:nth-child(1) {
+    width: 20%;
+}
+
+.a-table th:nth-child(2),
+.a-table td:nth-child(2) {
+    width: 25%;
+}
+
+.a-table th:nth-child(3),
+.a-table td:nth-child(3) {
+    width: 15%;
+}
+
+.a-table th:nth-child(4),
+.a-table td:nth-child(4),
+.a-table th:nth-child(5),
+.a-table td:nth-child(5) {
+    width: 10%;
+}
+
+.a-table th:nth-child(6),
+.a-table td:nth-child(6) {
+    width: 10%;
+}
+
+/* Στυλ για hover σε όλα τα κελιά της γραμμής */
+.a-table tbody tr:hover td {
+    background-color: #add8e6;  /* Ανοιχτό μπλε για το hover σε όλα τα κελιά της γραμμής */
+    cursor: pointer;  /* Αλλάζει το ποντίκι σε χεράκι */
+}
+
+.a-table tbody tr.selected td {
+    background-color: #87cefa;  /* Χρώμα επιλογής για την επιλεγμένη γραμμή */
+}
+
+.table-title {
+
+    color: #000080;
+}
+
+.complete-task-btn{
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #FF7F50; /* Κουμπί σε χρώμα κοραλί */
+    color: #ffffff; /* Λευκό κείμενο */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    margin-right: 20px; /* Προσθήκη κενών μεταξύ των κουμπιών */
+    margin-left: 53%;
+    
+}
+
+.cancel-task-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #FF7F50; /* Κουμπί σε χρώμα κοραλί */
+    color: #ffffff; /* Λευκό κείμενο */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+   
+    
+    
+}
+
+.complete-task-btn:hover, .cancel-task-btn:hover {
+    background-color: #FF6347; /* Σκούρο κοραλί στο hover */
 }
