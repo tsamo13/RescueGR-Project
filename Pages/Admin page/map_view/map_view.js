@@ -83,7 +83,8 @@ fetch('/manage_data/fetch_rescuers')
             data.rescuers.forEach(rescuer => {
                 L.marker([rescuer.lat, rescuer.lng], { icon: redIcon })
                     .addTo(map)
-                    .bindPopup(`Rescuer: ${rescuer.name}`)
+                    .bindPopup(`Rescuer: <b>${rescuer.name}</b><br>
+                        Availability: <b>${rescuer.availability === 1 ? 'Available' : 'Unavailable'}</b>`)
                     .openPopup();
             });
         } else {

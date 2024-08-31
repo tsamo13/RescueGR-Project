@@ -148,6 +148,9 @@ app.use('/warehouse_status', warehouseStatusRoute);
 const requestsRoute = require('./routes/requests');
 app.use('/requests', requestsRoute);
 
+const rescuerRoute = require('./routes/take_location_of_signed_rescuer');
+app.use('/take_location_of_signed_rescuer', rescuerRoute);
+
 
 
 function ensureAuthenticated(req, res, next) {

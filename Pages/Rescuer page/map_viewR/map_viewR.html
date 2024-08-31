@@ -6,6 +6,7 @@
     <title>RescueGR - Map View</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="/map_viewR/map_viewR.css" /> <!-- Προσθήκη του νέου CSS αρχείου -->
+
 </head>
 <body>
     <div class="header-container">
@@ -18,7 +19,8 @@
         <button id="logoutButton" class="logout-button">Logout</button>
     </div>
 
-    <div class="content-wrapper">
+
+<div class="content-wrapper">
         <div id="map"></div>
         <div class="table-wrapper">
             <h2 class="table-title">Current Tasks</h2>
@@ -60,15 +62,21 @@
                     </tr>
                 </tbody>
             </table>
-        
-            <!-- Προσθήκη κουμπιών κάτω από τον πίνακα -->
+
+ <!-- Προσθήκη κουμπιών κάτω από τον πίνακα -->
             <button class="complete-task-btn">Complete task</button>
             <button class="cancel-task-btn">Cancel task</button>
         </div>
-        
+
     </div>
+
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="/map_viewR/map_viewR.js"></script>
+    
+    
+<!-- Include Leaflet Routing Machine CSS and JS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+<script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
 </body>
 </html>

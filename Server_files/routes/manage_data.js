@@ -255,7 +255,7 @@ router.get('/fetch_rescuers', (req, res) => {
     const db = req.db;
 
     const sql = `
-        SELECT u.name, ST_X(u.location) AS lat, ST_Y(u.location) AS lng
+        SELECT u.name, ST_X(u.location) AS lat, ST_Y(u.location) AS lng, availability
         FROM rescuer r
         JOIN user u ON r.user_id = u.user_id
         WHERE u.location IS NOT NULL

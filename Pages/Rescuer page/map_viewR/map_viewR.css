@@ -25,7 +25,6 @@ body {
     height: auto;
 }
 
-
 .sidebar {
     position: absolute;
     top: 0px;
@@ -67,6 +66,7 @@ body {
     margin-left: 3%;
     border: 1px solid #ccc; /* Προαιρετικό: Για να βάλεις ένα περίγραμμα γύρω από τον χάρτη */
 }
+
 
 .table-wrapper {
     width: 38%;
@@ -158,11 +158,14 @@ body {
     border-radius: 5px;
     cursor: pointer;
     font-size: 1em;
-   
-    
     
 }
 
 .complete-task-btn:hover, .cancel-task-btn:hover {
     background-color: #FF6347; /* Σκούρο κοραλί στο hover */
+}
+
+
+.leaflet-routing-container-hide {
+    display: none;
 }
