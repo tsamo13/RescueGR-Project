@@ -151,6 +151,9 @@ app.use('/requests', requestsRoute);
 const rescuerRoute = require('./routes/take_location_of_signed_rescuer');
 app.use('/take_location_of_signed_rescuer', rescuerRoute);
 
+const aofRouter = require('./routes/aof_page');
+app.use('/aof_page', aofRouter);
+
 
 
 function ensureAuthenticated(req, res, next) {
