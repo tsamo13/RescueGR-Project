@@ -93,28 +93,7 @@ fetch('/manage_data/fetch_rescuers')
     })
     .catch(error => console.error('Error:', error));
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Handle the logout button click event
-    const logoutButton = document.getElementById('logoutButton');
-    
-    logoutButton.addEventListener('click', function(event) {
-        event.preventDefault(); // Prevent any default behavior
-        
-        fetch('/logout', {
-            method: 'GET',
-        })
-        .then(response => {
-            if (response.ok) {
-                window.location.href = '/login'; // Redirect to the login page after logout
-            } else {
-                console.error('Logout failed');
-            }
-        })
-        .catch(error => {
-            console.error('Error during logout:', error);
-        });
-    });
-});
+
 
 document.addEventListener('DOMContentLoaded', function() {
     // Handle the logout button click event
@@ -137,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error during logout:', error);
         });
     });
-});
+
 
 
 /*
@@ -159,7 +138,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         */
 
-        document.addEventListener('DOMContentLoaded', function() {
             fetch('/requests/get_request_locations')
                 .then(response => response.json())
                 .then(data => {
@@ -183,5 +161,5 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 })
                 .catch(error => console.error('Error fetching requests:', error));
-        });
+            });  
        
