@@ -6,35 +6,88 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors'
 }).addTo(map);
 
-// Create a marker for the base (initially not draggable)
-var baseMarker = L.marker([38.2466, 21.7346], {
-    draggable: false
-}).addTo(map)
-  .bindPopup('Click here to confirm dragging the base location.').openPopup();
+// Function to initialize the base marker
+function initializeBaseMarker(lat, lng) {
+    var baseMarker = L.marker([lat, lng], {
+        draggable: false
+    }).addTo(map)
+      .bindPopup('Click here to confirm dragging the base location.').openPopup();
 
-// Add click event to the marker to ask for confirmation
+    // Add click event to the marker to ask for confirmation
 baseMarker.on('click', function() {
-    var confirmation = confirm("Do you want to drag the marker to set a new base location?");
-    if (confirmation) {
-        baseMarker.dragging.enable(); // Enable dragging
-        baseMarker.bindPopup('Drag the marker to set the new base location.').openPopup();
-    } else {
-        baseMarker.dragging.disable(); // Ensure dragging is disabled
-        baseMarker.bindPopup('Drag cancelled. Click again to confirm dragging.').openPopup();
-    }
+    Swal.fire({
+        title: 'Do you want to drag the marker?',
+        text: "You can drag the marker to set a new base location.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, drag it!',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            baseMarker.dragging.enable(); // Enable dragging
+            baseMarker.bindPopup('Drag the marker to set the new base location.').openPopup();
+        } else {
+            baseMarker.dragging.disable(); // Ensure dragging is disabled
+            baseMarker.bindPopup('Drag cancelled. Click again to confirm dragging.').openPopup();
+        }
+    });
 });
 
-// Event listener to update the marker position on drag end
-baseMarker.on('dragend', function(e) {
-    var marker = e.target;
-    var position = marker.getLatLng();
-    marker.setLatLng(position, {draggable: true}).bindPopup(
-        "Base location: " + position.lat.toFixed(4) + ", " + position.lng.toFixed(4)
-    ).openPopup();
-    
-    // You can add code to save the new base location here
-    console.log("New base location: ", position);
-});
+    // Event listener to update the marker position on drag end
+    baseMarker.on('dragend', function(e) {
+        var marker = e.target;
+        var position = marker.getLatLng();
+        marker.setLatLng(position, {draggable: true}).bindPopup(
+            "Base location: " + position.lat.toFixed(4) + ", " + position.lng.toFixed(4)
+        ).openPopup();
+
+        // Save the new base location to the database
+        saveBaseLocation(position.lat, position.lng);
+    });
+}
+
+// Function to save the new base location to the server
+function saveBaseLocation(lat, lng) {
+    fetch('/baseLocation/update_base_location', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ lat: lat, lng: lng })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log("Base location updated successfully!");
+        } else {
+            console.log("Failed to update base location.");
+        }
+    })
+    .catch(error => {
+        console.error("Error updating base location:", error);
+    });
+}
+
+// Fetch the stored base location from the server
+fetch('/baseLocation/get_base_location')
+    .then(response => response.json())
+    .then(data => {
+        if (data.success && data.location) {
+            // If a location is stored in the database, use it
+            initializeBaseMarker(data.location.lat, data.location.lng);
+        } else {
+            // If no location is stored, use the default (Patras, Greece)
+            initializeBaseMarker(38.2466, 21.7346);
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching base location:', error);
+        // On error, default to Patras, Greece
+        initializeBaseMarker(38.2466, 21.7346);
+    });
+
 
 
 // JavaScript to handle redirection to the admin page

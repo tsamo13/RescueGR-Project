@@ -157,6 +157,8 @@ app.use('/tasks', tasksRoute);
 const aofRouter = require('./routes/aof_page');
 app.use('/aof_page', aofRouter);
 
+const baseLocationRoute = require('./routes/baseLocation');
+app.use('/baseLocation', baseLocationRoute);
 
 
 function ensureAuthenticated(req, res, next) {

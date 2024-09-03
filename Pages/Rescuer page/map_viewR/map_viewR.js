@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                const rescuerLatLng = L.latLng(data.location.latitude, data.location.longitude);
+                const rescuerLatLng = L.latLng(data.location.longitude, data.location.latitude);
                 rescuerId = data.rescuerId; // Store the rescuer's ID
                 console.log('Rescuer id: ', rescuerId); //Debugging
 
@@ -64,6 +64,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 }).addTo(map)
                 .bindPopup('You are here')
                 .openPopup();
+
+                // Fetch and display the base marker
+                fetch('/baseLocation/get_base_location')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success && data.location) {
+                            // Add the base marker to the map (not draggable)
+                            L.marker([data.location.lat, data.location.lng], {
+                                draggable: false, // Ensure the marker is not draggable
+                            }).addTo(map)
+                              .bindPopup('Base location')
+                              .openPopup();
+                        } else {
+                            console.error('No base location found.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching base location:', error);
+                    });
+
+
 
                 // Handle rescuer marker dragend event to update rescuer's location
                 rescuerMarker.on('dragend', function(e) {

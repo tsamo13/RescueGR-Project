@@ -153,4 +153,10 @@ ADD COLUMN accepted_at TIMESTAMP NULL,  -- Allows null initially, will be popula
 ADD COLUMN completed_at TIMESTAMP NULL, -- Allows null initially, will be populated when completed
 ADD CONSTRAINT fk_item_name_2 FOREIGN KEY (item_name) REFERENCES item(item_name);
 
+CREATE TABLE db_location(
+id INT PRIMARY KEY AUTO_INCREMENT,
+location POINT NOT NULL
+);
+
+
 
