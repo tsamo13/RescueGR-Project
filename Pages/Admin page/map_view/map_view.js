@@ -81,7 +81,7 @@ fetch('/manage_data/fetch_rescuers')
     .then(data => {
         if (data.success) {
             data.rescuers.forEach(rescuer => {
-                L.marker([rescuer.lat, rescuer.lng], { icon: redIcon })
+                L.marker([rescuer.lng, rescuer.lat], { icon: redIcon })
                     .addTo(map)
                     .bindPopup(`Rescuer: <b>${rescuer.name}</b><br>
                         Availability: <b>${rescuer.availability === 1 ? 'Available' : 'Unavailable'}</b>`)
@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error during logout:', error);
         });
     });
-
+});
 
 
 /*
@@ -138,6 +138,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         */
 
+        document.addEventListener('DOMContentLoaded', function() {
             fetch('/requests/get_request_locations')
                 .then(response => response.json())
                 .then(data => {
@@ -161,5 +162,5 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 })
                 .catch(error => console.error('Error fetching requests:', error));
-            });  
+        });
        

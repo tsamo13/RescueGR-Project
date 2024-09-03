@@ -77,23 +77,33 @@ router.get('/get_request_history', (req, res) => {
 router.get('/get_request_locations', (req, res) => {
     const query = `
         SELECT 
-            r.request_id,
-            u.name,
-            u.phone,
-            r.item_name,
-            r.quantity,
-            r.status,
-            r.created_at,
-            ST_Y(u.location) AS latitude,
-            ST_X(u.location) AS longitude
-        FROM 
-            request r
-        JOIN 
-            user u ON r.user_id = u.user_id
-    `;
+        r.request_id,
+        u.name,
+        u.phone,
+        r.item_name,
+        r.quantity,
+        r.status,
+        r.created_at,
+        ST_Y(u.location) AS latitude,
+        ST_X(u.location) AS longitude,
+        (CASE 
+            WHEN t.task_id IS NOT NULL AND (t.status = 'Pending' OR t.status = 'Completed') 
+            THEN true 
+            ELSE false 
+        END) AS is_accepted
+    FROM 
+        request r
+    JOIN 
+        user u ON r.user_id = u.user_id
+    LEFT JOIN
+        task t ON r.request_id = t.request_id 
+    AND 
+        (t.status = 'Pending' OR t.status = 'Completed')
+`;
 
     req.db.query(query, (error, results) => {
         if (error) {
+            console.error('Error executing query:', error); // Ensure the error is logged
             return res.status(500).json({ success: false, message: 'Database error.' });
         }
         res.json({ success: true, requests: results });

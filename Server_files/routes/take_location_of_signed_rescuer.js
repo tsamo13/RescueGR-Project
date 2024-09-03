@@ -20,10 +20,25 @@ router.get('/get_rescuer_location', (req, res) => {
 
         if (results.length > 0) {
             const location = results[0];
-            res.json({ success: true, location });
+            res.json({ success: true, location,rescuerId });
         } else {
             res.json({ success: false, message: 'Location not found' });
         }
+    });
+});
+
+// Route to update the rescuer's location
+router.post('/update_rescuer_location', (req, res) => {
+    const { rescuer_id, latitude, longitude } = req.body;
+
+    const sql = 'UPDATE user SET location = POINT(?, ?) WHERE user_id = ?';
+
+    req.db.query(sql, [longitude, latitude, rescuer_id], (err, result) => {
+        if (err) {
+            console.error('Error updating rescuer location:', err);
+            return res.status(500).json({ success: false, message: 'Server error' });
+        }
+        res.json({ success: true, message: 'Rescuer location updated successfully!' });
     });
 });
 
