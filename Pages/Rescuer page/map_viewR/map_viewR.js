@@ -1,4 +1,38 @@
 document.addEventListener('DOMContentLoaded', function() {
+    const viewLoadButton = document.getElementById('viewLoadButton');
+    const viewLoadPopup = document.getElementById('viewLoadPopup');
+    const closeViewLoadPopupBtn = document.querySelector('.close-view-load-popup-btn');
+
+    viewLoadButton.addEventListener('click', function() {
+        // Φόρτωση δεδομένων στον πίνακα, αυτό μπορεί να αντικατασταθεί με δυναμικά δεδομένα από τον server
+        const viewLoadTableBody = document.querySelector('.view-load-table tbody');
+        viewLoadTableBody.innerHTML = `
+            <tr>
+                <td>Example Item 1</td>
+                <td>10</td>
+            </tr>
+            <tr>
+                <td>Example Item 2</td>
+                <td>5</td>
+            </tr>
+        `;
+
+        // Εμφάνιση του παραθύρου
+        viewLoadPopup.style.display = 'flex';
+    });
+
+    closeViewLoadPopupBtn.addEventListener('click', function() {
+        viewLoadPopup.style.display = 'none';
+    });
+
+    window.addEventListener('click', function(event) {
+        if (event.target === viewLoadPopup) {
+            viewLoadPopup.style.display = 'none';
+        }
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
     const tableBody = document.querySelector('.a-table tbody');
     let currentTaskId = null; // Variable to track the current task ID
     let rescuerId;
@@ -285,3 +319,6 @@ fetch('/requests/get_request_locations')
         popupAnchor: [0, -12] // point from which the popup should open relative to the iconAnchor
     });
 });
+
+
+

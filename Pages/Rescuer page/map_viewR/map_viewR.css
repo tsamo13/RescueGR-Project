@@ -61,10 +61,11 @@ body {
 }
 
 #map {
-    height: 500px; /* Ύψος του χάρτη */
+    height: 470px; /* Ύψος του χάρτη */
     width: 50%;    /* Μείωση του πλάτους του χάρτη */
     margin-left: 3%;
     border: 1px solid #ccc; /* Προαιρετικό: Για να βάλεις ένα περίγραμμα γύρω από τον χάρτη */
+    margin-top: 2%;
     
 }
 
@@ -169,4 +170,102 @@ body {
 
 .leaflet-routing-container-hide {
     display: none;
+}
+
+
+.map-control-container {
+    position: absolute;
+    top:27%;
+    left: 4%;
+   
+   
+}
+
+.view-load-btn {
+    padding: 10px 20px;
+    background-color: #FF7F50; /* Χρώμα κοραλί */
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.view-load-btn:hover {
+    background-color: #FF6347; /* Σκούρο κοραλί στο hover */
+}
+
+
+/* Styles for the View Load modal pop-up */
+.modal1 {
+    display: none; /* Αρχικά κρυφό */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content1 {
+    background-color: #ADD8E6;
+    margin: auto;
+    padding: 30px;
+    border: 4px solid #808080;
+    width: 600px; /* Πλάτος για το παράθυρο */
+    height: 300px; /* Ύψος για το παράθυρο */
+    text-align: center;
+    position: relative;
+    overflow-y: auto; /* Scroll αν χρειαστεί */
+    z-index: 1001;
+}
+
+.close-view-load-popup-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    color: #000080;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-view-load-popup-btn:hover,
+.close-view-load-popup-btn:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.view-load-table-wrapper {
+    height: auto; /* Σταθερό ύψος για το wrapper του πίνακα */
+    overflow-y: auto; /* Scroll μόνο για τον πίνακα */
+}
+
+.view-load-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.view-load-table th,
+.view-load-table td {
+    border: 1px solid #000080;
+    width: 50%;
+    padding: 8px;
+    text-align: left;
+    background-color: #ffffff; /* Λευκό χρώμα για όλες τις γραμμές */
+}
+
+.view-load-table th {
+    background-color: #f0f8ff;
+    color: #000080;
+}
+
+.popup-title {
+    color: #000080;
+    padding-bottom: 10px;
 }

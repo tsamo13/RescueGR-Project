@@ -22,7 +22,10 @@
 
 
 <div class="content-wrapper">
-        <div id="map"></div>
+    <div class="map-control-container">
+        <button id="viewLoadButton" class="view-load-btn">View Load</button>
+    </div>    
+    <div id="map"></div>
         <div class="table-wrapper">
             <h2 class="table-title">Current Tasks</h2>
             <table class="a-table">
@@ -54,5 +57,31 @@
     
     
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- Pop-up window for "View Load" -->
+<div id="viewLoadPopup" class="modal1">
+    <div class="modal-content1">
+        <span class="close-view-load-popup-btn">&times;</span>
+        <h2 class="popup-title">Vehicle Load</h2>
+        <div class="popup-content">
+            <div class="view-load-table-wrapper">
+                <table class="view-load-table">
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Τα δεδομένα θα προστεθούν δυναμικά εδώ -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 </body>
 </html>
