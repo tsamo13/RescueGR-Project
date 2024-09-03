@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 document.addEventListener('DOMContentLoaded', function() {
 
+    let selectedRow = null;
     // Fetch announcements from the server
     fetch('/aof_page/get_announcements')
         .then(response => response.json())
@@ -68,8 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Attach click event listener to the row
                     row.addEventListener('click', function() {
                         // Remove 'selected' class from all rows
-                        const allRows = announcementsTableBody.querySelectorAll('tr');
-                        allRows.forEach(r => r.classList.remove('selected'));
+                        document.querySelectorAll('.a-table tbody tr').forEach(r => r.classList.remove('selected'));
 
                         // Add 'selected' class to the clicked row
                         row.classList.add('selected');
