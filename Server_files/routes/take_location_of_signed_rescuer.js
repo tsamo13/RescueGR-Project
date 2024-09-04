@@ -9,21 +9,37 @@ router.get('/get_rescuer_location', (req, res) => {
         return res.status(403).json({ success: false, message: 'Unauthorized' });
     }
 
-    const rescuerId = req.session.user.id;
-    const sql = 'SELECT ST_X(location) AS longitude, ST_Y(location) AS latitude FROM user WHERE user_id = ?';
+    const userId = req.session.user.id; // This is the user ID stored in the session
 
-    req.db.query(sql, [rescuerId], (err, results) => {
+    // Step 1: Fetch the rescuer_id using the user_id
+    const getRescuerIdSql = 'SELECT rescuer_id FROM rescuer WHERE user_id = ?';
+    req.db.query(getRescuerIdSql, [userId], (err, result) => {
         if (err) {
-            console.error('Error fetching rescuer location:', err);
+            console.error('Error fetching rescuer_id:', err);
             return res.status(500).json({ success: false, message: 'Server error' });
         }
 
-        if (results.length > 0) {
-            const location = results[0];
-            res.json({ success: true, location,rescuerId });
-        } else {
-            res.json({ success: false, message: 'Location not found' });
+        if (result.length === 0) {
+            return res.status(404).json({ success: false, message: 'Rescuer not found for this user' });
         }
+
+        const rescuerId = result[0].rescuer_id;
+
+        // Step 2: Fetch the rescuer's location
+        const sql = 'SELECT ST_X(location) AS longitude, ST_Y(location) AS latitude FROM user WHERE user_id = ?';
+        req.db.query(sql, [userId], (err, results) => {
+            if (err) {
+                console.error('Error fetching rescuer location:', err);
+                return res.status(500).json({ success: false, message: 'Server error' });
+            }
+
+            if (results.length > 0) {
+                const location = results[0];
+                res.json({ success: true, location, rescuerId });
+            } else {
+                res.json({ success: false, message: 'Location not found' });
+            }
+        });
     });
 });
 
@@ -31,8 +47,8 @@ router.get('/get_rescuer_location', (req, res) => {
 router.post('/update_rescuer_location', (req, res) => {
     const { rescuer_id, latitude, longitude } = req.body;
 
-    const sql = 'UPDATE user SET location = POINT(?, ?) WHERE user_id = ?';
-
+    // Step 3: Update the user's location
+    const sql = 'UPDATE user SET location = POINT(?, ?) WHERE user_id = (SELECT user_id FROM rescuer WHERE rescuer_id = ?)';
     req.db.query(sql, [longitude, latitude, rescuer_id], (err, result) => {
         if (err) {
             console.error('Error updating rescuer location:', err);
