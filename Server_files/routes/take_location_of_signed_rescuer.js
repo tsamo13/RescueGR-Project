@@ -49,7 +49,7 @@ router.post('/update_rescuer_location', (req, res) => {
 
     // Step 3: Update the user's location
     const sql = 'UPDATE user SET location = POINT(?, ?) WHERE user_id = (SELECT user_id FROM rescuer WHERE rescuer_id = ?)';
-    req.db.query(sql, [longitude, latitude, rescuer_id], (err, result) => {
+    req.db.query(sql, [latitude, longitude, rescuer_id], (err, result) => {
         if (err) {
             console.error('Error updating rescuer location:', err);
             return res.status(500).json({ success: false, message: 'Server error' });
