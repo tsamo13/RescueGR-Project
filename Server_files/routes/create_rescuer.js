@@ -23,11 +23,26 @@ router.post('/', async (req, res) => {
     const { username, password, name, phone } = req.body;
 
 
-    // Assuming the base location is fixed
-    const baseLat = 38.2466; // Example: Patras latitude
-    const baseLng = 21.7346; // Example: Patras longitude
-
     try {
+
+        // Fetch the current base location from the database
+        const baseLocationQuery = 'SELECT ST_X(location) AS lat, ST_Y(location) AS lng FROM db_location WHERE id = 1';
+
+        db.query(baseLocationQuery, async (err, result) => {
+            if (err) {
+                console.error('Error fetching base location:', err);
+                return res.status(500).json({ success: false, message: 'Error fetching base location' });
+            }
+
+            if (result.length === 0) {
+                return res.status(404).json({ success: false, message: 'Base location not found' });
+            }
+
+            // Extract base location coordinates
+            const baseLat = result[0].lat;
+            const baseLng = result[0].lng;
+
+
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -40,7 +55,6 @@ router.post('/', async (req, res) => {
             }
 
             
-
             // Generate random coordinates for the rescuer's location
             const [rescuerLat, rescuerLng] = getRandomCoordinates(baseLat, baseLng);
             console.log('Generated coordinates:', rescuerLat, rescuerLng);
@@ -52,8 +66,6 @@ router.post('/', async (req, res) => {
                     console.error('Error updating user location:', err);
                     return res.status(500).json({ success: false, message: 'Error updating user location' });
                 }
-
-            
 
 
             // Insert into the rescuer table using the inserted user ID
@@ -67,6 +79,7 @@ router.post('/', async (req, res) => {
             });
         });
     });
+});
     } catch (err) {
         console.error('Error during account creation:', err);
         res.status(500).json({success: false, message: 'Server error' });
