@@ -160,6 +160,9 @@ app.use('/aof_page', aofRouter);
 const baseLocationRoute = require('./routes/baseLocation');
 app.use('/baseLocation', baseLocationRoute);
 
+const adminMapRoute = require('./routes/admin_map');
+app.use('/admin_map', adminMapRoute);
+
 
 function ensureAuthenticated(req, res, next) {
   if (req.session && req.session.user) {

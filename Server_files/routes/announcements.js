@@ -39,7 +39,7 @@ router.get('/get_announcements', (req, res) => {
 });
 
 // Route to delete an announcement
-router.post('/delete_announcement', (req, res) => {
+router.delete('/delete_announcement', (req, res) => {
     const { title } = req.body;
 
     const sql = 'DELETE FROM announcement WHERE title = ?';

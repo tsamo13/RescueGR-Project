@@ -195,7 +195,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const title = selectedRow.querySelector('td:first-child').textContent;
     
             fetch('/announcements/delete_announcement', {
-                method: 'POST',
+                method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
                 },
