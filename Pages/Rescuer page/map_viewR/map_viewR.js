@@ -1,12 +1,12 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const viewLoadButton = document.getElementById('viewLoadButton');  //button for viewing the load
     const viewLoadPopup = document.getElementById('viewLoadPopup');    // popup for viewing the load of vehicle
     const closeViewLoadPopupBtn = document.querySelector('.close-view-load-popup-btn'); // button to close the popup window
-    const loadButton = document.getElementById('loadButton'); 
+    const loadButton = document.getElementById('loadButton');
     const unloadButton = document.getElementById('unloadButton');
     let baseLatLng = null; // To store base marker's position
 
-    viewLoadButton.addEventListener('click', function() {
+    viewLoadButton.addEventListener('click', function () {
         // Display data in the table (could be replaced with dynamic data from the server)
         const viewLoadTableBody = document.querySelector('.view-load-table tbody');
         viewLoadTableBody.innerHTML = `
@@ -23,11 +23,11 @@ document.addEventListener('DOMContentLoaded', function() {
         viewLoadPopup.style.display = 'flex';
     });
 
-    closeViewLoadPopupBtn.addEventListener('click', function() {
+    closeViewLoadPopupBtn.addEventListener('click', function () {
         viewLoadPopup.style.display = 'none';
     });
 
-    window.addEventListener('click', function(event) {  //If the user clicks outside the pop-up (but inside the overlay), the pop-up is hidden.
+    window.addEventListener('click', function (event) {  //If the user clicks outside the pop-up (but inside the overlay), the pop-up is hidden.
         if (event.target === viewLoadPopup) {
             viewLoadPopup.style.display = 'none';
         }
@@ -57,12 +57,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 }).addTo(map);
 
                 // Add the rescuer marker to the map (draggable)
-                const rescuerMarker = L.marker(rescuerLatLng, { 
+                const rescuerMarker = L.marker(rescuerLatLng, {
                     icon: redIcon,
                     draggable: true
                 }).addTo(map)
-                .bindPopup('You are here')
-                .openPopup();
+                    .bindPopup('You are here')
+                    .openPopup();
 
                 // Fetch and display the base marker
                 fetch('/baseLocation/get_base_location')
@@ -73,8 +73,10 @@ document.addEventListener('DOMContentLoaded', function() {
                             L.marker(baseLatLng, {
                                 draggable: false,
                             }).addTo(map)
-                              .bindPopup('Base location')
-                              .openPopup();
+                                .bindPopup('Base location')
+                                .openPopup();
+
+                                fetchOffers();
                         } else {
                             console.error('No base location found.');
                         }
@@ -83,8 +85,39 @@ document.addEventListener('DOMContentLoaded', function() {
                         console.error('Error fetching base location:', error);
                     });
 
+                    // Fetch offers and display them on the map
+function fetchOffers() {
+    fetch('/admin_map/get_offer_locations') // Ensure the backend endpoint exists for rescuer
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                data.offers.forEach(offer => {
+                    if (offer.latitude && offer.longitude) {
+                        const marker = L.marker([offer.latitude, offer.longitude], { icon: circleIcon }).addTo(map);
+
+                        marker.bindPopup(`
+                            <h1>Offer</h1><br>
+                            <b>Name:</b> ${offer.name}<br>
+                            <b>Phone:</b> ${offer.phone}<br>
+                            <b>Created At:</b> ${new Date(offer.created_at).toLocaleString()}<br>
+                            <b>Item:</b> ${offer.item_name}<br>
+                            <b>Quantity:</b> ${offer.quantity}<br>
+                            <b>Accepted At:</b> ${offer.accepted_at ? new Date(offer.accepted_at).toLocaleString() : 'Not accepted'}<br>
+                            <b>Assigned Rescuer:</b> ${offer.assigned_rescuer_id ? offer.assigned_rescuer_id : 'Not assigned'}
+                        `);
+                    }
+                });
+            } else {
+                console.error('Failed to load offers:', data.message);
+            }
+        })
+        .catch(error => console.error('Error fetching offers:', error));
+}
+
+                    
+
                 // Handle rescuer marker dragend event to update rescuer's location
-                rescuerMarker.on('dragend', function(e) {
+                rescuerMarker.on('dragend', function (e) {
                     const newLatLng = rescuerMarker.getLatLng();
                     console.log('New rescuer position:', newLatLng);
 
@@ -100,15 +133,15 @@ document.addEventListener('DOMContentLoaded', function() {
                             longitude: newLatLng.lng
                         })
                     })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (!data.success) {
-                            console.error('Failed to update rescuer location:', data.message);
-                        } else {
-                            console.log('Rescuer location updated successfully!');
-                        }
-                    })
-                    .catch(error => console.error('Error updating rescuer location:', error));
+                        .then(response => response.json())
+                        .then(data => {
+                            if (!data.success) {
+                                console.error('Failed to update rescuer location:', data.message);
+                            } else {
+                                console.log('Rescuer location updated successfully!');
+                            }
+                        })
+                        .catch(error => console.error('Error updating rescuer location:', error));
 
                     // Check distance to base
                     if (baseLatLng) {
@@ -147,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     const marker = L.marker([request.latitude, request.longitude], { icon: squareIcon })
                                         .addTo(map)
                                         .bindPopup(generatePopupContent())
-                                        .on('popupopen', function() {
+                                        .on('popupopen', function () {
                                             const acceptButton = document.querySelector(`.accept-request[data-request-id="${requestId}"]`);
 
                                             if (acceptButton && request.is_accepted) {
@@ -167,17 +200,19 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(error => console.error('Error fetching rescuer location:', error));
 
+        
+
     // Fetch and display pending tasks
     function fetchPendingTasks(rescuerId) {
         fetch(`/tasks/get_pending_tasks?rescuerId=${rescuerId}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                data.tasks.forEach(task => {
-                    const row = document.createElement('tr');
-                    row.setAttribute('data-task-id', task.task_id);
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    data.tasks.forEach(task => {
+                        const row = document.createElement('tr');
+                        row.setAttribute('data-task-id', task.task_id);
 
-                    row.innerHTML = `
+                        row.innerHTML = `
                         <td>${task.civilian_name}</td>
                         <td>${task.civilian_phone}</td>
                         <td>${new Date(task.created_at).toLocaleString()}</td>
@@ -185,13 +220,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         <td>${task.item_name}</td>
                         <td>${task.quantity}</td>
                     `;
-                    tableBody.appendChild(row);
-                });
-            } else {
-                console.error('Failed to load tasks:', data.message);
-            }
-        })
-        .catch(error => console.error('Error fetching tasks:', error));
+                        tableBody.appendChild(row);
+                    });
+                } else {
+                    console.error('Failed to load tasks:', data.message);
+                }
+            })
+            .catch(error => console.error('Error fetching tasks:', error));
     }
 
     // Handle task row selection
@@ -217,7 +252,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle the "Cancel Task" button click event
     document.querySelector('.cancel-task-btn').addEventListener('click', function () {
         if (currentTaskId) {
-            const intTaskId = parseInt(currentTaskId,10);  //Ensure the request ID is an integer
+            const intTaskId = parseInt(currentTaskId, 10);  //Ensure the request ID is an integer
             console.log('Canceling task with ID:', currentTaskId); //Debug log
             // Update the task status in the database
             fetch('/tasks/update_task_status', {
@@ -231,25 +266,25 @@ document.addEventListener('DOMContentLoaded', function() {
                     status: 'Canceled'
                 })
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    console.log('Task canceled successfully!');
-                    acceptedRequests[currentTaskId] = false; // Reset the acceptedRequests object for that task
-                    document.querySelector(`tr[data-task-id="${currentTaskId}"]`).remove(); // Remove task from table
-                    currentTaskId = null; // Clear the current task ID
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('Task canceled successfully!');
+                        acceptedRequests[currentTaskId] = false; // Reset the acceptedRequests object for that task
+                        document.querySelector(`tr[data-task-id="${currentTaskId}"]`).remove(); // Remove task from table
+                        currentTaskId = null; // Clear the current task ID
 
-                    // Set rescuer as available again
-                    updateRescuerAvailability(rescuerId, true); // Set rescuer availability to true
+                        // Set rescuer as available again
+                        updateRescuerAvailability(rescuerId, true); // Set rescuer availability to true
 
-                    // Disable the task buttons
-                    document.getElementById('completeTaskBtn').disabled = true;
-                    document.getElementById('cancelTaskBtn').disabled = true;
-                } else {
-                    console.error('Failed to cancel task:', data.message);
-                }
-            })
-            .catch(error => console.error('Error canceling task:', error));
+                        // Disable the task buttons
+                        document.getElementById('completeTaskBtn').disabled = true;
+                        document.getElementById('cancelTaskBtn').disabled = true;
+                    } else {
+                        console.error('Failed to cancel task:', data.message);
+                    }
+                })
+                .catch(error => console.error('Error canceling task:', error));
         } else {
             console.error('No task is currently selected.');
         }
@@ -269,27 +304,27 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle the logout button click event
     const logoutButton = document.getElementById('logoutButton');
     if (logoutButton) { // Ensure the element exists
-        logoutButton.addEventListener('click', function(event) {
+        logoutButton.addEventListener('click', function (event) {
             event.preventDefault(); // Prevent any default behavior
-            
+
             fetch('/logout', {
                 method: 'GET',
             })
-            .then(response => {
-                if (response.ok) {
-                    window.location.href = '/login'; // Redirect to the login page after logout
-                } else {
-                    console.error('Logout failed');
-                }
-            })
-            .catch(error => {
-                console.error('Error during logout:', error);
-            });
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = '/login'; // Redirect to the login page after logout
+                    } else {
+                        console.error('Logout failed');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error during logout:', error);
+                });
         });
     }
 
     // Handle the "Accept" button click event
-    document.addEventListener('click', function(event) {
+    document.addEventListener('click', function (event) {
         if (event.target && event.target.classList.contains('accept-request')) {
             const requestId = event.target.getAttribute('data-request-id'); // Unique ID 
 
@@ -310,27 +345,27 @@ document.addEventListener('DOMContentLoaded', function() {
                     request_id: requestId
                 })
             })
-            .then(response => response.json())
-            .then(data => {
-                if (!data.success) {
-                    
-                    Swal.fire({title: 'Error!', text:data.message, icon: 'error', confirmButtonText: 'OK'});
-                    console.error('Failed to create task:', data.message);
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.success) {
 
-                    // If the task creation failed, show the "Accept" button again
-                    event.target.style.display = 'inline-block';
-                    acceptedRequests[requestId] = false;
-                    
-                } else {
-                    console.log('Task created successfully!');
-                    Swal.fire({title: 'Success!', text:'Task created successfully!', icon: 'success', confirmButtonText: 'OK'});
+                        Swal.fire({ title: 'Error!', text: data.message, icon: 'error', confirmButtonText: 'OK' });
+                        console.error('Failed to create task:', data.message);
+
+                        // If the task creation failed, show the "Accept" button again
+                        event.target.style.display = 'inline-block';
+                        acceptedRequests[requestId] = false;
+
+                    } else {
+                        console.log('Task created successfully!');
+                        Swal.fire({ title: 'Success!', text: 'Task created successfully!', icon: 'success', confirmButtonText: 'OK' });
 
 
-                     // After accepting the request, set rescuer availability to false
-                    updateRescuerAvailability(rescuerId, false); // Set rescuer as unavailable
-                }
-            })
-            .catch(error => console.error('Error creating task:', error));
+                        // After accepting the request, set rescuer availability to false
+                        updateRescuerAvailability(rescuerId, false); // Set rescuer as unavailable
+                    }
+                })
+                .catch(error => console.error('Error creating task:', error));
             event.target.style.display = 'inline-block'; // Re-show the button if there was an error
             acceptedRequests[requestId] = false;
         }
@@ -339,27 +374,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     // Function to update rescuer availability
-function updateRescuerAvailability(rescuerId, availability) {
-    fetch('/manage_data/update_rescuer_availability', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            rescuer_id: rescuerId,
-            availability: availability
+    function updateRescuerAvailability(rescuerId, availability) {
+        fetch('/manage_data/update_rescuer_availability', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                rescuer_id: rescuerId,
+                availability: availability
+            })
         })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            console.log('Rescuer availability updated successfully!');
-        } else {
-            console.error('Failed to update rescuer availability:', data.message);
-        }
-    })
-    .catch(error => console.error('Error updating rescuer availability:', error));
-}
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Rescuer availability updated successfully!');
+                } else {
+                    console.error('Failed to update rescuer availability:', data.message);
+                }
+            })
+            .catch(error => console.error('Error updating rescuer availability:', error));
+    }
+
+    
 
 
 
@@ -380,4 +417,12 @@ function updateRescuerAvailability(rescuerId, availability) {
         iconAnchor: [12, 12], // point of the icon which will correspond to marker's location
         popupAnchor: [0, -12] // point from which the popup should open relative to the iconAnchor
     });
+});
+
+var circleIcon = L.divIcon({
+    className: 'custom-circle-marker',
+    html: '<div style="width: 15px; height: 15px; background-color: red; border-radius: 50%; border: 2px solid #555;"></div>',
+    iconSize: [24, 24], // size of the icon
+    iconAnchor: [12, 12], // point of the icon which will correspond to marker's location
+    popupAnchor: [0, -12] // point from which the popup should open relative to the iconAnchor
 });
