@@ -1,10 +1,13 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const viewLoadButton = document.getElementById('viewLoadButton');
-    const viewLoadPopup = document.getElementById('viewLoadPopup');
-    const closeViewLoadPopupBtn = document.querySelector('.close-view-load-popup-btn');
+    const viewLoadButton = document.getElementById('viewLoadButton');  //button for viewing the load
+    const viewLoadPopup = document.getElementById('viewLoadPopup');    // popup for viewing the load of vehicle
+    const closeViewLoadPopupBtn = document.querySelector('.close-view-load-popup-btn'); // button to close the popup window
+    const loadButton = document.getElementById('loadButton'); 
+    const unloadButton = document.getElementById('unloadButton');
+    let baseLatLng = null; // To store base marker's position
 
     viewLoadButton.addEventListener('click', function() {
-        // Φόρτωση δεδομένων στον πίνακα, αυτό μπορεί να αντικατασταθεί με δυναμικά δεδομένα από τον server
+        // Display data in the table (could be replaced with dynamic data from the server)
         const viewLoadTableBody = document.querySelector('.view-load-table tbody');
         viewLoadTableBody.innerHTML = `
             <tr>
@@ -17,7 +20,6 @@ document.addEventListener('DOMContentLoaded', function() {
             </tr>
         `;
 
-        // Εμφάνιση του παραθύρου
         viewLoadPopup.style.display = 'flex';
     });
 
@@ -25,18 +27,16 @@ document.addEventListener('DOMContentLoaded', function() {
         viewLoadPopup.style.display = 'none';
     });
 
-    window.addEventListener('click', function(event) {
+    window.addEventListener('click', function(event) {  //If the user clicks outside the pop-up (but inside the overlay), the pop-up is hidden.
         if (event.target === viewLoadPopup) {
             viewLoadPopup.style.display = 'none';
         }
     });
-});
 
-document.addEventListener('DOMContentLoaded', function() {
     const tableBody = document.querySelector('.a-table tbody');
-    let currentTaskId = null; // Variable to track the current task ID
+    let currentTaskId = null;
     let rescuerId;
-    let acceptedRequests = {}; // Object to track accepted requests
+    let acceptedRequests = {};
 
     // Fetch the signed-in rescuer's location and initialize the map
     fetch('/take_location_of_signed_rescuer/get_rescuer_location')
@@ -44,10 +44,9 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             if (data.success) {
                 const rescuerLatLng = L.latLng(data.location.longitude, data.location.latitude);
-                rescuerId = data.rescuerId; // Store the rescuer's ID
-                console.log('Rescuer id: ', rescuerId); //Debugging
+                rescuerId = data.rescuerId;
+                console.log('Rescuer id: ', rescuerId);
 
-                // Now that we have the rescuerId, fetch and dispaly pending tasks
                 fetchPendingTasks(rescuerId);
 
                 const map = L.map('map').setView(rescuerLatLng, 13);
@@ -70,9 +69,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     .then(response => response.json())
                     .then(data => {
                         if (data.success && data.location) {
-                            // Add the base marker to the map (not draggable)
-                            L.marker([data.location.lat, data.location.lng], {
-                                draggable: false, // Ensure the marker is not draggable
+                            baseLatLng = L.latLng(data.location.lat, data.location.lng); // Store base position
+                            L.marker(baseLatLng, {
+                                draggable: false,
                             }).addTo(map)
                               .bindPopup('Base location')
                               .openPopup();
@@ -83,8 +82,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     .catch(error => {
                         console.error('Error fetching base location:', error);
                     });
-
-
 
                 // Handle rescuer marker dragend event to update rescuer's location
                 rescuerMarker.on('dragend', function(e) {
@@ -98,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            rescuer_id: rescuerId, // Use the actual rescuer's ID
+                            rescuer_id: rescuerId,
                             latitude: newLatLng.lat,
                             longitude: newLatLng.lng
                         })
@@ -112,48 +109,58 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     })
                     .catch(error => console.error('Error updating rescuer location:', error));
+
+                    // Check distance to base
+                    if (baseLatLng) {
+                        const distance = newLatLng.distanceTo(baseLatLng); // Distance in meters
+                        console.log('Distance to base:', distance);
+                        if (distance <= 100) {
+                            loadButton.disabled = false;
+                            unloadButton.disabled = false;
+                        } else {
+                            loadButton.disabled = true;
+                            unloadButton.disabled = true;
+                        }
+                    }
                 });
 
-
                 // Fetch and display request markers
-fetch('/requests/get_request_locations')
-.then(response => response.json())
-.then(data => {
-    if (data.success) {
-        data.requests.forEach(request => {
-            if (request.latitude && request.longitude) {
-                const requestId = `${request.request_id}`; // Unique ID based on request ID
+                fetch('/requests/get_request_locations')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            data.requests.forEach(request => {
+                                if (request.latitude && request.longitude) {
+                                    const requestId = `${request.request_id}`; // Unique ID based on request ID
 
-                const generatePopupContent = () => `
-                    <h1>Request</h1><br>
-                    <b>Name:</b> ${request.name}<br>
-                    <b>Phone:</b> ${request.phone}<br>
-                    <b>Created At:</b> ${new Date(request.created_at).toLocaleString()}<br>
-                    <b>Item:</b> ${request.item_name}<br>
-                    <b>Quantity:</b> ${request.quantity}<br>
-                    <b>Status:</b> ${request.status}<br>
-                    ${request.is_accepted ? '' : `<button class="accept-request" data-request-id="${requestId}" style="display:inline-block;">Accept</button>`}
-                `;
+                                    const generatePopupContent = () => `
+                                        <h1>Request</h1><br>
+                                        <b>Name:</b> ${request.name}<br>
+                                        <b>Phone:</b> ${request.phone}<br>
+                                        <b>Created At:</b> ${new Date(request.created_at).toLocaleString()}<br>
+                                        <b>Item:</b> ${request.item_name}<br>
+                                        <b>Quantity:</b> ${request.quantity}<br>
+                                        <b>Status:</b> ${request.status}<br>
+                                        ${request.is_accepted ? '' : `<button class="accept-request" data-request-id="${requestId}" style="display:inline-block;">Accept</button>`}
+                                    `;
 
-                const marker = L.marker([request.latitude, request.longitude], { icon: squareIcon })
-                    .addTo(map)
-                    .bindPopup(generatePopupContent())
-                    .on('popupopen', function() {
-                        const acceptButton = document.querySelector(`.accept-request[data-request-id="${requestId}"]`);
+                                    const marker = L.marker([request.latitude, request.longitude], { icon: squareIcon })
+                                        .addTo(map)
+                                        .bindPopup(generatePopupContent())
+                                        .on('popupopen', function() {
+                                            const acceptButton = document.querySelector(`.accept-request[data-request-id="${requestId}"]`);
 
-                        if (acceptButton && request.is_accepted) {
-                            // Hide the button if the request is already accepted
-                            acceptButton.style.display = 'none';
+                                            if (acceptButton && request.is_accepted) {
+                                                acceptButton.style.display = 'none';
+                                            }
+                                        });
+                                }
+                            });
+                        } else {
+                            console.error('Failed to load requests');
                         }
-                    });
-            }
-        });
-    } else {
-        console.error('Failed to load requests');
-    }
-})
-.catch(error => console.error('Error fetching requests:', error));
-
+                    })
+                    .catch(error => console.error('Error fetching requests:', error));
             } else {
                 console.error('Failed to fetch rescuer location');
             }
@@ -231,6 +238,9 @@ fetch('/requests/get_request_locations')
                     acceptedRequests[currentTaskId] = false; // Reset the acceptedRequests object for that task
                     document.querySelector(`tr[data-task-id="${currentTaskId}"]`).remove(); // Remove task from table
                     currentTaskId = null; // Clear the current task ID
+
+                    // Set rescuer as available again
+                    updateRescuerAvailability(rescuerId, true); // Set rescuer availability to true
 
                     // Disable the task buttons
                     document.getElementById('completeTaskBtn').disabled = true;
@@ -314,6 +324,10 @@ fetch('/requests/get_request_locations')
                 } else {
                     console.log('Task created successfully!');
                     Swal.fire({title: 'Success!', text:'Task created successfully!', icon: 'success', confirmButtonText: 'OK'});
+
+
+                     // After accepting the request, set rescuer availability to false
+                    updateRescuerAvailability(rescuerId, false); // Set rescuer as unavailable
                 }
             })
             .catch(error => console.error('Error creating task:', error));
@@ -321,6 +335,33 @@ fetch('/requests/get_request_locations')
             acceptedRequests[requestId] = false;
         }
     });
+
+
+
+    // Function to update rescuer availability
+function updateRescuerAvailability(rescuerId, availability) {
+    fetch('/manage_data/update_rescuer_availability', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            rescuer_id: rescuerId,
+            availability: availability
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log('Rescuer availability updated successfully!');
+        } else {
+            console.error('Failed to update rescuer availability:', data.message);
+        }
+    })
+    .catch(error => console.error('Error updating rescuer availability:', error));
+}
+
+
 
     // Define a custom red marker icon
     var redIcon = L.icon({
@@ -340,6 +381,3 @@ fetch('/requests/get_request_locations')
         popupAnchor: [0, -12] // point from which the popup should open relative to the iconAnchor
     });
 });
-
-
-

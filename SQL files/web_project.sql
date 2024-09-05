@@ -49,10 +49,12 @@ CREATE TABLE IF NOT EXISTS request (
 CREATE TABLE IF NOT EXISTS offer (
     offer_id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT,
-    item_id INT,
+    item_name INT,
     quantity INT NOT NULL,
     status ENUM('Pending', 'Assigned', 'Completed') DEFAULT 'Pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    accepted_at TIMESTAMP NULL,  -- Allows null initially, will be populated when accepted
+    completed_at TIMESTAMP NULL, -- Allows null initially, will be populated when completed
     assigned_rescuer_id INT,
     FOREIGN KEY (user_id) REFERENCES User(user_id),
     FOREIGN KEY (item_id) REFERENCES Item(item_id),

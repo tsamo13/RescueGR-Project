@@ -271,6 +271,22 @@ router.get('/fetch_rescuers', (req, res) => {
     });
 });
 
+// Route to update rescuer availability
+router.post('/update_rescuer_availability', (req, res) => {
+    const { rescuer_id, availability } = req.body;
+    
+    const updateSql = `UPDATE rescuer SET availability = ? WHERE rescuer_id = ?`;
+
+    req.db.query(updateSql, [availability, rescuer_id], (err, result) => {
+        if (err) {
+            console.error('Error updating rescuer availability:', err);
+            return res.status(500).json({ success: false, message: 'Error updating rescuer availability' });
+        }
+
+        res.json({ success: true, message: 'Rescuer availability updated successfully!' });
+    });
+});
+
 
 router.get('/get_products', (req, res) => {
     const sql = 'SELECT item_id AS id, item_name AS name FROM item';

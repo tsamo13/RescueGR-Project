@@ -175,8 +175,9 @@ body {
 
 .map-control-container {
     position: absolute;
-    top:27%;
+    top: 22%; /* Adjusted to move the buttons higher */
     left: 4%;
+    z-index: 1000;
    
    
 }
@@ -268,4 +269,17 @@ body {
 .popup-title {
     color: #000080;
     padding-bottom: 10px;
+}
+
+.load-btn, .unload-btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    margin: 10px;
+    border: none;
+    cursor: not-allowed; /* Disabled by default */
+}
+
+.load-btn:enabled, .unload-btn:enabled {
+    cursor: pointer; /* Change cursor when enabled */
 }
