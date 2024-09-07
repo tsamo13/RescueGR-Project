@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 .bindPopup('Base location')
                                 .openPopup();
 
-                                fetchOffers();
+                            fetchOffers();
                         } else {
                             console.error('No base location found.');
                         }
@@ -85,36 +85,74 @@ document.addEventListener('DOMContentLoaded', function () {
                         console.error('Error fetching base location:', error);
                     });
 
-                    // Fetch offers and display them on the map
-function fetchOffers() {
-    fetch('/admin_map/get_offer_locations') // Ensure the backend endpoint exists for rescuer
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                data.offers.forEach(offer => {
-                    if (offer.latitude && offer.longitude) {
-                        const marker = L.marker([offer.latitude, offer.longitude], { icon: circleIcon }).addTo(map);
+                // Fetch offers and display them on the map
+                function fetchOffers() {
+                    fetch('/offers/get_offer_locations') // Ensure the backend endpoint exists for rescuer
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                data.offers.forEach(offer => {
+                                    if (offer.latitude && offer.longitude) {
+                                        const offerId = `${offer.offer_id}`;
 
-                        marker.bindPopup(`
+                                        const generatePopupContent = () => `
                             <h1>Offer</h1><br>
                             <b>Name:</b> ${offer.name}<br>
                             <b>Phone:</b> ${offer.phone}<br>
                             <b>Created At:</b> ${new Date(offer.created_at).toLocaleString()}<br>
                             <b>Item:</b> ${offer.item_name}<br>
                             <b>Quantity:</b> ${offer.quantity}<br>
+                            <b>Status:</b> ${offer.status}<br>
                             <b>Accepted At:</b> ${offer.accepted_at ? new Date(offer.accepted_at).toLocaleString() : 'Not accepted'}<br>
-                            <b>Assigned Rescuer:</b> ${offer.assigned_rescuer_id ? offer.assigned_rescuer_id : 'Not assigned'}
-                        `);
-                    }
-                });
-            } else {
-                console.error('Failed to load offers:', data.message);
-            }
-        })
-        .catch(error => console.error('Error fetching offers:', error));
-}
+                            <b>Assigned Rescuer:</b> ${offer.assigned_rescuer_id ? offer.assigned_rescuer_id : 'Not assigned'}<br>
+                            ${offer.is_accepted ? '' : `<button class="accept-offer" data-offer-id="${offerId}" style="display:inline-block;">Accept</button>`}
+                        `;
 
-                    
+                                        const marker = L.marker([offer.latitude, offer.longitude], { icon: circleIcon })
+                                            .addTo(map)
+                                            .bindPopup(generatePopupContent())
+                                            .on('popupopen', function () {
+                                                const acceptButton = document.querySelector(`.accept-offer[data-offer-id="${offerId}"]`);
+
+                                                if (acceptButton && offer.is_accepted) {
+                                                    acceptButton.style.display = 'none';
+                                                }
+
+                                                if (acceptButton) {
+                                                    acceptButton.addEventListener('click', function () {
+                                                        fetch('/tasks/accept_offer_task', {
+                                                            method: 'POST',
+                                                            headers: {
+                                                                'Content-Type': 'application/json'
+                                                            },
+                                                            body: JSON.stringify({
+                                                                rescuer_id: rescuerId,
+                                                                offer_id: offerId
+                                                            })
+                                                        })
+                                                            .then(response => response.json())
+                                                            .then(data => {
+                                                                if (data.success) {
+                                                                    Swal.fire({ title: 'Success!', text: 'Offer accepted successfully!', icon: 'success', confirmButtonText: 'OK' });
+                                                                    acceptButton.style.display = 'none'; // Hide the button after successful acceptance
+                                                                } else {
+                                                                    Swal.fire({ title: 'Error!', text: data.message, icon: 'error', confirmButtonText: 'OK' });
+                                                                    console.error('Failed to accept offer:', data.message);
+                                                                }
+                                                            })
+                                                            .catch(error => console.error('Error accepting offer:', error));
+                                                    });
+                                                }
+                                            });
+                                    }
+                                });
+                            } else {
+                                console.error('Failed to load offers:', data.message);
+                            }
+                        })
+                        .catch(error => console.error('Error fetching offers:', error));
+                }
+
 
                 // Handle rescuer marker dragend event to update rescuer's location
                 rescuerMarker.on('dragend', function (e) {
@@ -174,6 +212,8 @@ function fetchOffers() {
                                         <b>Item:</b> ${request.item_name}<br>
                                         <b>Quantity:</b> ${request.quantity}<br>
                                         <b>Status:</b> ${request.status}<br>
+                                        <b>Accepted At:</b> ${request.accepted_at ? new Date(request.accepted_at).toLocaleString() : 'Not accepted'}<br>
+                                        <b>Assigned Rescuer:</b> ${request.assigned_rescuer_id ? request.assigned_rescuer_id : 'Not assigned'}<br>
                                         ${request.is_accepted ? '' : `<button class="accept-request" data-request-id="${requestId}" style="display:inline-block;">Accept</button>`}
                                     `;
 
@@ -185,6 +225,32 @@ function fetchOffers() {
 
                                             if (acceptButton && request.is_accepted) {
                                                 acceptButton.style.display = 'none';
+                                            }
+
+                                            if (acceptButton) {
+                                                acceptButton.addEventListener('click', function () {
+                                                    fetch('/tasks/accept_request_task', {
+                                                        method: 'POST',
+                                                        headers: {
+                                                            'Content-Type': 'application/json'
+                                                        },
+                                                        body: JSON.stringify({
+                                                            rescuer_id: rescuerId,
+                                                            request_id: requestId
+                                                        })
+                                                    })
+                                                        .then(response => response.json())
+                                                        .then(data => {
+                                                            if (data.success) {
+                                                                Swal.fire({ title: 'Success!', text: 'Request accepted successfully!', icon: 'success', confirmButtonText: 'OK' });
+                                                                acceptButton.style.display = 'none'; // Hide the button after successful acceptance
+                                                            } else {
+                                                                Swal.fire({ title: 'Error!', text: data.message, icon: 'error', confirmButtonText: 'OK' });
+                                                                console.error('Failed to accept request:', data.message);
+                                                            }
+                                                        })
+                                                        .catch(error => console.error('Error accepting request:', error));
+                                                });
                                             }
                                         });
                                 }
@@ -199,8 +265,6 @@ function fetchOffers() {
             }
         })
         .catch(error => console.error('Error fetching rescuer location:', error));
-
-        
 
     // Fetch and display pending tasks
     function fetchPendingTasks(rescuerId) {
@@ -323,55 +387,6 @@ function fetchOffers() {
         });
     }
 
-    // Handle the "Accept" button click event
-    document.addEventListener('click', function (event) {
-        if (event.target && event.target.classList.contains('accept-request')) {
-            const requestId = event.target.getAttribute('data-request-id'); // Unique ID 
-
-            // Hide the "Accept" button and set the task as accepted
-            event.target.style.display = 'none';
-
-            acceptedRequests[requestId] = true; // Mark the request as accepted
-            currentTaskId = requestId; // Set the current task ID
-
-            // Create the task in the database
-            fetch('/tasks/create_task', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    rescuer_id: rescuerId, // Use the actual rescuer's ID
-                    request_id: requestId
-                })
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (!data.success) {
-
-                        Swal.fire({ title: 'Error!', text: data.message, icon: 'error', confirmButtonText: 'OK' });
-                        console.error('Failed to create task:', data.message);
-
-                        // If the task creation failed, show the "Accept" button again
-                        event.target.style.display = 'inline-block';
-                        acceptedRequests[requestId] = false;
-
-                    } else {
-                        console.log('Task created successfully!');
-                        Swal.fire({ title: 'Success!', text: 'Task created successfully!', icon: 'success', confirmButtonText: 'OK' });
-
-
-                        // After accepting the request, set rescuer availability to false
-                        updateRescuerAvailability(rescuerId, false); // Set rescuer as unavailable
-                    }
-                })
-                .catch(error => console.error('Error creating task:', error));
-            event.target.style.display = 'inline-block'; // Re-show the button if there was an error
-            acceptedRequests[requestId] = false;
-        }
-    });
-
-
 
     // Function to update rescuer availability
     function updateRescuerAvailability(rescuerId, availability) {
@@ -395,10 +410,6 @@ function fetchOffers() {
             })
             .catch(error => console.error('Error updating rescuer availability:', error));
     }
-
-    
-
-
 
     // Define a custom red marker icon
     var redIcon = L.icon({

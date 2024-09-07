@@ -12,6 +12,7 @@ router.get('/get_request_locations', (req, res) => {
         r.quantity,
         r.status,
         r.created_at,
+        r.assigned_rescuer_id,
         ST_Y(u.location) AS latitude,
         ST_X(u.location) AS longitude,
         (CASE 
@@ -69,6 +70,7 @@ router.get('/get_offer_locations', (req, res) => {
             u.phone,
             o.item_name,
             o.quantity,
+            o.status,
             o.created_at,
             o.accepted_at,
             o.assigned_rescuer_id,

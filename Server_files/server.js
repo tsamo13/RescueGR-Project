@@ -163,6 +163,8 @@ app.use('/baseLocation', baseLocationRoute);
 const adminMapRoute = require('./routes/admin_map');
 app.use('/admin_map', adminMapRoute);
 
+const offerRoute = require('./routes/offers');
+app.use('/offers', offerRoute);
 
 function ensureAuthenticated(req, res, next) {
   if (req.session && req.session.user) {

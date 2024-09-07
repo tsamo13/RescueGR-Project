@@ -176,7 +176,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <b>Created At:</b> ${new Date(request.created_at).toLocaleString()}<br>
                                 <b>Item:</b> ${request.item_name}<br>
                                 <b>Quantity:</b> ${request.quantity}<br>
-                                <b>Status:</b> ${request.status}
+                                <b>Status:</b> ${request.status}<br>
+                                <b>Accepted At:</b> ${request.accepted_at ? new Date(request.accepted_at).toLocaleString() : 'Not accepted'}<br>
+                                <b>Assigned Rescuer:</b> ${request.assigned_rescuer_id ? request.assigned_rescuer_id : 'Not assigned'}
                             `);
                         }
                     });
@@ -220,6 +222,7 @@ fetch('/admin_map/get_offer_locations')
                     <b>Created At:</b> ${new Date(offer.created_at).toLocaleString()}<br>
                     <b>Item:</b> ${offer.item_name}<br>
                     <b>Quantity:</b> ${offer.quantity}<br>
+                    <b>Status:</b> ${offer.status}<br>
                     <b>Accepted At:</b> ${offer.accepted_at ? new Date(offer.accepted_at).toLocaleString() : 'Not accepted'}<br>
                     <b>Assigned Rescuer:</b> ${offer.assigned_rescuer_id ? offer.assigned_rescuer_id : 'Not assigned'}
                 `);

@@ -1,74 +1,114 @@
 const express = require('express');
 const router = express.Router();
 
-// Route to create a task when a request is accepted
-router.post('/create_task', (req, res) => {
-    const { rescuer_id, request_id } = req.body;
-    const type = 'Request'; // Assuming 'Offer' is the type you want
-    const status = 'Pending';
+// Helper function to check if rescuer has more than 4 tasks
+function checkRescuerTaskLimit(rescuer_id, req, res, next) {
+    const countTasksSql = `
+        SELECT COUNT(*) AS task_count 
+        FROM task 
+        WHERE rescuer_id = ? 
+        AND (status = 'Pending' OR status = 'Completed')
+    `;
 
-    // Check if the request has an existing pending or completed task
-    const checkSql = `SELECT * FROM task WHERE request_id = ? AND (status = 'Pending' OR status = 'Completed')`;
-
-    req.db.query(checkSql, [request_id], (err, results) => {
+    req.db.query(countTasksSql, [rescuer_id], (err, result) => {
         if (err) {
-            console.error('Error checking for existing task:', err);
+            console.error('Error counting rescuer tasks:', err);
             return res.status(500).json({ success: false, message: 'Server error' });
         }
 
-        if (results.length > 0) {
-            // Task already exists for this request and is either pending or completed
-            return res.status(400).json({ success: false, message: 'This request has already been accepted.' });
+        const taskCount = result[0].task_count;
+
+        // Check if the rescuer already has 4 or more tasks
+        if (taskCount >= 4) {
+            return res.status(400).json({ success: false, message: 'You cannot accept more than 4 tasks.' });
         }
 
-        // Step 2: Check how many tasks the rescuer currently has that are either pending or completed
-        const countTasksSql = `
-            SELECT COUNT(*) AS task_count 
-            FROM task 
-            WHERE rescuer_id = ? 
-            AND (status = 'Pending' OR status = 'Completed')
-        `;
+        // Continue to the next middleware or route if the rescuer has less than 4 tasks
+        next();
+    });
+}
 
-        req.db.query(countTasksSql, [rescuer_id], (err, result) => {
+// Route to create a task when a request is accepted
+router.post('/accept_request_task', (req, res, next) => {
+    const { rescuer_id, request_id } = req.body;
+    const type = 'Request';
+    const status = 'Pending';
+
+    // Check task limit first
+    checkRescuerTaskLimit(rescuer_id, req, res, () => {
+        // Check if the request has an existing pending or completed task
+        const checkSql = `SELECT * FROM task WHERE request_id = ? AND (status = 'Pending' OR status = 'Completed')`;
+
+        req.db.query(checkSql, [request_id], (err, results) => {
             if (err) {
-                console.error('Error counting rescuer tasks:', err);
+                console.error('Error checking for existing task:', err);
                 return res.status(500).json({ success: false, message: 'Server error' });
             }
 
-            const taskCount = result[0].task_count;
-
-            // Step 3: Check if the rescuer already has 4 or more tasks
-            if (taskCount >= 4) {
-                return res.status(400).json({ success: false, message: 'You cannot accept more than 4 tasks.' });
+            if (results.length > 0) {
+                return res.status(400).json({ success: false, message: 'This request has already been accepted.' });
             }
 
+            // Insert new task for the request
+            const sql = 'INSERT INTO task (rescuer_id, type, request_id, status, created_at) VALUES (?, ?, ?, ?, NOW())';
+
+            req.db.query(sql, [rescuer_id, type, request_id, status], (err, result) => {
+                if (err) {
+                    console.error('Error creating task:', err);
+                    return res.status(500).json({ success: false, message: 'Server error' });
+                }
 
 
-    const sql = 'INSERT INTO task (rescuer_id, type, request_id, status, created_at) VALUES (?, ?, ?, ?, NOW())';
-
-    req.db.query(sql, [rescuer_id, type, request_id, status], (err, result) => {
-        if (err) {
-            console.error('Error creating task:', err);
-            return res.status(500).json({ success: false, message: 'Server error' });
-        }
-        res.json({ success: true, message: 'Task created successfully!' });
+                res.json({ success: true, message: 'Task created successfully!' });
+            });
+        });
     });
 });
-});
+
+// Route to accept an offer and create a task
+router.post('/accept_offer_task', (req, res, next) => {
+    const { rescuer_id, offer_id } = req.body;
+    const type = 'Offer';
+    const status = 'Pending';
+
+    // Check task limit first
+    checkRescuerTaskLimit(rescuer_id, req, res, () => {
+        // Check if the offer has an existing pending or completed task
+        const checkSql = `SELECT * FROM task WHERE offer_id = ? AND (status = 'Pending' OR status = 'Completed')`;
+
+        req.db.query(checkSql, [offer_id], (err, results) => {
+            if (err) {
+                console.error('Error checking for existing task:', err);
+                return res.status(500).json({ success: false, message: 'Server error' });
+            }
+
+            if (results.length > 0) {
+                return res.status(400).json({ success: false, message: 'This offer has already been accepted.' });
+            }
+
+            // Insert new task for the offer
+            const sql = 'INSERT INTO task (rescuer_id, type, offer_id, status, created_at) VALUES (?, ?, ?, ?, NOW())';
+
+            req.db.query(sql, [rescuer_id, type, offer_id, status], (err, result) => {
+                if (err) {
+                    console.error('Error creating task for offer:', err);
+                    return res.status(500).json({ success: false, message: 'Server error' });
+                }
+                res.json({ success: true, message: 'Offer accepted and task created successfully!' });
+            });
+        });
+    });
 });
 
-// Route to update the task status when a request is rejected or canceled
+// Route to update the task status when a request or offer is rejected or canceled
 router.post('/update_task_status', (req, res) => {
-    let { rescuer_id, task_id, status } = req.body;
-
-    console.log('Received data: ', { rescuer_id, task_id, status }); // Debugging
+    const { rescuer_id, task_id, status } = req.body;
 
     if (!rescuer_id || !task_id || !status) {
         return res.status(400).json({ success: false, message: 'Missing required fields' });
     }
 
-    // Updated to ensure that the request_id matches either the request_id or offer_id in the task table.
-    const sql = 'UPDATE task SET status = ? WHERE rescuer_id = ? AND task_id = ?'; 
+    const sql = 'UPDATE task SET status = ? WHERE rescuer_id = ? AND task_id = ?';
 
     req.db.query(sql, [status, rescuer_id, task_id], (err, result) => {
         if (err) {
@@ -77,7 +117,6 @@ router.post('/update_task_status', (req, res) => {
         }
 
         if (result.affectedRows === 0) {
-            // If no rows were updated, it means the task wasn't found or wasn't updated
             return res.status(404).json({ success: false, message: 'Task not found or not updated' });
         }
 

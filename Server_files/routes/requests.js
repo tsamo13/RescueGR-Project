@@ -13,6 +13,9 @@ router.get('/get_request_locations', (req, res) => {
         r.quantity,
         r.status,
         r.created_at,
+        r.accepted_at,
+        r.completed_at,
+        r.assigned_rescuer_id,
         ST_Y(u.location) AS latitude,
         ST_X(u.location) AS longitude,
         (CASE 
