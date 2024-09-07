@@ -1,6 +1,38 @@
 const express = require('express');
 const router = express.Router();
 
+// Helper function to update rescuer availability based on task count
+function updateRescuerAvailability(rescuer_id, req, res) {
+    const countTasksSql = `
+        SELECT COUNT(*) AS task_count 
+        FROM task 
+        WHERE rescuer_id = ? 
+        AND (status = 'Pending' OR status = 'Completed')
+    `;
+
+    req.db.query(countTasksSql, [rescuer_id], (err, result) => {
+        if (err) {
+            console.error('Error counting rescuer tasks:', err);
+            return res.status(500).json({ success: false, message: 'Server error' });
+        }
+
+        const taskCount = result[0].task_count;
+
+        // Update rescuer availability based on task count
+        const updateAvailabilitySql = taskCount >= 4
+            ? `UPDATE rescuer SET availability = false WHERE rescuer_id = ?`
+            : `UPDATE rescuer SET availability = true WHERE rescuer_id = ?`;
+
+        req.db.query(updateAvailabilitySql, [rescuer_id], (err) => {
+            if (err) {
+                console.error('Error updating rescuer availability:', err);
+                return res.status(500).json({ success: false, message: 'Error updating rescuer availability.' });
+            }
+            console.log(`Rescuer ${rescuer_id} availability updated to ${taskCount >= 4 ? 'unavailable' : 'available'}.`);
+        });
+    });
+}
+
 // Helper function to check if rescuer has more than 4 tasks
 function checkRescuerTaskLimit(rescuer_id, req, res, next) {
     const countTasksSql = `
@@ -29,7 +61,7 @@ function checkRescuerTaskLimit(rescuer_id, req, res, next) {
 }
 
 // Route to create a task when a request is accepted
-router.post('/accept_request_task', (req, res, next) => {
+router.post('/accept_request_task', (req, res) => {
     const { rescuer_id, request_id } = req.body;
     const type = 'Request';
     const status = 'Pending';
@@ -58,6 +90,8 @@ router.post('/accept_request_task', (req, res, next) => {
                     return res.status(500).json({ success: false, message: 'Server error' });
                 }
 
+                // After task creation, update rescuer availability
+                updateRescuerAvailability(rescuer_id, req, res);
 
                 res.json({ success: true, message: 'Task created successfully!' });
             });
@@ -66,7 +100,7 @@ router.post('/accept_request_task', (req, res, next) => {
 });
 
 // Route to accept an offer and create a task
-router.post('/accept_offer_task', (req, res, next) => {
+router.post('/accept_offer_task', (req, res) => {
     const { rescuer_id, offer_id } = req.body;
     const type = 'Offer';
     const status = 'Pending';
@@ -94,6 +128,10 @@ router.post('/accept_offer_task', (req, res, next) => {
                     console.error('Error creating task for offer:', err);
                     return res.status(500).json({ success: false, message: 'Server error' });
                 }
+
+                // After task creation, update rescuer availability
+                updateRescuerAvailability(rescuer_id, req, res);
+
                 res.json({ success: true, message: 'Offer accepted and task created successfully!' });
             });
         });
@@ -119,6 +157,9 @@ router.post('/update_task_status', (req, res) => {
         if (result.affectedRows === 0) {
             return res.status(404).json({ success: false, message: 'Task not found or not updated' });
         }
+
+        // After updating the task status, update rescuer availability
+        updateRescuerAvailability(rescuer_id, req, res);
 
         res.json({ success: true, message: 'Task status updated successfully!' });
     });
