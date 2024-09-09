@@ -109,17 +109,8 @@ var redIcon = L.icon({
     shadowSize: [41, 41] // size of the shadow
 });
 
-var lightGrayIcon = L.icon({
-    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-grey.png', // Replace with the actual URL
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-    shadowSize: [41, 41]
-});
 
-
-var squareIcon = L.divIcon({
+var squareIconRed = L.divIcon({
     className: 'custom-square-marker',
     html: '<div style="width: 15px; height: 15px; background-color: red; border: 2px solid #555;"></div>',
     iconSize: [24, 24], // size of the icon
@@ -128,7 +119,7 @@ var squareIcon = L.divIcon({
 });
 
 
-var circleIcon = L.divIcon({
+var circleIconRed = L.divIcon({
     className: 'custom-circle-marker',
     html: '<div style="width: 15px; height: 15px; background-color: red; border-radius: 50%; border: 2px solid #555;"></div>',
     iconSize: [24, 24], // size of the icon
@@ -136,6 +127,23 @@ var circleIcon = L.divIcon({
     popupAnchor: [0, -12] // point from which the popup should open relative to the iconAnchor
 });
 
+
+var squareIconGreen = L.divIcon({
+    className: 'custom-square-marker',
+    html: '<div style="width: 15px; height: 15px; background-color: green; border: 2px solid #555;"></div>',
+    iconSize: [24, 24], // size of the icon
+    iconAnchor: [12, 12], // point of the icon which will correspond to marker's location
+    popupAnchor: [0, -12] // point from which the popup should open relative to the iconAnchor
+});
+
+
+var circleIconGreen = L.divIcon({
+    className: 'custom-circle-marker',
+    html: '<div style="width: 15px; height: 15px; background-color: green; border-radius: 50%; border: 2px solid #555;"></div>',
+    iconSize: [24, 24], // size of the icon
+    iconAnchor: [12, 12], // point of the icon which will correspond to marker's location
+    popupAnchor: [0, -12] // point from which the popup should open relative to the iconAnchor
+});
 
 document.addEventListener('DOMContentLoaded', function() {
     // Handle the logout button click event
@@ -168,7 +176,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.success) {
                     data.requests.forEach(request => {
                          if (request.latitude && request.longitude) {
-                            const marker = L.marker([request.latitude, request.longitude],{icon:squareIcon}).addTo(map);
+                            const markerIcon = request.is_accepted ? squareIconGreen : squareIconRed;
+                            const marker = L.marker([request.latitude, request.longitude],{icon:markerIcon}).addTo(map);
                              marker.bindPopup(`
                                 <h1>Request</h1><br>
                                 <b>Name:</b> ${request.name}<br>
@@ -213,7 +222,8 @@ fetch('/offers/get_offer_locations')
     if (data.success) {
         data.offers.forEach(offer => {
             if (offer.latitude && offer.longitude) {
-                const marker = L.marker([offer.latitude, offer.longitude], { icon: circleIcon }).addTo(map);
+                const markerIcon = offer.is_accepted ? circleIconGreen : circleIconRed;
+                const marker = L.marker([offer.latitude, offer.longitude], { icon: markerIcon }).addTo(map);
                 
                 marker.bindPopup(`
                     <h1>Offer</h1><br>

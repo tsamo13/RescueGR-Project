@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let rescuerId;
     let acceptedRequests = {};
     let currentTaskIdentifier = null;
-    let type= null;
+    let type = null;
 
     // Fetch the signed-in rescuer's location and initialize the map
     fetch('/take_location_of_signed_rescuer/get_rescuer_location')
@@ -97,6 +97,9 @@ document.addEventListener('DOMContentLoaded', function () {
                                     if (offer.latitude && offer.longitude) {
                                         const offerId = `${offer.offer_id}`;
 
+                                        // Set marker to green if the task is accepted, otherwise red
+                                        const markerIcon = offer.is_accepted ? circleIconGreen : circleIconRed;
+
                                         const generatePopupContent = () => `
                             <h1>Offer</h1><br>
                             <b>Name:</b> ${offer.name}<br>
@@ -110,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             ${offer.is_accepted ? '' : `<button class="accept-offer" data-offer-id="${offerId}" style="display:inline-block;">Accept</button>`}
                         `;
 
-                                        const marker = L.marker([offer.latitude, offer.longitude], { icon: circleIcon })
+                                        const marker = L.marker([offer.latitude, offer.longitude], { icon: markerIcon })
                                             .addTo(map)
                                             .bindPopup(generatePopupContent())
                                             .on('popupopen', function () {
@@ -137,6 +140,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                                                 if (data.success) {
                                                                     Swal.fire({ title: 'Success!', text: 'Offer accepted successfully!', icon: 'success', confirmButtonText: 'OK' });
                                                                     acceptButton.style.display = 'none'; // Hide the button after successful acceptance
+                                                                    marker.setIcon(circleIconGreen); // Change marker to green after accepting
                                                                 } else {
                                                                     Swal.fire({ title: 'Error!', text: data.message, icon: 'error', confirmButtonText: 'OK' });
                                                                     console.error('Failed to accept offer:', data.message);
@@ -206,6 +210,9 @@ document.addEventListener('DOMContentLoaded', function () {
                                 if (request.latitude && request.longitude) {
                                     const requestId = `${request.request_id}`; // Unique ID based on request ID
 
+                                    // Set marker to green if the task is accepted, otherwise red
+                                    const markerIcon = request.is_accepted ? squareIconGreen : squareIconRed;
+
                                     const generatePopupContent = () => `
                                         <h1>Request</h1><br>
                                         <b>Name:</b> ${request.name}<br>
@@ -219,7 +226,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                         ${request.is_accepted ? '' : `<button class="accept-request" data-request-id="${requestId}" style="display:inline-block;">Accept</button>`}
                                     `;
 
-                                    const marker = L.marker([request.latitude, request.longitude], { icon: squareIcon })
+                                    const marker = L.marker([request.latitude, request.longitude], { icon: markerIcon })
                                         .addTo(map)
                                         .bindPopup(generatePopupContent())
                                         .on('popupopen', function () {
@@ -246,6 +253,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                                             if (data.success) {
                                                                 Swal.fire({ title: 'Success!', text: 'Request accepted successfully!', icon: 'success', confirmButtonText: 'OK' });
                                                                 acceptButton.style.display = 'none'; // Hide the button after successful acceptance
+                                                                marker.setIcon(squareIconGreen); // Change marker to green after accepting
                                                             } else {
                                                                 Swal.fire({ title: 'Error!', text: data.message, icon: 'error', confirmButtonText: 'OK' });
                                                                 console.error('Failed to accept request:', data.message);
@@ -277,7 +285,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     data.tasks.forEach(task => {
                         const row = document.createElement('tr');
                         row.setAttribute('data-task-id', task.task_id);
-                        row.setAttribute('data-offer-id',task.task_identifier);
+                        row.setAttribute('data-offer-id', task.task_identifier);
                         row.setAttribute('data-type', task.type);
 
                         row.innerHTML = `
@@ -353,6 +361,14 @@ document.addEventListener('DOMContentLoaded', function () {
                         // Disable the task buttons
                         document.getElementById('completeTaskBtn').disabled = true;
                         document.getElementById('cancelTaskBtn').disabled = true;
+
+                        // Change marker back to red based on task type
+                        if (type === 'Offer') {
+                            marker.setIcon(circleIconRed);  // Revert to red circle for offers
+                        } else if (type === 'Request') {
+                            marker.setIcon(squareIconRed);  // Revert to red square for requests
+                        }
+
                     } else {
                         console.error('Failed to cancel task:', data.message);
                     }
@@ -430,19 +446,36 @@ document.addEventListener('DOMContentLoaded', function () {
         shadowSize: [41, 41] // size of the shadow
     });
 
-    var squareIcon = L.divIcon({
+    var squareIconRed = L.divIcon({
         className: 'custom-square-marker',
         html: '<div style="width: 15px; height: 15px; background-color: red; border: 2px solid #555;"></div>',
         iconSize: [24, 24], // size of the icon
         iconAnchor: [12, 12], // point of the icon which will correspond to marker's location
         popupAnchor: [0, -12] // point from which the popup should open relative to the iconAnchor
     });
-});
 
-var circleIcon = L.divIcon({
-    className: 'custom-circle-marker',
-    html: '<div style="width: 15px; height: 15px; background-color: red; border-radius: 50%; border: 2px solid #555;"></div>',
-    iconSize: [24, 24], // size of the icon
-    iconAnchor: [12, 12], // point of the icon which will correspond to marker's location
-    popupAnchor: [0, -12] // point from which the popup should open relative to the iconAnchor
+    var squareIconGreen = L.divIcon({
+        className: 'custom-square-marker',
+        html: '<div style="width: 15px; height: 15px; background-color: green; border: 2px solid #555;"></div>',
+        iconSize: [24, 24], // size of the icon
+        iconAnchor: [12, 12], // point of the icon which will correspond to marker's location
+        popupAnchor: [0, -12] // point from which the popup should open relative to the iconAnchor
+    });
+
+    var circleIconRed = L.divIcon({
+        className: 'custom-circle-marker',
+        html: '<div style="width: 15px; height: 15px; background-color: red; border-radius: 50%; border: 2px solid #555;"></div>',
+        iconSize: [24, 24], // size of the icon
+        iconAnchor: [12, 12], // point of the icon which will correspond to marker's location
+        popupAnchor: [0, -12] // point from which the popup should open relative to the iconAnchor
+    });
+
+    var circleIconGreen = L.divIcon({
+        className: 'custom-circle-marker',
+        html: '<div style="width: 15px; height: 15px; background-color: green; border-radius: 50%; border: 2px solid #555;"></div>',
+        iconSize: [24, 24], // size of the icon
+        iconAnchor: [12, 12], // point of the icon which will correspond to marker's location
+        popupAnchor: [0, -12] // point from which the popup should open relative to the iconAnchor
+    });
+
 });
