@@ -12,9 +12,12 @@ router.get('/get_request_locations', (req, res) => {
         r.quantity,
         r.status,
         r.created_at,
+        r.accepted_at,
+        r.completed_at,
         r.assigned_rescuer_id,
         ST_Y(u.location) AS latitude,
         ST_X(u.location) AS longitude,
+         rescuer_user.username AS rescuer_username, 
         (CASE 
             WHEN t.task_id IS NOT NULL AND (t.status = 'Pending' OR t.status = 'Completed') 
             THEN true 
@@ -28,7 +31,11 @@ router.get('/get_request_locations', (req, res) => {
         task t ON r.request_id = t.request_id 
     AND 
         (t.status = 'Pending' OR t.status = 'Completed')
-`;
+    LEFT JOIN 
+        rescuer res ON r.assigned_rescuer_id = res.rescuer_id  
+    LEFT JOIN 
+        user rescuer_user ON res.user_id = rescuer_user.user_id  
+    `;
 
     req.db.query(query, (error, results) => {
         if (error) {
@@ -50,7 +57,7 @@ router.get('/fetch_rescuers', (req, res) => {
         JOIN user u ON r.user_id = u.user_id
         WHERE u.location IS NOT NULL
     `;
-    
+
     db.query(sql, (err, results) => {
         if (err) {
             console.error('Error fetching rescuers:', err);
@@ -73,16 +80,28 @@ router.get('/get_offer_locations', (req, res) => {
             o.status,
             o.created_at,
             o.accepted_at,
+            o.completed_at,
             o.assigned_rescuer_id,
             ST_Y(u.location) AS latitude,
-            ST_X(u.location) AS longitude
+            ST_X(u.location) AS longitude,
+            rescuer_user.username AS rescuer_username,
+            (CASE 
+                WHEN t.task_id IS NOT NULL AND (t.status = 'Pending' OR t.status = 'Completed') 
+                THEN true 
+                ELSE false 
+            END) AS is_accepted
         FROM 
             offer o
         JOIN 
             user u ON o.user_id = u.user_id
-        WHERE 
-            u.location IS NOT NULL
-    `;
+        LEFT JOIN
+            task t ON o.offer_id = t.offer_id
+            AND (t.status = 'Pending' OR t.status = 'Completed')
+        LEFT JOIN 
+            rescuer r ON o.assigned_rescuer_id = r.rescuer_id  
+        LEFT JOIN 
+            user rescuer_user ON r.user_id = rescuer_user.user_id
+        `;
 
     req.db.query(query, (error, results) => {
         if (error) {

@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 // Fetch offers and display them on the map
                 function fetchOffers() {
-                    fetch('/offers/get_offer_locations') // Ensure the backend endpoint exists for rescuer
+                    fetch(`/offers/get_offer_locations?rescuerId=${rescuerId}`) // Ensure the backend endpoint exists for rescuer
                         .then(response => response.json())
                         .then(data => {
                             if (data.success) {
@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
 
                 // Fetch and display request markers
-                fetch('/requests/get_request_locations')
+                fetch(`/requests/get_request_locations?rescuerId=${rescuerId}`)
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {

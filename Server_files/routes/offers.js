@@ -20,10 +20,10 @@ router.get('/get_offer_locations', (req, res) => {
             ST_X(u.location) AS longitude,
             rescuer_user.username AS rescuer_username,
             (CASE 
-            WHEN t.task_id IS NOT NULL AND (t.status = 'Pending' OR t.status = 'Completed') 
-            THEN true 
-            ELSE false 
-        END) AS is_accepted
+                WHEN t.task_id IS NOT NULL AND (t.status = 'Pending' OR t.status = 'Completed') 
+                THEN true 
+                ELSE false 
+            END) AS is_accepted
         FROM 
             offer o
         JOIN 
@@ -32,12 +32,14 @@ router.get('/get_offer_locations', (req, res) => {
             task t ON o.offer_id = t.offer_id
             AND (t.status = 'Pending' OR t.status = 'Completed')
         LEFT JOIN 
-            rescuer r ON o.assigned_rescuer_id = r.rescuer_id  -- Join the rescuer table
+            rescuer r ON o.assigned_rescuer_id = r.rescuer_id  
         LEFT JOIN 
-            user rescuer_user ON r.user_id = rescuer_user.user_id  -- Join the user table to get the rescuer's username
-    `;
+            user rescuer_user ON r.user_id = rescuer_user.user_id  
+        WHERE 
+            o.assigned_rescuer_id IS NULL OR o.assigned_rescuer_id = ?
+      `;
 
-    req.db.query(query, (error, results) => {
+    req.db.query(query,[req.query.rescuerId], (error, results) => {
         if (error) {
             console.error('Error fetching offer locations:', error);
             return res.status(500).json({ success: false, message: 'Database error.' });

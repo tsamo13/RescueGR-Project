@@ -36,9 +36,11 @@ router.get('/get_request_locations', (req, res) => {
         rescuer res ON r.assigned_rescuer_id = res.rescuer_id  -- Join rescuer table
     LEFT JOIN 
         user rescuer_user ON res.user_id = rescuer_user.user_id  -- Join user table to get rescuer's username
+    WHERE 
+        r.assigned_rescuer_id IS NULL OR r.assigned_rescuer_id = ?
 `;
 
-    req.db.query(query, (error, results) => {
+    req.db.query(query,[req.query.rescuerId], (error, results) => {
         if (error) {
             console.error('Error executing query:', error); // Ensure the error is logged
             return res.status(500).json({ success: false, message: 'Database error.' });

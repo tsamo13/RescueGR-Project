@@ -170,7 +170,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     document.addEventListener('DOMContentLoaded', function() {
-        fetch('/requests/get_request_locations')
+        fetch('/admin_map/get_request_locations')
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
@@ -216,7 +216,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => console.error('Error:', error));
 
         // Fetch the offer locations and display them on the map
-fetch('/offers/get_offer_locations')
+fetch('/admin_map/get_offer_locations')
 .then(response => response.json())
 .then(data => {
     if (data.success) {
