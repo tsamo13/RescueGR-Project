@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     document.addEventListener('DOMContentLoaded', function() {
-        fetch('/admin_map/get_request_locations')
+        fetch('/requests/get_request_locations')
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <b>Quantity:</b> ${request.quantity}<br>
                                 <b>Status:</b> ${request.status}<br>
                                 <b>Accepted At:</b> ${request.accepted_at ? new Date(request.accepted_at).toLocaleString() : 'Not accepted'}<br>
-                                <b>Assigned Rescuer:</b> ${request.assigned_rescuer_id ? request.assigned_rescuer_id : 'Not assigned'}
+                                <b>Assigned Rescuer:</b> ${request.assigned_rescuer_id ? request.rescuer_username : 'Not assigned'}
                             `);
                         }
                     });
@@ -207,7 +207,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => console.error('Error:', error));
 
         // Fetch the offer locations and display them on the map
-fetch('/admin_map/get_offer_locations')
+fetch('/offers/get_offer_locations')
 .then(response => response.json())
 .then(data => {
     if (data.success) {
@@ -224,7 +224,7 @@ fetch('/admin_map/get_offer_locations')
                     <b>Quantity:</b> ${offer.quantity}<br>
                     <b>Status:</b> ${offer.status}<br>
                     <b>Accepted At:</b> ${offer.accepted_at ? new Date(offer.accepted_at).toLocaleString() : 'Not accepted'}<br>
-                    <b>Assigned Rescuer:</b> ${offer.assigned_rescuer_id ? offer.assigned_rescuer_id : 'Not assigned'}
+                    <b>Assigned Rescuer:</b> ${offer.assigned_rescuer_id ? offer.rescuer_username : 'Not assigned'}
                 `);
             }
         });

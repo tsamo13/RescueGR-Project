@@ -18,6 +18,7 @@ router.get('/get_request_locations', (req, res) => {
         r.assigned_rescuer_id,
         ST_Y(u.location) AS latitude,
         ST_X(u.location) AS longitude,
+         rescuer_user.username AS rescuer_username, 
         (CASE 
             WHEN t.task_id IS NOT NULL AND (t.status = 'Pending' OR t.status = 'Completed') 
             THEN true 
@@ -31,6 +32,10 @@ router.get('/get_request_locations', (req, res) => {
         task t ON r.request_id = t.request_id 
     AND 
         (t.status = 'Pending' OR t.status = 'Completed')
+    LEFT JOIN 
+        rescuer res ON r.assigned_rescuer_id = res.rescuer_id  -- Join rescuer table
+    LEFT JOIN 
+        user rescuer_user ON res.user_id = rescuer_user.user_id  -- Join user table to get rescuer's username
 `;
 
     req.db.query(query, (error, results) => {
@@ -73,7 +78,7 @@ router.get('/get_categories_items', (req, res) => {
 // Route to handle submitting a new request
 router.post('/submit_request', (req, res) => {
     const user_id = req.session.user.id;  // Get the user_id from the session
-    const {item_name, quantity } = req.body;
+    const { item_name, quantity } = req.body;
 
     // Validate required fields
     if (!item_name || !quantity) {

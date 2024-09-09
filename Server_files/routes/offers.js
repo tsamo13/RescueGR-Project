@@ -18,6 +18,7 @@ router.get('/get_offer_locations', (req, res) => {
             o.assigned_rescuer_id,
             ST_Y(u.location) AS latitude,
             ST_X(u.location) AS longitude,
+            rescuer_user.username AS rescuer_username,
             (CASE 
             WHEN t.task_id IS NOT NULL AND (t.status = 'Pending' OR t.status = 'Completed') 
             THEN true 
@@ -29,6 +30,11 @@ router.get('/get_offer_locations', (req, res) => {
             user u ON o.user_id = u.user_id
         LEFT JOIN
             task t ON o.offer_id = t.offer_id
+            AND (t.status = 'Pending' OR t.status = 'Completed')
+        LEFT JOIN 
+            rescuer r ON o.assigned_rescuer_id = r.rescuer_id  -- Join the rescuer table
+        LEFT JOIN 
+            user rescuer_user ON r.user_id = rescuer_user.user_id  -- Join the user table to get the rescuer's username
     `;
 
     req.db.query(query, (error, results) => {

@@ -90,10 +90,30 @@ router.post('/accept_request_task', (req, res) => {
                     return res.status(500).json({ success: false, message: 'Server error' });
                 }
 
-                // After task creation, update rescuer availability
-                updateRescuerAvailability(rescuer_id, req, res);
 
-                res.json({ success: true, message: 'Task created successfully!' });
+                // Update the assigned_rescuer_id and accepted_at in the request table
+                const updateRequestSql = `
+                    UPDATE request 
+                    SET assigned_rescuer_id = ?, accepted_at = NOW(), status="Assigned"
+                    WHERE request_id = ? AND assigned_rescuer_id IS NULL
+                `;
+
+                req.db.query(updateRequestSql, [rescuer_id, request_id], (err, updateResult) => {
+                    if (err) {
+                        console.error('Error updating request:', err);
+                        return res.status(500).json({ success: false, message: 'Error updating request details' });
+                    }
+
+                    if (updateResult.affectedRows === 0) {
+                        return res.status(400).json({ success: false, message: 'Request has already been accepted by another rescuer.' });
+                    }
+
+
+                    // After task creation, update rescuer availability
+                    updateRescuerAvailability(rescuer_id, req, res);
+
+                    res.json({ success: true, message: 'Task created successfully!' });
+                });
             });
         });
     });
@@ -129,10 +149,29 @@ router.post('/accept_offer_task', (req, res) => {
                     return res.status(500).json({ success: false, message: 'Server error' });
                 }
 
-                // After task creation, update rescuer availability
-                updateRescuerAvailability(rescuer_id, req, res);
 
-                res.json({ success: true, message: 'Offer accepted and task created successfully!' });
+                // Update the assigned_rescuer_id and completed_at in the offer table
+                const updateOfferSql = `
+                    UPDATE offer 
+                    SET assigned_rescuer_id = ?, accepted_at = NOW(), status="Assigned" 
+                    WHERE offer_id = ? AND assigned_rescuer_id IS NULL
+                `;
+
+                req.db.query(updateOfferSql, [rescuer_id, offer_id], (err, updateResult) => {
+                    if (err) {
+                        console.error('Error updating offer:', err);
+                        return res.status(500).json({ success: false, message: 'Error updating offer details' });
+                    }
+
+                    if (updateResult.affectedRows === 0) {
+                        return res.status(400).json({ success: false, message: 'Offer has already been accepted by another rescuer.' });
+                    }
+
+                    // After task creation, update rescuer availability
+                    updateRescuerAvailability(rescuer_id, req, res);
+
+                    res.json({ success: true, message: 'Offer accepted and task created successfully!' });
+                });
             });
         });
     });
@@ -140,7 +179,8 @@ router.post('/accept_offer_task', (req, res) => {
 
 // Route to update the task status when a request or offer is rejected or canceled
 router.post('/update_task_status', (req, res) => {
-    const { rescuer_id, task_id, status } = req.body;
+    const { rescuer_id, task_id, status,type, offer_id, request_id } = req.body;  // Add both offer_id and request_id
+    console.log(req.body);
 
     if (!rescuer_id || !task_id || !status) {
         return res.status(400).json({ success: false, message: 'Missing required fields' });
@@ -158,12 +198,59 @@ router.post('/update_task_status', (req, res) => {
             return res.status(404).json({ success: false, message: 'Task not found or not updated' });
         }
 
-        // After updating the task status, update rescuer availability
-        updateRescuerAvailability(rescuer_id, req, res);
+        // If the task is canceled or rejected, update the corresponding table (offer or request)
+        if (status === 'Canceled') {
+            if (type==='Offer') {
+                // Update the offer table
+                const updateOfferSql = `
+                    UPDATE offer 
+                    SET assigned_rescuer_id = NULL, accepted_at = NULL, status = 'Pending'
+                    WHERE offer_id = ? AND assigned_rescuer_id = ?
+                `;
 
-        res.json({ success: true, message: 'Task status updated successfully!' });
+                req.db.query(updateOfferSql, [offer_id, rescuer_id], (err, updateResult) => {
+                    if (err) {
+                        console.error('Error updating offer:', err);
+                        return res.status(500).json({ success: false, message: 'Error updating offer details' });
+                    }
+
+                    // After updating the offer, update rescuer availability
+                    updateRescuerAvailability(rescuer_id, req, res);
+
+                    return res.json({ success: true, message: 'Offer task canceled successfully!' });
+                });
+            } else if (type==='Request') {
+                // Update the request table
+                const updateRequestSql = `
+                    UPDATE request 
+                    SET assigned_rescuer_id = NULL, accepted_at = NULL, status = 'Pending'
+                    WHERE request_id = ? AND assigned_rescuer_id = ?
+                `;
+
+                req.db.query(updateRequestSql, [request_id, rescuer_id], (err, updateResult) => {
+                    if (err) {
+                        console.error('Error updating request:', err);
+                        return res.status(500).json({ success: false, message: 'Error updating request details' });
+                    }
+
+                    // After updating the request, update rescuer availability
+                    updateRescuerAvailability(rescuer_id, req, res);
+
+                    return res.json({ success: true, message: 'Request task canceled successfully!' });
+                });
+            } else {
+                // Neither offer_id nor request_id is present
+                return res.status(400).json({ success: false, message: 'Missing offer_id or request_id' });
+            }
+        } else {
+            // If not canceled or rejected, just update the rescuer availability
+            updateRescuerAvailability(rescuer_id, req, res);
+            res.json({ success: true, message: 'Task status updated successfully!' });
+        }
     });
 });
+
+
 
 // Route to get pending tasks
 router.get('/get_pending_tasks', (req, res) => {
@@ -174,13 +261,13 @@ router.get('/get_pending_tasks', (req, res) => {
     }
 
     const sql = `
-        SELECT t.task_id, u.name AS civilian_name, u.phone AS civilian_phone, t.created_at, t.type, r.item_name, t.status, r.quantity
+        SELECT t.task_id, u.name AS civilian_name, u.phone AS civilian_phone, t.created_at, t.type, r.item_name, t.status, r.quantity, r.request_id AS task_identifier
         FROM task t
         JOIN request r ON t.request_id = r.request_id
         JOIN user u ON r.user_id = u.user_id
         WHERE t.rescuer_id = ? AND t.status = 'Pending'
         UNION
-        SELECT t.task_id, u.name AS civilian_name, u.phone AS civilian_phone, t.created_at, t.type, o.item_name, t.status, o.quantity
+        SELECT t.task_id, u.name AS civilian_name, u.phone AS civilian_phone, t.created_at, t.type, o.item_name, t.status, o.quantity, o.offer_id AS task_identifier
         FROM task t
         JOIN offer o ON t.offer_id = o.offer_id
         JOIN user u ON o.user_id = u.user_id

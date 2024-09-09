@@ -37,6 +37,8 @@ document.addEventListener('DOMContentLoaded', function () {
     let currentTaskId = null;
     let rescuerId;
     let acceptedRequests = {};
+    let currentTaskIdentifier = null;
+    let type= null;
 
     // Fetch the signed-in rescuer's location and initialize the map
     fetch('/take_location_of_signed_rescuer/get_rescuer_location')
@@ -104,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             <b>Quantity:</b> ${offer.quantity}<br>
                             <b>Status:</b> ${offer.status}<br>
                             <b>Accepted At:</b> ${offer.accepted_at ? new Date(offer.accepted_at).toLocaleString() : 'Not accepted'}<br>
-                            <b>Assigned Rescuer:</b> ${offer.assigned_rescuer_id ? offer.assigned_rescuer_id : 'Not assigned'}<br>
+                            <b>Assigned Rescuer:</b> ${offer.assigned_rescuer_id ? offer.rescuer_username : 'Not assigned'}<br>
                             ${offer.is_accepted ? '' : `<button class="accept-offer" data-offer-id="${offerId}" style="display:inline-block;">Accept</button>`}
                         `;
 
@@ -213,7 +215,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                         <b>Quantity:</b> ${request.quantity}<br>
                                         <b>Status:</b> ${request.status}<br>
                                         <b>Accepted At:</b> ${request.accepted_at ? new Date(request.accepted_at).toLocaleString() : 'Not accepted'}<br>
-                                        <b>Assigned Rescuer:</b> ${request.assigned_rescuer_id ? request.assigned_rescuer_id : 'Not assigned'}<br>
+                                        <b>Assigned Rescuer:</b> ${request.assigned_rescuer_id ? request.rescuer_username : 'Not assigned'}<br>
                                         ${request.is_accepted ? '' : `<button class="accept-request" data-request-id="${requestId}" style="display:inline-block;">Accept</button>`}
                                     `;
 
@@ -275,6 +277,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     data.tasks.forEach(task => {
                         const row = document.createElement('tr');
                         row.setAttribute('data-task-id', task.task_id);
+                        row.setAttribute('data-offer-id',task.task_identifier);
+                        row.setAttribute('data-type', task.type);
 
                         row.innerHTML = `
                         <td>${task.civilian_name}</td>
@@ -310,6 +314,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Set the current task ID
             currentTaskId = row.getAttribute('data-task-id');
+            currentTaskIdentifier = row.getAttribute('data-offer-id');
+            type = row.getAttribute('data-type');
         }
     });
 
@@ -327,6 +333,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 body: JSON.stringify({
                     rescuer_id: rescuerId, // Use the actual rescuer's ID
                     task_id: intTaskId,
+                    offer_id: currentTaskIdentifier,
+                    request_id: currentTaskIdentifier,
+                    type: type,
                     status: 'Canceled'
                 })
             })
