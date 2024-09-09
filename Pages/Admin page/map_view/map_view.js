@@ -169,80 +169,110 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-    document.addEventListener('DOMContentLoaded', function() {
-        fetch('/admin_map/get_request_locations')
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    data.requests.forEach(request => {
-                         if (request.latitude && request.longitude) {
-                            const markerIcon = request.is_accepted ? squareIconGreen : squareIconRed;
-                            const marker = L.marker([request.latitude, request.longitude],{icon:markerIcon}).addTo(map);
-                             marker.bindPopup(`
-                                <h1>Request</h1><br>
-                                <b>Name:</b> ${request.name}<br>
-                                <b>Phone:</b> ${request.phone}<br>
-                                <b>Created At:</b> ${new Date(request.created_at).toLocaleString()}<br>
-                                <b>Item:</b> ${request.item_name}<br>
-                                <b>Quantity:</b> ${request.quantity}<br>
-                                <b>Status:</b> ${request.status}<br>
-                                <b>Accepted At:</b> ${request.accepted_at ? new Date(request.accepted_at).toLocaleString() : 'Not accepted'}<br>
-                                <b>Assigned Rescuer:</b> ${request.assigned_rescuer_id ? request.rescuer_username : 'Not assigned'}
-                            `);
-                        }
-                    });
-                } else {
-                    console.error('Failed to load requests');
-                }
-            })
-            .catch(error => console.error('Error fetching requests:', error));
-
+document.addEventListener('DOMContentLoaded', function() {
     // Fetch rescuers data and add them to the map
     fetch('/admin_map/fetch_rescuers')
         .then(response => response.json())
         .then(data => {
             if (data.success) {
                 data.rescuers.forEach(rescuer => {
-                L.marker([rescuer.lat, rescuer.lng], { icon: redIcon })
-                    .addTo(map)
-                    .bindPopup(`Rescuer: <b>${rescuer.name}</b><br>
-                        Availability: <b>${rescuer.availability === 1 ? 'Available' : 'Unavailable'}</b>`)
-                    .openPopup();
-            });
-        } else {
-            console.error('Failed to fetch rescuers:', data.message);
-        }
+                    // Ensure rescuer_id is correctly retrieved and used
+                    console.log('Rescuer ID:', rescuer.rescuer_id);  // Debugging log to ensure rescuer_id is present
+
+                    // Add rescuer marker (vehicle marker) to the map
+                    const rescuerMarker = L.marker([rescuer.lat, rescuer.lng], { icon: redIcon })
+                        .addTo(map)
+                        .bindPopup(`Rescuer: <b>${rescuer.name}</b><br>
+                            Availability: <b>${rescuer.availability === 1 ? 'Available' : 'Unavailable'}</b>`)
+                        .openPopup();
+
+                    // Fetch the offer locations and display them on the map
+                    fetch('/admin_map/get_offer_locations')
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                data.offers.forEach(offer => {
+                                    if (offer.latitude && offer.longitude) {
+                                        const markerIcon = offer.is_accepted ? circleIconGreen : circleIconRed;
+                                        const taskMarker = L.marker([offer.latitude, offer.longitude], { icon: markerIcon }).addTo(map);
+
+                                        taskMarker.bindPopup(`
+                                            <h1>Offer</h1><br>
+                                            <b>Name:</b> ${offer.name}<br>
+                                            <b>Phone:</b> ${offer.phone}<br>
+                                            <b>Created At:</b> ${new Date(offer.created_at).toLocaleString()}<br>
+                                            <b>Item:</b> ${offer.item_name}<br>
+                                            <b>Quantity:</b> ${offer.quantity}<br>
+                                            <b>Status:</b> ${offer.status}<br>
+                                            <b>Accepted At:</b> ${offer.accepted_at ? new Date(offer.accepted_at).toLocaleString() : 'Not accepted'}<br>
+                                            <b>Assigned Rescuer:</b> ${offer.assigned_rescuer_id ? offer.rescuer_username : 'Not assigned'}
+                                        `);
+
+                                        // Log for debugging
+                                        console.log('Rescuer ID:', rescuer.rescuer_id, 'Offer Assigned Rescuer:', offer.assigned_rescuer_id);
+
+                                        // Draw lines between rescuer and accepted offers
+                                        if (offer.assigned_rescuer_id !== null && offer.assigned_rescuer_id == rescuer.rescuer_id) {
+                                            L.polyline([L.latLng(rescuer.lat, rescuer.lng), L.latLng(offer.latitude, offer.longitude)], {
+                                                color: 'blue',
+                                                weight: 2.5,
+                                                opacity: 0.8
+                                            }).addTo(map);
+                                        }
+                                    }
+                                });
+                            } else {
+                                console.error('Failed to load offers:', data.message);
+                            }
+                        })
+                        .catch(error => console.error('Error fetching offers:', error));
+
+                    // Fetch the request locations and display them on the map
+                    fetch('/admin_map/get_request_locations')
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                data.requests.forEach(request => {
+                                    if (request.latitude && request.longitude) {
+                                        const markerIcon = request.is_accepted ? squareIconGreen : squareIconRed;
+                                        const taskMarker = L.marker([request.latitude, request.longitude], { icon: markerIcon }).addTo(map);
+
+                                        taskMarker.bindPopup(`
+                                            <h1>Request</h1><br>
+                                            <b>Name:</b> ${request.name}<br>
+                                            <b>Phone:</b> ${request.phone}<br>
+                                            <b>Created At:</b> ${new Date(request.created_at).toLocaleString()}<br>
+                                            <b>Item:</b> ${request.item_name}<br>
+                                            <b>Quantity:</b> ${request.quantity}<br>
+                                            <b>Status:</b> ${request.status}<br>
+                                            <b>Accepted At:</b> ${request.accepted_at ? new Date(request.accepted_at).toLocaleString() : 'Not accepted'}<br>
+                                            <b>Assigned Rescuer:</b> ${request.assigned_rescuer_id ? request.rescuer_username : 'Not assigned'}
+                                        `);
+
+                                        // Log for debugging
+                                        console.log('Rescuer ID:', rescuer.rescuer_id, 'Request Assigned Rescuer:', request.assigned_rescuer_id);
+
+                                        // Draw lines between rescuer and accepted requests
+                                        if (request.assigned_rescuer_id !== null && request.assigned_rescuer_id == rescuer.rescuer_id) {
+                                            L.polyline([L.latLng(rescuer.lat, rescuer.lng), L.latLng(request.latitude, request.longitude)], {
+                                                color: 'blue',
+                                                weight: 2.5,
+                                                opacity: 0.8
+                                            }).addTo(map);
+                                        }
+                                    }
+                                });
+                            } else {
+                                console.error('Failed to load requests');
+                            }
+                        })
+                        .catch(error => console.error('Error fetching requests:', error));
+                });
+            } else {
+                console.error('Failed to fetch rescuers:', data.message);
+            }
         })
         .catch(error => console.error('Error:', error));
+});
 
-        // Fetch the offer locations and display them on the map
-fetch('/admin_map/get_offer_locations')
-.then(response => response.json())
-.then(data => {
-    if (data.success) {
-        data.offers.forEach(offer => {
-            if (offer.latitude && offer.longitude) {
-                const markerIcon = offer.is_accepted ? circleIconGreen : circleIconRed;
-                const marker = L.marker([offer.latitude, offer.longitude], { icon: markerIcon }).addTo(map);
-                
-                marker.bindPopup(`
-                    <h1>Offer</h1><br>
-                    <b>Name:</b> ${offer.name}<br>
-                    <b>Phone:</b> ${offer.phone}<br>
-                    <b>Created At:</b> ${new Date(offer.created_at).toLocaleString()}<br>
-                    <b>Item:</b> ${offer.item_name}<br>
-                    <b>Quantity:</b> ${offer.quantity}<br>
-                    <b>Status:</b> ${offer.status}<br>
-                    <b>Accepted At:</b> ${offer.accepted_at ? new Date(offer.accepted_at).toLocaleString() : 'Not accepted'}<br>
-                    <b>Assigned Rescuer:</b> ${offer.assigned_rescuer_id ? offer.rescuer_username : 'Not assigned'}
-                `);
-            }
-        });
-    } else {
-        console.error('Failed to load offers:', data.message);
-    }
-})
-.catch(error => console.error('Error fetching offers:', error));
-
-    });
        

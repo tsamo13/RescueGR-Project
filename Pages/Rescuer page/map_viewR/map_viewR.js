@@ -141,6 +141,13 @@ document.addEventListener('DOMContentLoaded', function () {
                                                                     Swal.fire({ title: 'Success!', text: 'Offer accepted successfully!', icon: 'success', confirmButtonText: 'OK' });
                                                                     acceptButton.style.display = 'none'; // Hide the button after successful acceptance
                                                                     marker.setIcon(circleIconGreen); // Change marker to green after accepting
+
+                                                                    // Draw line between the rescuer and the accepted task
+                                                                    L.polyline([rescuerLatLng, L.latLng(offer.latitude, offer.longitude)], {
+                                                                        color: 'blue',
+                                                                        weight: 2.5,
+                                                                        opacity: 0.8
+                                                                    }).addTo(map);
                                                                 } else {
                                                                     Swal.fire({ title: 'Error!', text: data.message, icon: 'error', confirmButtonText: 'OK' });
                                                                     console.error('Failed to accept offer:', data.message);
@@ -150,6 +157,17 @@ document.addEventListener('DOMContentLoaded', function () {
                                                     });
                                                 }
                                             });
+
+                                        // If the offer is already accepted, draw the line immediately
+                                        if (offer.is_accepted && offer.assigned_rescuer_id === rescuerId) {
+                                            L.polyline([rescuerLatLng, L.latLng(offer.latitude, offer.longitude)], {
+                                                color: 'blue',
+                                                weight: 2.5,
+                                                opacity: 0.8
+                                            }).addTo(map);
+                                        }
+
+
                                     }
                                 });
                             } else {
@@ -254,6 +272,14 @@ document.addEventListener('DOMContentLoaded', function () {
                                                                 Swal.fire({ title: 'Success!', text: 'Request accepted successfully!', icon: 'success', confirmButtonText: 'OK' });
                                                                 acceptButton.style.display = 'none'; // Hide the button after successful acceptance
                                                                 marker.setIcon(squareIconGreen); // Change marker to green after accepting
+
+                                                                // Draw line between the rescuer and the accepted task
+                                                                L.polyline([rescuerLatLng, L.latLng(request.latitude, request.longitude)], {
+                                                                    color: 'blue',
+                                                                    weight: 2.5,
+                                                                    opacity: 0.8
+                                                                }).addTo(map);
+
                                                             } else {
                                                                 Swal.fire({ title: 'Error!', text: data.message, icon: 'error', confirmButtonText: 'OK' });
                                                                 console.error('Failed to accept request:', data.message);
@@ -263,6 +289,15 @@ document.addEventListener('DOMContentLoaded', function () {
                                                 });
                                             }
                                         });
+
+                                    // If the request is already accepted, draw the line immediately
+                                    if (request.is_accepted && request.assigned_rescuer_id === rescuerId) {
+                                        L.polyline([rescuerLatLng, L.latLng(request.latitude, request.longitude)], {
+                                            color: 'blue',
+                                            weight: 2.5,
+                                            opacity: 0.8
+                                        }).addTo(map);
+                                    }
                                 }
                             });
                         } else {
