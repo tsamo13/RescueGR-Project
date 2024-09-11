@@ -7,31 +7,116 @@ document.addEventListener('DOMContentLoaded', function () {
     let baseLatLng = null; // To store base marker's position
 
     viewLoadButton.addEventListener('click', function () {
-        // Display data in the table (could be replaced with dynamic data from the server)
-        const viewLoadTableBody = document.querySelector('.view-load-table tbody');
-        viewLoadTableBody.innerHTML = `
-            <tr>
-                <td>Example Item 1</td>
-                <td>10</td>
-            </tr>
-            <tr>
-                <td>Example Item 2</td>
-                <td>5</td>
-            </tr>
-        `;
-
-        viewLoadPopup.style.display = 'flex';
+        // Fetch rescuer load from the server
+        fetch('/rescuer_form/get_rescuer_load') // Send the signed-in rescuer's ID
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const viewLoadTableBody = document.querySelector('.view-load-table tbody');
+                    viewLoadTableBody.innerHTML = ''; // Clear existing content
+    
+                    // Populate the table with rescuer's load data
+                    data.load.forEach(loadItem => {
+                        viewLoadTableBody.innerHTML += `
+                            <tr>
+                                <td>${loadItem.item_name}</td>
+                                <td>${loadItem.quantity}</td>
+                            </tr>
+                        `;
+                    });
+    
+                    // Display the popup
+                    viewLoadPopup.style.display = 'flex';
+                } else {
+                    console.error('Failed to load rescuer data:', data.message);
+                }
+            })
+            .catch(error => console.error('Error fetching rescuer load:', error));
     });
-
+    
+    // Close the popup when the close button is clicked
     closeViewLoadPopupBtn.addEventListener('click', function () {
         viewLoadPopup.style.display = 'none';
     });
-
-    window.addEventListener('click', function (event) {  //If the user clicks outside the pop-up (but inside the overlay), the pop-up is hidden.
+    
+    // Close the popup if clicked outside of the modal
+    window.addEventListener('click', function (event) {
         if (event.target === viewLoadPopup) {
             viewLoadPopup.style.display = 'none';
         }
     });
+    
+
+    // Enable buttons and show the form when near the base
+    function handleBaseProximity() {
+        // Fetch the categories and items from the base when Load button is clicked
+        loadButton.addEventListener('click', function () {
+            fetch('/rescuer_form/get_categories_items')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const viewLoadTableBody = document.querySelector('.view-load-table tbody');
+                        viewLoadTableBody.innerHTML = ''; // Clear the table before populating
+
+                        // Populate the table with items and categories
+                        data.items.forEach(item => {
+                            viewLoadTableBody.innerHTML += `
+                                <tr>
+                                    <td>${item.item_name}</td>
+                                    <td>${item.quantity}</td>
+                                </tr>
+                            `;
+                        });
+
+                        // Show the popup
+                        viewLoadPopup.style.display = 'flex';
+                    } else {
+                        console.error('Failed to load base items:', data.message);
+                    }
+                })
+                .catch(error => console.error('Error fetching items:', error));
+        });
+
+        // Fetch the categories and items from the base when Unload button is clicked (same as Load for now)
+        unloadButton.addEventListener('click', function () {
+            fetch('/rescuer_form/get_categories_items')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const viewLoadTableBody = document.querySelector('.view-load-table tbody');
+                        viewLoadTableBody.innerHTML = ''; // Clear the table before populating
+
+                        // Populate the table with items and categories
+                        data.items.forEach(item => {
+                            viewLoadTableBody.innerHTML += `
+                                <tr>
+                                    <td>${item.item_name}</td>
+                                    <td>${item.quantity}</td>
+                                </tr>
+                            `;
+                        });
+
+                        // Show the popup
+                        viewLoadPopup.style.display = 'flex';
+                    } else {
+                        console.error('Failed to load base items:', data.message);
+                    }
+                })
+                .catch(error => console.error('Error fetching items:', error));
+        });
+
+        // Close the popup when the close button is clicked
+        closeViewLoadPopupBtn.addEventListener('click', function () {
+            viewLoadPopup.style.display = 'none';
+        });
+
+        // Close the popup if clicked outside of the modal
+        window.addEventListener('click', function (event) {
+            if (event.target === viewLoadPopup) {
+                viewLoadPopup.style.display = 'none';
+            }
+        });
+    }
 
     const tableBody = document.querySelector('.a-table tbody');
     let currentTaskId = null;
@@ -212,6 +297,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         if (distance <= 100) {
                             loadButton.disabled = false;
                             unloadButton.disabled = false;
+                            handleBaseProximity();
                         } else {
                             loadButton.disabled = true;
                             unloadButton.disabled = true;

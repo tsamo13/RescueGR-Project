@@ -166,6 +166,9 @@ app.use('/admin_map', adminMapRoute);
 const offerRoute = require('./routes/offers');
 app.use('/offers', offerRoute);
 
+const rescuerformRoute = require('./routes/rescuer_form');
+app.use('/rescuer_form', rescuerformRoute);
+
 function ensureAuthenticated(req, res, next) {
   if (req.session && req.session.user) {
       return next();                  // User is authenticated, proceed to the next middleware
