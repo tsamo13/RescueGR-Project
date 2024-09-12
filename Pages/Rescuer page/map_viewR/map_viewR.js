@@ -124,6 +124,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let acceptedRequests = {};
     let currentTaskIdentifier = null;
     let type = null;
+    let markers = {};
 
     // Fetch the signed-in rescuer's location and initialize the map
     fetch('/take_location_of_signed_rescuer/get_rescuer_location')
@@ -242,6 +243,8 @@ document.addEventListener('DOMContentLoaded', function () {
                                                     });
                                                 }
                                             });
+
+                                            markers[offerId] = marker;
 
                                         // If the offer is already accepted, draw the line immediately
                                         if (offer.is_accepted && offer.assigned_rescuer_id === rescuerId) {
@@ -376,6 +379,8 @@ document.addEventListener('DOMContentLoaded', function () {
                                             }
                                         });
 
+                                        markers[requestId] = marker;
+
                                     // If the request is already accepted, draw the line immediately
                                     if (request.is_accepted && request.assigned_rescuer_id === rescuerId) {
                                         L.polyline([rescuerLatLng, L.latLng(request.latitude, request.longitude)], {
@@ -482,6 +487,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         // Disable the task buttons
                         document.getElementById('completeTaskBtn').disabled = true;
                         document.getElementById('cancelTaskBtn').disabled = true;
+
+                        const marker = markers[currentTaskIdentifier];
 
                         // Change marker back to red based on task type
                         if (type === 'Offer') {
