@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (data.success) {
                     const viewLoadTableBody = document.querySelector('.view-load-table tbody');
                     viewLoadTableBody.innerHTML = ''; // Clear existing content
-    
+
                     // Populate the table with rescuer's load data
                     data.load.forEach(loadItem => {
                         viewLoadTableBody.innerHTML += `
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             </tr>
                         `;
                     });
-    
+
                     // Display the popup
                     viewLoadPopup.style.display = 'flex';
                 } else {
@@ -33,22 +33,22 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .catch(error => console.error('Error fetching rescuer load:', error));
     });
-    
+
     // Close the popup when the close button is clicked
     closeViewLoadPopupBtn.addEventListener('click', function () {
         viewLoadPopup.style.display = 'none';
     });
-    
+
     // Close the popup if clicked outside of the modal
     window.addEventListener('click', function (event) {
         if (event.target === viewLoadPopup) {
             viewLoadPopup.style.display = 'none';
         }
     });
-    
 
-  
-    
+
+
+
 
     const tableBody = document.querySelector('.a-table tbody');
     let currentTaskId = null;
@@ -57,6 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let currentTaskIdentifier = null;
     let type = null;
     let markers = {};
+    let acceptedOfferId;
 
     // Fetch the signed-in rescuer's location and initialize the map
     fetch('/take_location_of_signed_rescuer/get_rescuer_location')
@@ -107,7 +108,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 // Fetch offers and display them on the map
                 function fetchOffers() {
-                    fetch(`/offers/get_offer_locations?rescuerId=${rescuerId}`) // Ensure the backend endpoint exists for rescuer
+                    fetch(`/offers/get_offer_locations?rescuerId=${rescuerId}`)
                         .then(response => response.json())
                         .then(data => {
                             if (data.success) {
@@ -118,76 +119,141 @@ document.addEventListener('DOMContentLoaded', function () {
                                         // Set marker to green if the task is accepted, otherwise red
                                         const markerIcon = offer.is_accepted ? circleIconGreen : circleIconRed;
 
-                                        const generatePopupContent = () => `
-                            <h1>Offer</h1><br>
-                            <b>Name:</b> ${offer.name}<br>
-                            <b>Phone:</b> ${offer.phone}<br>
-                            <b>Created At:</b> ${new Date(offer.created_at).toLocaleString()}<br>
-                            <b>Item:</b> ${offer.item_name}<br>
-                            <b>Quantity:</b> ${offer.quantity}<br>
-                            <b>Status:</b> ${offer.status}<br>
-                            <b>Accepted At:</b> ${offer.accepted_at ? new Date(offer.accepted_at).toLocaleString() : 'Not accepted'}<br>
-                            <b>Assigned Rescuer:</b> ${offer.assigned_rescuer_id ? offer.rescuer_username : 'Not assigned'}<br>
-                            ${offer.is_accepted ? '' : `<button class="accept-offer" data-offer-id="${offerId}" style="display:inline-block;">Accept</button>`}
-                        `;
+                                        // Fetch to check if items are already loaded
+                                        fetch(`/rescuer_form/check_if_loaded?rescuer_id=${rescuerId}&offer_id=${offerId}`)
+                                            .then(response => response.json())
+                                            .then(result => {
+                                                let alreadyLoaded = result.alreadyLoaded;
 
-                                        const marker = L.marker([offer.latitude, offer.longitude], { icon: markerIcon })
-                                            .addTo(map)
-                                            .bindPopup(generatePopupContent())
-                                            .on('popupopen', function () {
-                                                const acceptButton = document.querySelector(`.accept-offer[data-offer-id="${offerId}"]`);
+                                                // Now generate the popup content
+                                                const generatePopupContent = () => `
+                                    <h1>Offer</h1><br>
+                                    <b>Name:</b> ${offer.name}<br>
+                                    <b>Phone:</b> ${offer.phone}<br>
+                                    <b>Created At:</b> ${new Date(offer.created_at).toLocaleString()}<br>
+                                    <b>Item:</b> ${offer.item_name}<br>
+                                    <b>Quantity:</b> ${offer.quantity}<br>
+                                    <b>Status:</b> ${offer.status}<br>
+                                    <b>Accepted At:</b> ${offer.accepted_at ? new Date(offer.accepted_at).toLocaleString() : 'Not accepted'}<br>
+                                    <b>Assigned Rescuer:</b> ${offer.assigned_rescuer_id ? offer.rescuer_username : 'Not assigned'}<br>
+                                    ${offer.is_accepted ? '' : `<button class="accept-offer" data-offer-id="${offerId}" style="display:inline-block;">Accept</button>`}
+                                    ${offer.is_accepted && !alreadyLoaded ? `<button class="load-items" data-offer-id="${offerId}" style="display:none;">Load Items</button>` : ''}
+                                `;
 
-                                                if (acceptButton && offer.is_accepted) {
-                                                    acceptButton.style.display = 'none';
-                                                }
+                                                const marker = L.marker([offer.latitude, offer.longitude], { icon: markerIcon })
+                                                    .addTo(map)
+                                                    .bindPopup(generatePopupContent())
+                                                    .on('popupopen', function () {
+                                                        const acceptButton = document.querySelector(`.accept-offer[data-offer-id="${offerId}"]`);
+                                                        const loadItemsButton = document.querySelector(`.load-items[data-offer-id="${offerId}"]`);
 
-                                                if (acceptButton) {
-                                                    acceptButton.addEventListener('click', function () {
-                                                        fetch('/tasks/accept_offer_task', {
-                                                            method: 'POST',
-                                                            headers: {
-                                                                'Content-Type': 'application/json'
-                                                            },
-                                                            body: JSON.stringify({
-                                                                rescuer_id: rescuerId,
-                                                                offer_id: offerId
-                                                            })
-                                                        })
-                                                            .then(response => response.json())
-                                                            .then(data => {
-                                                                if (data.success) {
-                                                                    Swal.fire({ title: 'Success!', text: 'Offer accepted successfully!', icon: 'success', confirmButtonText: 'OK' });
-                                                                    acceptButton.style.display = 'none'; // Hide the button after successful acceptance
-                                                                    marker.setIcon(circleIconGreen); // Change marker to green after accepting
+                                                        if (acceptButton && offer.is_accepted) {
+                                                            acceptButton.style.display = 'none';
+                                                        }
 
-                                                                    // Draw line between the rescuer and the accepted task
-                                                                    L.polyline([rescuerLatLng, L.latLng(offer.latitude, offer.longitude)], {
-                                                                        color: 'blue',
-                                                                        weight: 2.5,
-                                                                        opacity: 0.8
-                                                                    }).addTo(map);
-                                                                } else {
-                                                                    Swal.fire({ title: 'Error!', text: data.message, icon: 'error', confirmButtonText: 'OK' });
-                                                                    console.error('Failed to accept offer:', data.message);
-                                                                }
-                                                            })
-                                                            .catch(error => console.error('Error accepting offer:', error));
+                                                        if (acceptButton) {
+                                                            acceptButton.addEventListener('click', function () {
+                                                                fetch('/tasks/accept_offer_task', {
+                                                                    method: 'POST',
+                                                                    headers: {
+                                                                        'Content-Type': 'application/json'
+                                                                    },
+                                                                    body: JSON.stringify({
+                                                                        rescuer_id: rescuerId,
+                                                                        offer_id: offerId
+                                                                    })
+                                                                })
+                                                                    .then(response => response.json())
+                                                                    .then(data => {
+                                                                        if (data.success) {
+                                                                            Swal.fire({ title: 'Success!', text: 'Offer accepted successfully!', icon: 'success', confirmButtonText: 'OK' });
+                                                                            acceptButton.style.display = 'none'; // Hide the button after successful acceptance
+                                                                            marker.setIcon(circleIconGreen); // Change marker to green after accepting
+
+                                                                            acceptedOfferId = offerId;  //Store the accepted offer ID
+
+                                                                            // Draw line between the rescuer and the accepted task
+                                                                            L.polyline([rescuerLatLng, L.latLng(offer.latitude, offer.longitude)], {
+                                                                                color: 'blue',
+                                                                                weight: 2.5,
+                                                                                opacity: 0.8
+                                                                            }).addTo(map);
+                                                                        } else {
+                                                                            Swal.fire({ title: 'Error!', text: data.message, icon: 'error', confirmButtonText: 'OK' });
+                                                                            console.error('Failed to accept offer:', data.message);
+                                                                        }
+                                                                    })
+                                                                    .catch(error => console.error('Error accepting offer:', error));
+                                                            });
+                                                        }
+
+                                                        if (loadItemsButton && !alreadyLoaded) {
+                                                            checkProximityToOffer(marker, loadItemsButton, alreadyLoaded);  // Pass marker and button
+                                                            // Add "Load Items" button functionality once, only if it's not already loaded
+                                                            if (!loadItemsButton.hasListener) {
+                                                                loadItemsButton.hasListener = true;  // Prevent re-adding the listener
+
+                                                                // Add "Load Items" button functionality
+                                                                loadItemsButton.addEventListener('click', function () {
+                                                                    const itemName = offer.item_name;
+                                                                    const itemQuantity = offer.quantity;
+
+                                                                    // Send the data to the backend to store in the rescuer_load table
+                                                                    fetch('/rescuer_form/load_items', {
+                                                                        method: 'POST',
+                                                                        headers: {
+                                                                            'Content-Type': 'application/json'
+                                                                        },
+                                                                        body: JSON.stringify({
+                                                                            rescuer_id: rescuerId,
+                                                                            item_name: itemName,
+                                                                            quantity: itemQuantity,
+                                                                            offer_id: offerId
+                                                                        })
+                                                                    })
+                                                                        .then(response => response.json())
+                                                                        .then(data => {
+                                                                            if (data.success) {
+                                                                                Swal.fire({
+                                                                                    title: 'Success!',
+                                                                                    text: 'Items successfully loaded into your vehicle.',
+                                                                                    icon: 'success',
+                                                                                    confirmButtonText: 'OK'
+                                                                                });
+
+                                                                                // Hide the "Load Items" button after successful insertion
+                                                                                loadItemsButton.style.display = 'none';
+                                                                                loadItemsButton.disabled = true;
+
+                                                                                // Mark as already loaded and stop proximity check
+                                                                                alreadyLoaded = true;
+                                                                            } else {
+                                                                                Swal.fire({
+                                                                                    title: 'Error!',
+                                                                                    text: data.message,
+                                                                                    icon: 'error',
+                                                                                    confirmButtonText: 'OK'
+                                                                                });
+                                                                            }
+                                                                        })
+                                                                        .catch(error => console.error('Error loading items:', error));
+                                                                });
+                                                            }
+                                                        }
                                                     });
+
+                                                markers[offerId] = marker;
+
+                                                // If the offer is already accepted, draw the line immediately
+                                                if (offer.is_accepted && offer.assigned_rescuer_id === rescuerId) {
+                                                    L.polyline([rescuerLatLng, L.latLng(offer.latitude, offer.longitude)], {
+                                                        color: 'blue',
+                                                        weight: 2.5,
+                                                        opacity: 0.8
+                                                    }).addTo(map);
                                                 }
-                                            });
-
-                                            markers[offerId] = marker;
-
-                                        // If the offer is already accepted, draw the line immediately
-                                        if (offer.is_accepted && offer.assigned_rescuer_id === rescuerId) {
-                                            L.polyline([rescuerLatLng, L.latLng(offer.latitude, offer.longitude)], {
-                                                color: 'blue',
-                                                weight: 2.5,
-                                                opacity: 0.8
-                                            }).addTo(map);
-                                        }
-
-
+                                            })
+                                            .catch(error => console.error('Error checking if items are loaded:', error));
                                     }
                                 });
                             } else {
@@ -196,6 +262,27 @@ document.addEventListener('DOMContentLoaded', function () {
                         })
                         .catch(error => console.error('Error fetching offers:', error));
                 }
+
+
+                // Function to check the rescuer's proximity to the offer marker
+                function checkProximityToOffer(marker, loadItemsButton, alreadyLoaded) {
+                    // Declare proximityCheckInterval here to ensure it's in scope
+                    const proximityCheckInterval = setInterval(() => {
+                        const distance = rescuerMarker.getLatLng().distanceTo(marker.getLatLng());  // Updated position
+
+                        if (distance <= 50 && !alreadyLoaded) {
+                            loadItemsButton.style.display = 'inline-block'; // Show the "Load Items" button when conditions are met
+                        } else {
+                            loadItemsButton.style.display = 'none'; // Hide otherwise
+                        }
+                    }, 1000); // Check every second
+
+                    // Clear interval when button is clicked
+                    loadItemsButton.addEventListener('click', () => {
+                        clearInterval(proximityCheckInterval);  // Stop proximity checking after items are loaded
+                    });
+                }
+
 
 
                 // Handle rescuer marker dragend event to update rescuer's location
@@ -232,7 +319,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         if (distance <= 100) {
                             loadButton.disabled = false;
                             unloadButton.disabled = false;
-                            handleBaseProximity();
+                            
                         } else {
                             loadButton.disabled = true;
                             unloadButton.disabled = true;
@@ -311,7 +398,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                             }
                                         });
 
-                                        markers[requestId] = marker;
+                                    markers[requestId] = marker;
 
                                     // If the request is already accepted, draw the line immediately
                                     if (request.is_accepted && request.assigned_rescuer_id === rescuerId) {
@@ -539,7 +626,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 });
-
 
 document.addEventListener('DOMContentLoaded', function () {
     const loadButton = document.getElementById('loadButton');  // button for loading items

@@ -63,5 +63,59 @@ router.get('/get_rescuer_load', (req, res) => {
     });
 });
 
+// Route to load items into the rescuer's vehicle
+router.post('/load_items', (req, res) => {
+    const { rescuer_id, item_name, quantity, offer_id } = req.body;
+
+    // Check if the item already exists in the rescuer_load table for the rescuer
+    const checkQuery = 'SELECT * FROM rescuer_load WHERE rescuer_id = ? AND item_name = ? AND offer_id = ?';
+    req.db.query(checkQuery, [rescuer_id, item_name,offer_id], (err, result) => {
+        if (err) {
+            console.error('Error checking for existing item in rescuer_load:', err);
+            return res.status(500).json({ success: false, message: 'Server error while checking existing items.' });
+        }
+
+        if (result.length > 0) {
+            // Item already exists, update the quantity
+            const updateQuery = 'UPDATE rescuer_load SET quantity = quantity + ? WHERE rescuer_id = ? AND item_name = ? AND offer_id = ?';
+            req.db.query(updateQuery, [quantity, rescuer_id, item_name,offer_id], (err, updateResult) => {
+                if (err) {
+                    console.error('Error updating item quantity in rescuer_load:', err);
+                    return res.status(500).json({ success: false, message: 'Server error while updating item quantity.' });
+                }
+                return res.json({ success: true, message: 'Item quantity updated successfully.' });
+            });
+        } else {
+            // Item does not exist, insert a new record
+            const insertQuery = 'INSERT INTO rescuer_load (rescuer_id,offer_id, item_name, quantity) VALUES (?, ?, ?,?)';
+            req.db.query(insertQuery, [rescuer_id, offer_id, item_name, quantity], (err, insertResult) => {
+                if (err) {
+                    console.error('Error inserting new item into rescuer_load:', err);
+                    return res.status(500).json({ success: false, message: 'Server error while inserting new item.' });
+                }
+                return res.json({ success: true, message: 'Item loaded successfully.' });
+            });
+        }
+    });
+});
+
+// Route to check if items are already loaded
+router.get('/check_if_loaded', (req, res) => {
+    const { rescuer_id, offer_id } = req.query;
+
+    const checkQuery = 'SELECT COUNT(*) AS count FROM rescuer_load WHERE rescuer_id = ? AND offer_id = ?';
+
+    req.db.query(checkQuery, [rescuer_id, offer_id], (err, results) => {
+        if (err) {
+            console.error('Error checking load status:', err);
+            return res.status(500).json({ success: false, message: 'Server error' });
+        }
+        
+
+        const alreadyLoaded = results[0].count > 0;
+        res.json({ success: true, alreadyLoaded });
+    });
+});
+
 
 module.exports = router;
