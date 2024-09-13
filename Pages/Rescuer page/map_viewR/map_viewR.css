@@ -70,6 +70,84 @@ body {
 }
 
 
+/* Styles for the Load Items modal pop-up */
+.modal2 {
+    display: none; /* Initially hidden */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content2 {
+    background-color: #ADD8E6;
+    margin: auto;
+    padding: 30px;
+    border: 4px solid #808080;
+    width: 900px; /* Width for the modal */
+    height: 600px; /* Height for the modal */
+    text-align: center;
+    position: relative;
+    overflow-y: auto; /* Scroll if needed */
+    z-index: 1001;
+}
+
+.close-load-popup-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    color: #000080;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-load-popup-btn:hover,
+.close-load-popup-btn:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.load-table-wrapper {
+    height: auto;
+    overflow-y: auto;
+}
+
+.load-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.load-table th,
+.load-table td {
+    border: 1px solid #000080;
+    width: 50%;
+    padding: 8px;
+    text-align: left;
+    background-color: #ffffff;
+}
+
+.load-table th {
+    background-color: #f0f8ff;
+    color: #000080;
+}
+
+.load-popup-title {
+    color: #000080;
+    padding-bottom: 10px;
+}
+
+
+
+
+
 .table-wrapper {
     width: 38%;
     margin-right: 2%;
@@ -217,8 +295,8 @@ body {
     margin: auto;
     padding: 30px;
     border: 4px solid #808080;
-    width: 600px; /* Πλάτος για το παράθυρο */
-    height: 300px; /* Ύψος για το παράθυρο */
+    width: 900px; /* Πλάτος για το παράθυρο */
+    height: 600px; /* Ύψος για το παράθυρο */
     text-align: center;
     position: relative;
     overflow-y: auto; /* Scroll αν χρειαστεί */
@@ -282,4 +360,273 @@ body {
 
 .load-btn:enabled, .unload-btn:enabled {
     cursor: pointer; /* Change cursor when enabled */
+}
+
+
+/* Styles for the Load Items modal pop-up */
+.modal2 {
+    display: none; /* Initially hidden */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content2 {
+    background-color: #ADD8E6;
+    margin: auto;
+    padding: 30px;
+    border: 4px solid #808080;
+    width: 900px; /* Width for the modal */
+    height: 600px; /* Height for the modal */
+    text-align: center;
+    position: relative;
+    overflow-y: auto; /* Scroll if needed */
+    z-index: 1001;
+}
+
+.close-load-popup-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    color: #000080;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-load-popup-btn:hover,
+.close-load-popup-btn:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.load-popup-title {
+    color: #000080;
+    padding-bottom: 10px;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.load-table-wrapper {
+    height: auto;
+    overflow-y: auto;
+}
+
+.load-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.load-table th,
+.load-table td {
+    border: 1px solid #000080;
+    width: 50%;
+    padding: 8px;
+    text-align: left;
+    background-color: #ffffff;
+}
+
+.load-table th {
+    background-color: #f0f8ff;
+    color: #000080;
+}
+
+/* Hover and selected row styles */
+.load-table tbody tr:hover td {
+    background-color: #add8e6;  /* Ανοιχτό μπλε για το hover */
+    cursor: pointer;  /* Ο κέρσορας γίνεται χεράκι */
+}
+
+.load-table tbody tr.selected td {
+    background-color: #87cefa;  /* Σκούρο μπλε για την επιλεγμένη γραμμή */
+}
+
+/* Styling for the form container */
+.form-container {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+}
+
+.form-label {
+    font-size: 1.2em;
+    color: #000080;
+    font-weight: bold;
+}
+
+.form-row {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Add some space between the label and the input */
+}
+
+.form-input {
+    padding: 6px;
+    border: 1px solid #000080;
+    border-radius: 4px;
+    margin-left: 20px;
+}
+
+/* Make both forms white */
+.form-input {
+    background-color: #ffffff; /* White background for both fields */
+}
+
+/* Adjust size of "Selected Item" form */
+#selectedItem {
+    width: 40%; /* Slightly larger than the quantity input */
+}
+
+.form-input[type="number"] {
+    width: 20%; /* Smaller width for the quantity input */
+}
+
+
+
+/* Styling for the Load Item button */
+.load-item-button {
+    padding: 10px 20px;
+    background-color: #FF7F50;  
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    margin-top: 60px;
+   margin-left: 380px;
+    
+}
+
+.load-item-button:hover {
+    background-color: #FF6347;
+}
+
+
+/* Styles for the Unload Items modal pop-up */
+.modal3 {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content3 {
+    background-color: #ADD8E6;
+    margin: auto;
+    padding: 30px;
+    border: 4px solid #808080;
+    width: 900px;
+    height: 600px;
+    text-align: center;
+    position: relative;
+    overflow-y: auto;
+    z-index: 1001;
+}
+
+.close-unload-popup-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    color: #000080;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-unload-popup-btn:hover,
+.close-unload-popup-btn:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.unload-table-wrapper {
+    height: auto;
+    overflow-y: auto;
+}
+
+.unload-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.unload-table th,
+.unload-table td {
+    border: 1px solid #000080;
+    width: 50%;
+    padding: 8px;
+    text-align: left;
+    background-color: #ffffff;
+}
+
+.unload-table th {
+    background-color: #f0f8ff;
+    color: #000080;
+}
+
+.unload-popup-title {
+    color: #000080;
+    padding-bottom: 10px;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.unload-item-button {
+    padding: 10px 20px;
+    background-color: #FF7F50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    margin-top: 120px;
+    margin-left: 300px;
+    margin-right: 20px;
+}
+
+.unload-item-button:hover {
+    background-color: #FF6347;
+}
+
+.unload-item-button2 {
+    padding: 10px 20px;
+    background-color: #FF7F50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    margin-top: 120px;
+}
+
+.unload-item-button2:hover {
+    background-color: #FF6347;
+}
+
+
+/* Hover and selected row styles for the Unload Items */
+.unload-table tbody tr:hover td {
+    background-color: #add8e6;  /* Ανοιχτό μπλε για το hover */
+    cursor: pointer;  /* Ο κέρσορας γίνεται χεράκι */
+}
+
+.unload-table tbody tr.selected td {
+    background-color: #87cefa;  /* Σκούρο μπλε για την επιλεγμένη γραμμή */
 }

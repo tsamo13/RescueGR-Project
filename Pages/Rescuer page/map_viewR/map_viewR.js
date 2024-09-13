@@ -47,76 +47,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     
 
-    // Enable buttons and show the form when near the base
-    function handleBaseProximity() {
-        // Fetch the categories and items from the base when Load button is clicked
-        loadButton.addEventListener('click', function () {
-            fetch('/rescuer_form/get_categories_items')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        const viewLoadTableBody = document.querySelector('.view-load-table tbody');
-                        viewLoadTableBody.innerHTML = ''; // Clear the table before populating
-
-                        // Populate the table with items and categories
-                        data.items.forEach(item => {
-                            viewLoadTableBody.innerHTML += `
-                                <tr>
-                                    <td>${item.item_name}</td>
-                                    <td>${item.quantity}</td>
-                                </tr>
-                            `;
-                        });
-
-                        // Show the popup
-                        viewLoadPopup.style.display = 'flex';
-                    } else {
-                        console.error('Failed to load base items:', data.message);
-                    }
-                })
-                .catch(error => console.error('Error fetching items:', error));
-        });
-
-        // Fetch the categories and items from the base when Unload button is clicked (same as Load for now)
-        unloadButton.addEventListener('click', function () {
-            fetch('/rescuer_form/get_categories_items')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        const viewLoadTableBody = document.querySelector('.view-load-table tbody');
-                        viewLoadTableBody.innerHTML = ''; // Clear the table before populating
-
-                        // Populate the table with items and categories
-                        data.items.forEach(item => {
-                            viewLoadTableBody.innerHTML += `
-                                <tr>
-                                    <td>${item.item_name}</td>
-                                    <td>${item.quantity}</td>
-                                </tr>
-                            `;
-                        });
-
-                        // Show the popup
-                        viewLoadPopup.style.display = 'flex';
-                    } else {
-                        console.error('Failed to load base items:', data.message);
-                    }
-                })
-                .catch(error => console.error('Error fetching items:', error));
-        });
-
-        // Close the popup when the close button is clicked
-        closeViewLoadPopupBtn.addEventListener('click', function () {
-            viewLoadPopup.style.display = 'none';
-        });
-
-        // Close the popup if clicked outside of the modal
-        window.addEventListener('click', function (event) {
-            if (event.target === viewLoadPopup) {
-                viewLoadPopup.style.display = 'none';
-            }
-        });
-    }
+  
+    
 
     const tableBody = document.querySelector('.a-table tbody');
     let currentTaskId = null;
@@ -606,4 +538,276 @@ document.addEventListener('DOMContentLoaded', function () {
         popupAnchor: [0, -12] // point from which the popup should open relative to the iconAnchor
     });
 
+});
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    const loadButton = document.getElementById('loadButton');  // button for loading items
+    const loadItemsPopup = document.getElementById('loadItemsPopup');    // popup for loading items
+    const closeLoadPopupBtn = document.querySelector('.close-load-popup-btn'); // button to close the load popup window
+    const loadTableBody = document.querySelector('.load-table tbody'); // body of the table
+    const selectedItemInput = document.getElementById('selectedItem'); // Input for the selected item
+    const selectQuantityInput = document.getElementById('selectQuantity'); // Input for the quantity
+    const itemError = document.getElementById('item-error');  // Στοιχείο για το μήνυμα σφάλματος προϊόντος
+    const quantityError = document.getElementById('quantity-error');  // Στοιχείο για μηνύματα λάθους ποσότητας (αν υπάρχει)
+
+    // Event listener for "Load Items" button to open the modal
+    loadButton.addEventListener('click', function () {
+        // Display the popup
+        loadItemsPopup.style.display = 'flex';
+    });
+
+    // Function to deselect the selected row
+    function deselectRow() {
+        const selectedRow = loadTableBody.querySelector('tr.selected');
+        if (selectedRow) {
+            selectedRow.classList.remove('selected');
+            selectedItemInput.value = ''; // Clear the selected item field when deselected
+        }
+    }
+
+    // Close the popup when the close button is clicked
+    closeLoadPopupBtn.addEventListener('click', function () {
+        loadItemsPopup.style.display = 'none';
+        deselectRow();  // Call the function to deselect the row
+        selectQuantityInput.value = ''; // Καθαρισμός του πεδίου ποσότητας
+    });
+
+    // Close the popup if clicked outside of the modal
+    window.addEventListener('click', function (event) {
+        if (event.target === loadItemsPopup) {
+            loadItemsPopup.style.display = 'none';
+            deselectRow();  // Call the function to deselect the row
+            selectQuantityInput.value = ''; // Καθαρισμός του πεδίου ποσότητας
+        }
+    });
+
+    // Event listener για την επιλογή γραμμής στον πίνακα
+    loadTableBody.addEventListener('click', function (event) {
+        const row = event.target.closest('tr');  // Παίρνει την κλικαρισμένη γραμμή
+
+        if (row) {
+            // Αφαιρεί την κλάση 'selected' από όλες τις γραμμές
+            Array.from(loadTableBody.getElementsByTagName('tr')).forEach(r => r.classList.remove('selected'));
+
+            // Προσθέτει την κλάση 'selected' στην κλικαρισμένη γραμμή
+            row.classList.add('selected');
+
+            // Ενημερώνει το πεδίο "Selected Item" με το όνομα του αντικειμένου από την επιλεγμένη γραμμή
+            const itemName = row.cells[0].textContent; // Πρώτη στήλη είναι το όνομα του αντικειμένου
+            selectedItemInput.value = itemName;
+        }
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    const loadSelectedItemButton = document.getElementById('loadSelectedItemButton');
+    const selectQuantityInput = document.getElementById('selectQuantity');
+    const selectedItemInput = document.getElementById('selectedItem');
+    const loadTableBody = document.querySelector('.load-table tbody');
+
+    // Event listener για να καθαρίζεται το μήνυμα λάθους όταν ο χρήστης πληκτρολογεί στο πεδίο ποσότητας
+    selectQuantityInput.addEventListener('input', function () {
+        selectQuantityInput.setCustomValidity('');  // Καθαρισμός του μηνύματος λάθους
+    });
+
+    loadSelectedItemButton.addEventListener('click', function () {
+        let isValid = true;
+
+        // Check if an item is selected
+        if (selectedItemInput.value.trim() === "") {
+            selectedItemInput.setCustomValidity('Please select an item from the table above.');
+            selectedItemInput.reportValidity();  // Show the message with the browser style
+            isValid = false;
+        } else {
+            selectedItemInput.setCustomValidity('');  // Clear the message if valid
+        }
+
+        // Check if the quantity is a positive number
+        if (!selectQuantityInput.checkValidity()) {
+            selectQuantityInput.reportValidity();  // Use browser's message for quantity
+            isValid = false;
+        }
+
+        // Get the quantity from the selected row in the table
+        const selectedRow = loadTableBody.querySelector('tr.selected');
+        if (selectedRow) {
+            const availableQuantity = parseInt(selectedRow.cells[1].textContent, 10); // Ποσότητα από τη δεύτερη στήλη
+            const enteredQuantity = parseInt(selectQuantityInput.value, 10);
+
+            // Check if the entered quantity is greater than the available quantity
+            if (enteredQuantity > availableQuantity) {
+                selectQuantityInput.setCustomValidity(`The entered quantity (${enteredQuantity}) exceeds the available quantity (${availableQuantity}).`);
+                selectQuantityInput.reportValidity();  // Εμφάνιση του μηνύματος μόνο όταν πατηθεί το κουμπί
+                isValid = false;
+            } else {
+                selectQuantityInput.setCustomValidity('');  // Clear any previous error message
+            }
+        }
+
+        // If all is valid, proceed
+        if (isValid) {
+            console.log('Product selected and valid quantity entered.');
+
+            // Proceed with the item load (your existing logic to handle the item load goes here)
+            // ...
+
+            // Clear the form fields
+            selectedItemInput.value = '';
+            selectQuantityInput.value = '';
+
+            // Deselect the selected row from the table
+            if (selectedRow) {
+                selectedRow.classList.remove('selected');
+            }
+
+            console.log('Forms and table selection cleared.');
+        }
+    });
+});
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    const unloadButton = document.getElementById('unloadButton');  // κουμπί για το unload items
+    const unloadItemsPopup = document.getElementById('unloadItemsPopup');  // παράθυρο του unload items
+    const closeUnloadPopupBtn = document.querySelector('.close-unload-popup-btn'); // κουμπί για το κλείσιμο του unload popup
+    const unloadTableBody = document.querySelector('.unload-table tbody'); // σώμα του πίνακα unload
+    const unloadSelectedItemInput = document.getElementById('unloadSelectedItem'); // πεδίο για το επιλεγμένο αντικείμενο
+    const unloadQuantityInput = document.getElementById('unloadQuantity'); // πεδίο για την ποσότητα
+    const unloadSelectedItemButton = document.getElementById('unloadSelectedItemButton'); // κουμπί για unload item
+
+    // Event listener για να ανοίξει το παράθυρο unload items
+    unloadButton.addEventListener('click', function () {
+        // Εμφανίζει το παράθυρο
+        unloadItemsPopup.style.display = 'flex';
+    });
+
+    // Λειτουργία για να αφαιρεθεί η επιλογή από την επιλεγμένη γραμμή
+    function deselectUnloadRow() {
+        const selectedRow = unloadTableBody.querySelector('tr.selected');
+        if (selectedRow) {
+            selectedRow.classList.remove('selected');
+            unloadSelectedItemInput.value = ''; // Καθαρίζει το πεδίο επιλεγμένου αντικειμένου
+        }
+    }
+
+    // Κλείνει το παράθυρο όταν κάνουμε κλικ στο κουμπί κλεισίματος
+    closeUnloadPopupBtn.addEventListener('click', function () {
+        unloadItemsPopup.style.display = 'none';
+        deselectUnloadRow();  // Καλεί τη λειτουργία για να αφαιρεθεί η επιλογή
+        unloadQuantityInput.value = ''; // Καθαρίζει το πεδίο ποσότητας
+    });
+
+    // Κλείνει το παράθυρο αν κάνουμε κλικ έξω από το παράθυρο
+    window.addEventListener('click', function (event) {
+        if (event.target === unloadItemsPopup) {
+            unloadItemsPopup.style.display = 'none';
+            deselectUnloadRow();  // Καλεί τη λειτουργία για να αφαιρεθεί η επιλογή
+            unloadQuantityInput.value = ''; // Καθαρίζει το πεδίο ποσότητας
+        }
+    });
+
+    // Event listener για την επιλογή γραμμής στον πίνακα unload items
+    unloadTableBody.addEventListener('click', function (event) {
+        const row = event.target.closest('tr');  // Παίρνει την κλικαρισμένη γραμμή
+
+        if (row) {
+            // Αφαιρεί την κλάση 'selected' από όλες τις γραμμές
+            Array.from(unloadTableBody.getElementsByTagName('tr')).forEach(r => r.classList.remove('selected'));
+
+            // Προσθέτει την κλάση 'selected' στην κλικαρισμένη γραμμή
+            row.classList.add('selected');
+
+            // Ενημερώνει το πεδίο "Selected Item" με το όνομα του αντικειμένου από την επιλεγμένη γραμμή
+            const itemName = row.cells[0].textContent;
+            unloadSelectedItemInput.value = itemName;
+        }
+    });
+
+    // Event listener για το κουμπί "Unload Item"
+    unloadSelectedItemButton.addEventListener('click', function () {
+        let isValid = true;
+
+        // Έλεγχος αν έχει επιλεχθεί αντικείμενο
+        if (unloadSelectedItemInput.value.trim() === "") {
+            unloadSelectedItemInput.setCustomValidity('Please select an item from the table above.');
+            unloadSelectedItemInput.reportValidity();  // Εμφάνιση μηνύματος σφάλματος μόνο όταν πατηθεί το κουμπί
+            isValid = false;
+        } else {
+            unloadSelectedItemInput.setCustomValidity('');  // Καθαρισμός του μηνύματος αν είναι έγκυρο
+        }
+
+        // Έλεγχος αν η ποσότητα είναι θετικός αριθμός
+        if (!unloadQuantityInput.checkValidity()) {
+            unloadQuantityInput.reportValidity();  // Χρήση του browser μηνύματος για ποσότητα
+            isValid = false;
+        }
+
+        // Παίρνει την ποσότητα από την επιλεγμένη γραμμή στον πίνακα
+        const selectedRow = unloadTableBody.querySelector('tr.selected');
+        if (selectedRow) {
+            const availableQuantity = parseInt(selectedRow.cells[1].textContent, 10); // Ποσότητα από τη δεύτερη στήλη
+            const enteredQuantity = parseInt(unloadQuantityInput.value, 10);
+
+            // Έλεγχος αν η εισαχθείσα ποσότητα είναι μεγαλύτερη από την διαθέσιμη
+            if (enteredQuantity > availableQuantity) {
+                unloadQuantityInput.setCustomValidity(`The entered quantity (${enteredQuantity}) exceeds the available quantity (${availableQuantity}).`);
+                unloadQuantityInput.reportValidity();  // Εμφάνιση μηνύματος μόνο όταν πατηθεί το κουμπί
+                isValid = false;
+            } else {
+                unloadQuantityInput.setCustomValidity('');  // Καθαρισμός του μηνύματος σφάλματος αν η ποσότητα είναι έγκυρη
+            }
+        }
+
+        // Εάν όλα είναι έγκυρα, προχωράμε
+        if (isValid) {
+            console.log('Item selected and valid quantity entered for unloading.');
+
+            // Υλοποίηση λογικής unload εδώ
+            // ...
+
+            // Καθαρισμός των πεδίων της φόρμας
+            unloadSelectedItemInput.value = '';
+            unloadQuantityInput.value = '';
+
+            // Αφαίρεση της επιλογής από την επιλεγμένη γραμμή του πίνακα
+            if (selectedRow) {
+                selectedRow.classList.remove('selected');
+            }
+
+            console.log('Forms and table selection cleared.');
+        }
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    const unloadAllItemsButton = document.getElementById('unloadAllItemsButton');
+    const unloadTableBody = document.querySelector('.unload-table tbody'); // Αναφορά στο σώμα του πίνακα
+    const unloadItemsPopup = document.getElementById('unloadItemsPopup');
+
+    const unloadSelectedItemInput = document.getElementById('unloadSelectedItem'); // Πεδίο επιλεγμένου αντικειμένου
+    const unloadQuantityInput = document.getElementById('unloadQuantity'); // Πεδίο ποσότητας
+
+    // Αποθήκευση του αρχικού HTML για να το επαναφέρουμε
+    const originalTableContent = unloadTableBody.innerHTML;
+
+    // Event listener για το κουμπί "Unload All Items"
+    unloadAllItemsButton.addEventListener('click', function () {
+        // Κρύβει όλα τα στοιχεία του πίνακα προσωρινά
+        unloadTableBody.innerHTML = '';
+        console.log('Όλα τα στοιχεία έχουν κρυφτεί προσωρινά.');
+
+        // Καθαρίζει τα πεδία της φόρμας
+        unloadSelectedItemInput.value = '';
+        unloadQuantityInput.value = '';
+        console.log('Τα πεδία "Selected Item" και "Quantity" καθαρίστηκαν.');
+    });
+
+    // Όταν κλείνει το παράθυρο και ξανανοίγει, επαναφέρει τα δεδομένα
+    unloadItemsPopup.addEventListener('click', function (event) {
+        if (event.target === unloadItemsPopup) {
+            // Επαναφορά του αρχικού περιεχομένου όταν ξανανοίγει το παράθυρο
+            unloadTableBody.innerHTML = originalTableContent;
+        }
+    });
 });

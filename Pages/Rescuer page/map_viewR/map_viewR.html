@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="/map_viewR/map_viewR.css" /> <!-- Προσθήκη του νέου CSS αρχείου -->
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
-
 </head>
 
 <body>
@@ -21,7 +20,6 @@
         <a href="#" id="mainPageLink" class="link">Main Page</a>
         <button id="logoutButton" class="logout-button">Logout</button>
     </div>
-
 
     <div class="content-wrapper">
         <div class="map-control-container">
@@ -58,11 +56,9 @@
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="/map_viewR/map_viewR.js"></script>
-
-
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-     <!-- Pop-up window for "View Load" -->
+    <!-- Pop-up window for "View Load" -->
     <div id="viewLoadPopup" class="modal1">
         <div class="modal-content1">
             <span class="close-view-load-popup-btn">&times;</span>
@@ -84,6 +80,173 @@
             </div>
         </div>
     </div>
+
+    <!-- Pop-up window for "Load Items" -->
+    <div id="loadItemsPopup" class="modal2">
+        <div class="modal-content2">
+            <span class="close-load-popup-btn">&times;</span>
+            <h2 class="load-popup-title">Warehouse Stock</h2>
+            <div class="popup-content">
+                <div class="load-table-wrapper" style="max-height: 300px; overflow-y: scroll;">
+                    <table class="load-table">
+                        <thead>
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Water Bottles</td>
+                                <td>150</td>
+                            </tr>
+                            <tr>
+                                <td>First Aid Kits</td>
+                                <td>50</td>
+                            </tr>
+                            <tr>
+                                <td>Blankets</td>
+                                <td>200</td>
+                            </tr>
+                            <tr>
+                                <td>Canned Food</td>
+                                <td>300</td>
+                            </tr>
+                            <tr>
+                                <td>Flashlights</td>
+                                <td>100</td>
+                            </tr>
+                            <tr>
+                                <td>Batteries</td>
+                                <td>500</td>
+                            </tr>
+                            <tr>
+                                <td>Sleeping Bags</td>
+                                <td>75</td>
+                            </tr>
+                            <tr>
+                                <td>Medical Gloves</td>
+                                <td>1000</td>
+                            </tr>
+                            <tr>
+                                <td>Hand Sanitizers</td>
+                                <td>250</td>
+                            </tr>
+                            <tr>
+                                <td>Tents</td>
+                                <td>40</td>
+                            </tr>
+                            <tr>
+                                <td>Raincoats</td>
+                                <td>60</td>
+                            </tr>
+                            <tr>
+                                <td>Face Masks</td>
+                                <td>5000</td>
+                            </tr>
+                            <tr>
+                                <td>Gas Canisters</td>
+                                <td>30</td>
+                            </tr>
+                            <tr>
+                                <td>Portable Stoves</td>
+                                <td>25</td>
+                            </tr>
+                            <tr>
+                                <td>Water Purification Tablets</td>
+                                <td>1000</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Form for Selected Item and Quantity -->
+                <div class="form-container">
+                    <div class="form-row">
+                        <label for="selectedItem" class="form-label">Selected Item:</label>
+                        <input type="text" id="selectedItem" class="form-input"  required>
+                        
+                    </div>
+
+                    <div class="form-row">
+                        <label for="selectQuantity" class="form-label">Select Quantity:</label>
+                        <input type="number" id="selectQuantity" class="form-input" min="1" required placeholder="Enter quantity">
+                    </div>
+
+                    <div class="form-row">
+                        <button id="loadSelectedItemButton" class="load-item-button"><b>Load Item</b></button>
+                    </div>
+
+                    
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    
+<!-- Pop-up window for "Unload Items" -->
+<div id="unloadItemsPopup" class="modal3">
+    <div class="modal-content3">
+        <span class="close-unload-popup-btn">&times;</span>
+        <h2 class="unload-popup-title">Vehicle Load</h2>
+        <div class="popup-content">
+            <div class="unload-table-wrapper" style="max-height: 300px; overflow-y: scroll;">
+                <table class="unload-table">
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Ropes</td>
+                            <td>30</td>
+                        </tr>
+                        <tr>
+                            <td>Water Bottles</td>
+                            <td>100</td>
+                        </tr>
+                        <tr>
+                            <td>First Aid Kits</td>
+                            <td>50</td>
+                        </tr>
+                        <tr>
+                            <td>Blankets</td>
+                            <td>200</td>
+                        </tr>
+                        <tr>
+                            <td>Flashlights</td>
+                            <td>15</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Form for Selected Item and Quantity -->
+            <div class="form-container">
+                <div class="form-row">
+                    <label for="unloadSelectedItem" class="form-label">Selected Item:</label>
+                    <input type="text" id="unloadSelectedItem" class="form-input" required>
+                </div>
+
+                <div class="form-row">
+                    <label for="unloadQuantity" class="form-label">Select Quantity:</label>
+                    <input type="number" id="unloadQuantity" class="form-input" min="1" required placeholder="Enter quantity">
+                </div>
+
+                <div class="form-row">
+                    <button id="unloadSelectedItemButton" class="unload-item-button"><b>Unload Item</b></button>
+                    <button id="unloadAllItemsButton" class="unload-item-button2"><b>Unload All Items</b></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+        
+    
 
 </body>
 
