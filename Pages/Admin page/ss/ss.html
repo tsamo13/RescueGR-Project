@@ -19,6 +19,25 @@
         <button id="logoutButton" class="logout-button">Logout</button>
     </div>
 
+    <div class="main-content">
+        <div class="chart-container">
+            <canvas id="Chart"></canvas>
+        </div>
+
+        <div class="form-container">
+            <form id="dateForm">
+                <label for="startDate">Start Date:</label>
+                <input type="date" id="startDate" name="startDate" required><br>
+
+                <label for="endDate">End Date:</label>
+                <input type="date" id="endDate" name="endDate" required><br>
+
+                <button type="submit" id="showStatisticsButton"><b>Show Statistics</b></button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="/ss/ss.js"></script>
 </body>
 
