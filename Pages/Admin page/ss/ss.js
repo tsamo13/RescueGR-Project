@@ -78,9 +78,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const startDate = new Date(startDateInput.value);
         const endDate = new Date(endDateInput.value);
 
-        if (endDate <= startDate) {
+        if (endDate < startDate) {
             event.preventDefault(); // Prevent form submission
-            alert("The end date must be after the start date.");
+            alert("The end date must be the same or after the start date.");
         }
     });
 });
