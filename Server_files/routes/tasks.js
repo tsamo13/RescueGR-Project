@@ -7,7 +7,7 @@ function updateRescuerAvailability(rescuer_id, req, res) {
         SELECT COUNT(*) AS task_count 
         FROM task 
         WHERE rescuer_id = ? 
-        AND (status = 'Pending' OR status = 'Completed')
+        AND status = 'Pending'
     `;
 
     req.db.query(countTasksSql, [rescuer_id], (err, result) => {
@@ -39,7 +39,7 @@ function checkRescuerTaskLimit(rescuer_id, req, res, next) {
         SELECT COUNT(*) AS task_count 
         FROM task 
         WHERE rescuer_id = ? 
-        AND (status = 'Pending' OR status = 'Completed')
+        AND (status = 'Pending')
     `;
 
     req.db.query(countTasksSql, [rescuer_id], (err, result) => {
@@ -288,7 +288,7 @@ router.get('/get_pending_tasks', (req, res) => {
 
 // Route to mark task and offer as completed
 router.post('/complete_task', (req, res) => {
-    const { task_id, offer_id } = req.body;
+    const { task_id, offer_id,rescuer_id } = req.body;
     const completedAt = new Date();
 
     // Update task status in the `tasks` table
@@ -308,6 +308,8 @@ router.post('/complete_task', (req, res) => {
                 console.error('Error updating offer status:', err);
                 return res.status(500).json({ success: false, message: 'Failed to update offer status.' });
             }
+
+            updateRescuerAvailability(rescuer_id, req, res);
 
             // Success
             res.json({ success: true, message: 'Task and offer marked as completed.' });

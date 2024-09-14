@@ -508,6 +508,7 @@ completeTaskBtn.addEventListener('click', function () {
         body: JSON.stringify({
             task_id: currentTaskId,
             offer_id: currentTaskIdentifier,
+            rescuer_id: rescuerId
         })
     })
     .then(response => response.json())
