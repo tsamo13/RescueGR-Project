@@ -284,4 +284,35 @@ router.get('/get_pending_tasks', (req, res) => {
     });
 });
 
+
+
+// Route to mark task and offer as completed
+router.post('/complete_task', (req, res) => {
+    const { task_id, offer_id } = req.body;
+    const completedAt = new Date();
+
+    // Update task status in the `tasks` table
+    const updateTaskQuery = 'UPDATE task SET status = "Completed" WHERE task_id = ?';
+    
+    req.db.query(updateTaskQuery, [task_id], (err, taskResult) => {
+        if (err) {
+            console.error('Error updating task status:', err);
+            return res.status(500).json({ success: false, message: 'Failed to update task status.' });
+        }
+
+        // Update offer status and set the `completed_at` in the `offers` table
+        const updateOfferQuery = 'UPDATE offer SET status = "Completed", completed_at = ? WHERE offer_id = ?';
+        
+        req.db.query(updateOfferQuery, [completedAt, offer_id], (err, offerResult) => {
+            if (err) {
+                console.error('Error updating offer status:', err);
+                return res.status(500).json({ success: false, message: 'Failed to update offer status.' });
+            }
+
+            // Success
+            res.json({ success: true, message: 'Task and offer marked as completed.' });
+        });
+    });
+});
+
 module.exports = router;

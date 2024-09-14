@@ -47,10 +47,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 
-
-
-
-    const tableBody = document.querySelector('.a-table tbody');
     let currentTaskId = null;
     let rescuerId;
     let acceptedRequests = {};
@@ -319,7 +315,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         if (distance <= 100) {
                             loadButton.disabled = false;
                             unloadButton.disabled = false;
-                            
+
                         } else {
                             loadButton.disabled = true;
                             unloadButton.disabled = true;
@@ -450,6 +446,11 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(error => console.error('Error fetching tasks:', error));
     }
 
+
+    // Get references to buttons
+    const completeTaskBtn = document.getElementById('completeTaskBtn');
+    const tableBody = document.getElementById('tasks-table-body');
+
     // Handle task row selection
     tableBody.addEventListener('click', function (event) {
         const row = event.target.closest('tr');
@@ -469,8 +470,78 @@ document.addEventListener('DOMContentLoaded', function () {
             currentTaskId = row.getAttribute('data-task-id');
             currentTaskIdentifier = row.getAttribute('data-offer-id');
             type = row.getAttribute('data-type');
+
+            completeTaskBtn.disabled = true;
+
+            // Check if the items for this offer/task have been loaded by the rescuer
+            fetch(`/rescuer_form/check_if_loaded?rescuer_id=${rescuerId}&offer_id=${currentTaskIdentifier}`)
+                .then(response => response.json())
+                .then(result => {
+                    if (result.alreadyLoaded) {
+                        // If the items are loaded, enable the "Complete Task" button
+                        completeTaskBtn.disabled = false;
+                        cancelTaskBtn.disabled = true; // Disable the "Cancel Task" button
+                    } else {
+                        // If not loaded, keep the button disabled
+                        completeTaskBtn.disabled = true;
+                    }
+                })
+                .catch(error => console.error('Error checking if items are loaded:', error));
         }
     });
+
+    // Handle "Complete Task" button click
+completeTaskBtn.addEventListener('click', function () {
+    if (!currentTaskIdentifier) {
+        console.error('No task selected');
+        return;
+    }
+
+    const row = document.querySelector(`tr[data-offer-id="${currentTaskIdentifier}"]`);
+
+    // 1. Send request to update the task status and offer status in the backend
+    fetch('/tasks/complete_task', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            task_id: currentTaskId,
+            offer_id: currentTaskIdentifier,
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // 2. Remove the row from the table
+            if (row) {
+                row.remove(); // Removes the task row from the table
+            }
+
+            // 3. Show success message
+            Swal.fire({
+                title: 'Success!',
+                text: 'Task and Offer have been marked as completed!',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
+
+            // Optionally, disable the "Complete Task" button after the row is removed
+            completeTaskBtn.disabled = true;
+        } else {
+            Swal.fire({
+                title: 'Error!',
+                text: data.message,
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+            console.error('Failed to complete the task:', data.message);
+        }
+    })
+    .catch(error => console.error('Error completing task:', error));
+});
+
+
 
     // Handle the "Cancel Task" button click event
     document.querySelector('.cancel-task-btn').addEventListener('click', function () {

@@ -36,7 +36,7 @@ router.get('/get_offer_locations', (req, res) => {
         LEFT JOIN 
             user rescuer_user ON r.user_id = rescuer_user.user_id  
         WHERE 
-            o.assigned_rescuer_id IS NULL OR o.assigned_rescuer_id = ?
+            (o.assigned_rescuer_id IS NULL OR o.assigned_rescuer_id = ?) AND o.status != 'Completed'
       `;
 
     req.db.query(query,[req.query.rescuerId], (error, results) => {

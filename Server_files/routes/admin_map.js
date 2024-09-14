@@ -101,7 +101,10 @@ router.get('/get_offer_locations', (req, res) => {
             rescuer r ON o.assigned_rescuer_id = r.rescuer_id  
         LEFT JOIN 
             user rescuer_user ON r.user_id = rescuer_user.user_id
-        `;
+        WHERE
+            o.status != 'Completed'
+
+         `;
 
     req.db.query(query, (error, results) => {
         if (error) {
