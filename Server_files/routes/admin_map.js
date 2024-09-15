@@ -35,6 +35,8 @@ router.get('/get_request_locations', (req, res) => {
         rescuer res ON r.assigned_rescuer_id = res.rescuer_id  
     LEFT JOIN 
         user rescuer_user ON res.user_id = rescuer_user.user_id  
+        WHERE
+            r.status != 'Completed'
     `;
 
     req.db.query(query, (error, results) => {
