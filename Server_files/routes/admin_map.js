@@ -54,11 +54,15 @@ router.get('/fetch_rescuers', (req, res) => {
     const db = req.db;
 
     const sql = `
-        SELECT rescuer_id, u.name, ST_X(u.location) AS lat, ST_Y(u.location) AS lng, availability
+        SELECT r.rescuer_id, u.name, ST_X(u.location) AS lat, ST_Y(u.location) AS lng, r.availability,
+        GROUP_CONCAT(CONCAT(rl.item_name, ' (', rl.quantity, ')') SEPARATOR ', ') AS load_items
         FROM rescuer r
         JOIN user u ON r.user_id = u.user_id
+        LEFT JOIN rescuer_load rl ON r.rescuer_id = rl.rescuer_id
         WHERE u.location IS NOT NULL
+        GROUP BY r.rescuer_id
     `;
+    
 
     db.query(sql, (err, results) => {
         if (err) {

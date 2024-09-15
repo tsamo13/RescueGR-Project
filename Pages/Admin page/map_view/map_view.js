@@ -183,7 +183,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     const rescuerMarker = L.marker([rescuer.lat, rescuer.lng], { icon: redIcon })
                         .addTo(map)
                         .bindPopup(`Rescuer: <b>${rescuer.name}</b><br>
-                            Availability: <b>${rescuer.availability === 1 ? 'Available' : 'Unavailable'}</b>`)
+                            Availability: <b>${rescuer.availability === 1 ? 'Available' : 'Unavailable'}</b></br>
+                            Load: <b>${rescuer.load_items ? rescuer.load_items : 'No items loaded'}</b>`)
                         .openPopup();
 
                     // Fetch the offer locations and display them on the map
