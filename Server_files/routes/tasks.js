@@ -287,7 +287,7 @@ router.get('/get_pending_tasks', (req, res) => {
 
 
 // Route to mark task and offer as completed
-router.post('/complete_task', (req, res) => {
+router.post('/complete_offer_task', (req, res) => {
     const { task_id, offer_id,rescuer_id } = req.body;
     const completedAt = new Date();
 
@@ -301,9 +301,9 @@ router.post('/complete_task', (req, res) => {
         }
 
         // Update offer status and set the `completed_at` in the `offers` table
-        const updateOfferQuery = 'UPDATE offer SET status = "Completed", completed_at = ? WHERE offer_id = ?';
+        const updateOfferQuery = 'UPDATE offer SET status = "Completed", completed_at = NOW() WHERE offer_id = ?';
         
-        req.db.query(updateOfferQuery, [completedAt, offer_id], (err, offerResult) => {
+        req.db.query(updateOfferQuery, [offer_id], (err, offerResult) => {
             if (err) {
                 console.error('Error updating offer status:', err);
                 return res.status(500).json({ success: false, message: 'Failed to update offer status.' });
@@ -313,6 +313,32 @@ router.post('/complete_task', (req, res) => {
 
             // Success
             res.json({ success: true, message: 'Task and offer marked as completed.' });
+        });
+    });
+});
+
+// Route to mark a request task as completed
+router.post('/complete_request_task', (req, res) => {
+    const { task_id, request_id, rescuer_id } = req.body;
+
+    const completeTaskQuery = 'UPDATE task SET status = "Completed" WHERE task_id = ?';
+    
+    req.db.query(completeTaskQuery, [task_id], (err, result) => {
+        if (err) {
+            console.error('Error completing request task:', err);
+            return res.status(500).json({ success: false, message: 'Server error while completing the task' });
+        }
+
+        // Optionally, update the request status to "Completed" as well
+        const updateRequestQuery = 'UPDATE request SET status = "Completed", completed_at = NOW() WHERE request_id = ?';
+        req.db.query(updateRequestQuery, [request_id], (err, requestResult) => {
+            if (err) {
+                console.error('Error updating request status:', err);
+                return res.status(500).json({ success: false, message: 'Server error while updating request status' });
+            }
+            updateRescuerAvailability(rescuer_id, req, res);
+
+            return res.json({ success: true, message: 'Request task and status marked as completed.' });
         });
     });
 });

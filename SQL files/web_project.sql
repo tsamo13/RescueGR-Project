@@ -124,6 +124,7 @@ CREATE TABLE rescuer_load (
 rescuer_load_id INT PRIMARY KEY AUTO_INCREMENT,
 rescuer_id INT,
 offer_id INT,
+request_id INT,
 item_name VARCHAR(100) NOT NULL,
 quantity INT NOT NULL,
 FOREIGN KEY (rescuer_id) REFERENCES rescuer(rescuer_id)

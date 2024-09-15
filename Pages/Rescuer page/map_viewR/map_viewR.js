@@ -335,75 +335,142 @@ document.addEventListener('DOMContentLoaded', function () {
                                     // Set marker to green if the task is accepted, otherwise red
                                     const markerIcon = request.is_accepted ? squareIconGreen : squareIconRed;
 
-                                    const generatePopupContent = () => `
-                                        <h1>Request</h1><br>
-                                        <b>Name:</b> ${request.name}<br>
-                                        <b>Phone:</b> ${request.phone}<br>
-                                        <b>Created At:</b> ${new Date(request.created_at).toLocaleString()}<br>
-                                        <b>Item:</b> ${request.item_name}<br>
-                                        <b>Quantity:</b> ${request.quantity}<br>
-                                        <b>Status:</b> ${request.status}<br>
-                                        <b>Accepted At:</b> ${request.accepted_at ? new Date(request.accepted_at).toLocaleString() : 'Not accepted'}<br>
-                                        <b>Assigned Rescuer:</b> ${request.assigned_rescuer_id ? request.rescuer_username : 'Not assigned'}<br>
-                                        ${request.is_accepted ? '' : `<button class="accept-request" data-request-id="${requestId}" style="display:inline-block;">Accept</button>`}
-                                    `;
+                                    // Fetch to check if items are already unloaded
+                                    fetch(`/rescuer_form/check_if_unloaded?rescuer_id=${rescuerId}&request_id=${requestId}`)
+                                        .then(response => response.json())
+                                        .then(result => {
+                                            let alreadyUnloaded = result.alreadyUnloaded;
 
-                                    const marker = L.marker([request.latitude, request.longitude], { icon: markerIcon })
-                                        .addTo(map)
-                                        .bindPopup(generatePopupContent())
-                                        .on('popupopen', function () {
-                                            const acceptButton = document.querySelector(`.accept-request[data-request-id="${requestId}"]`);
+                                            const generatePopupContent = () => `
+                            <h1>Request</h1><br>
+                            <b>Name:</b> ${request.name}<br>
+                            <b>Phone:</b> ${request.phone}<br>
+                            <b>Created At:</b> ${new Date(request.created_at).toLocaleString()}<br>
+                            <b>Item:</b> ${request.item_name}<br>
+                            <b>Quantity:</b> ${request.quantity}<br>
+                            <b>Status:</b> ${request.status}<br>
+                            <b>Accepted At:</b> ${request.accepted_at ? new Date(request.accepted_at).toLocaleString() : 'Not accepted'}<br>
+                            <b>Assigned Rescuer:</b> ${request.assigned_rescuer_id ? request.rescuer_username : 'Not assigned'}<br>
+                            ${request.is_accepted ? '' : `<button class="accept-request" data-request-id="${requestId}" style="display:inline-block;">Accept</button>`}
+                            ${request.is_accepted && !alreadyUnloaded ? `<button class="unload-items" data-request-id="${requestId}" style="display:none;">Unload Items</button>` : ''}
+                        `;
 
-                                            if (acceptButton && request.is_accepted) {
-                                                acceptButton.style.display = 'none';
-                                            }
+                                            const marker = L.marker([request.latitude, request.longitude], { icon: markerIcon })
+                                                .addTo(map)
+                                                .bindPopup(generatePopupContent())
+                                                .on('popupopen', function () {
+                                                    const acceptButton = document.querySelector(`.accept-request[data-request-id="${requestId}"]`);
+                                                    const unloadItemsButton = document.querySelector(`.unload-items[data-request-id="${requestId}"]`);
 
-                                            if (acceptButton) {
-                                                acceptButton.addEventListener('click', function () {
-                                                    fetch('/tasks/accept_request_task', {
-                                                        method: 'POST',
-                                                        headers: {
-                                                            'Content-Type': 'application/json'
-                                                        },
-                                                        body: JSON.stringify({
-                                                            rescuer_id: rescuerId,
-                                                            request_id: requestId
-                                                        })
-                                                    })
-                                                        .then(response => response.json())
-                                                        .then(data => {
-                                                            if (data.success) {
-                                                                Swal.fire({ title: 'Success!', text: 'Request accepted successfully!', icon: 'success', confirmButtonText: 'OK' });
-                                                                acceptButton.style.display = 'none'; // Hide the button after successful acceptance
-                                                                marker.setIcon(squareIconGreen); // Change marker to green after accepting
 
-                                                                // Draw line between the rescuer and the accepted task
-                                                                L.polyline([rescuerLatLng, L.latLng(request.latitude, request.longitude)], {
-                                                                    color: 'blue',
-                                                                    weight: 2.5,
-                                                                    opacity: 0.8
-                                                                }).addTo(map);
+                                                    if (acceptButton && request.is_accepted) {
+                                                        acceptButton.style.display = 'none';
+                                                    }
 
-                                                            } else {
-                                                                Swal.fire({ title: 'Error!', text: data.message, icon: 'error', confirmButtonText: 'OK' });
-                                                                console.error('Failed to accept request:', data.message);
-                                                            }
-                                                        })
-                                                        .catch(error => console.error('Error accepting request:', error));
+                                                    if (acceptButton) {
+                                                        acceptButton.addEventListener('click', function () {
+                                                            fetch('/tasks/accept_request_task', {
+                                                                method: 'POST',
+                                                                headers: {
+                                                                    'Content-Type': 'application/json'
+                                                                },
+                                                                body: JSON.stringify({
+                                                                    rescuer_id: rescuerId,
+                                                                    request_id: requestId
+                                                                })
+                                                            })
+                                                                .then(response => response.json())
+                                                                .then(data => {
+                                                                    if (data.success) {
+                                                                        Swal.fire({ title: 'Success!', text: 'Request accepted successfully!', icon: 'success', confirmButtonText: 'OK' });
+                                                                        acceptButton.style.display = 'none'; // Hide the button after successful acceptance
+                                                                        marker.setIcon(squareIconGreen); // Change marker to green after accepting
+
+                                                                        // Draw line between the rescuer and the accepted task
+                                                                        L.polyline([rescuerLatLng, L.latLng(request.latitude, request.longitude)], {
+                                                                            color: 'blue',
+                                                                            weight: 2.5,
+                                                                            opacity: 0.8
+                                                                        }).addTo(map);
+
+                                                                    } else {
+                                                                        Swal.fire({ title: 'Error!', text: data.message, icon: 'error', confirmButtonText: 'OK' });
+                                                                        console.error('Failed to accept request:', data.message);
+                                                                    }
+                                                                })
+                                                                .catch(error => console.error('Error accepting request:', error));
+                                                        });
+                                                    }
+
+                                                    if (unloadItemsButton && !alreadyUnloaded) {
+                                                        checkProximityToRequest(marker, unloadItemsButton);  // Pass marker and button
+
+                                                        // Add "Unload Items" button functionality once
+                                                        if (!unloadItemsButton.hasListener) {
+                                                            unloadItemsButton.hasListener = true;  // Prevent re-adding the listener
+
+                                                            unloadItemsButton.addEventListener('click', function () {
+                                                                const itemName = request.item_name;
+                                                                const itemQuantity = request.quantity;
+
+                                                                // Send the data to the backend to store in the rescuer_unload table
+                                                                fetch('/rescuer_form/unload_items', {
+                                                                    method: 'POST',
+                                                                    headers: {
+                                                                        'Content-Type': 'application/json'
+                                                                    },
+                                                                    body: JSON.stringify({
+                                                                        rescuer_id: rescuerId, // Send the rescuer ID
+                                                                        item_name: itemName,   // Send the item name from the request
+                                                                        quantity: itemQuantity, // Send the item quantity from the request
+                                                                        request_id: requestId  // Send the request ID
+                                                                    })
+                                                                })
+                                                                    .then(response => response.json())
+                                                                    .then(data => {
+                                                                        if (data.success) {
+                                                                            Swal.fire({
+                                                                                title: 'Success!',
+                                                                                text: 'Items successfully unloaded.',
+                                                                                icon: 'success',
+                                                                                confirmButtonText: 'OK'
+                                                                            });
+
+                                                                            // Hide the "Unload Items" button after successful insertion
+                                                                            unloadItemsButton.style.display = 'none';
+
+                                                                            // Optionally, if the popup is closed and reopened, don't show the button again
+                                                                            unloadItemsButton.disabled = true;
+                                                                            alreadyUnloaded = true;
+                                                                        } else {
+                                                                            Swal.fire({
+                                                                                title: 'Error!',
+                                                                                text: data.message,
+                                                                                icon: 'error',
+                                                                                confirmButtonText: 'OK'
+                                                                            });
+                                                                        }
+                                                                    })
+                                                                    .catch(error => console.error('Error unloading items:', error));
+                                                            });
+                                                        }
+                                                    }
+
+
                                                 });
+
+                                            markers[requestId] = marker;
+
+                                            // If the request is already accepted, draw the line immediately
+                                            if (request.is_accepted && request.assigned_rescuer_id === rescuerId) {
+                                                L.polyline([rescuerLatLng, L.latLng(request.latitude, request.longitude)], {
+                                                    color: 'blue',
+                                                    weight: 2.5,
+                                                    opacity: 0.8
+                                                }).addTo(map);
                                             }
-                                        });
-
-                                    markers[requestId] = marker;
-
-                                    // If the request is already accepted, draw the line immediately
-                                    if (request.is_accepted && request.assigned_rescuer_id === rescuerId) {
-                                        L.polyline([rescuerLatLng, L.latLng(request.latitude, request.longitude)], {
-                                            color: 'blue',
-                                            weight: 2.5,
-                                            opacity: 0.8
-                                        }).addTo(map);
-                                    }
+                                        })
+                                        .catch(error => console.error('Error checking if items are unloaded:', error));
                                 }
                             });
                         } else {
@@ -411,6 +478,23 @@ document.addEventListener('DOMContentLoaded', function () {
                         }
                     })
                     .catch(error => console.error('Error fetching requests:', error));
+
+                // Function to check the rescuer's proximity to the request marker
+                function checkProximityToRequest(marker, unloadItemsButton) {
+                    const proximityCheckInterval = setInterval(() => {
+                        const distance = rescuerMarker.getLatLng().distanceTo(marker.getLatLng());  // Updated position
+
+                        if (distance <= 50) {
+                            unloadItemsButton.style.display = 'inline-block'; // Show the "Unload Items" button when conditions are met
+                        } else {
+                            unloadItemsButton.style.display = 'none'; // Hide otherwise
+                        }
+                    }, 1000); // Check every second
+
+                    unloadItemsButton.addEventListener('click', () => {
+                        clearInterval(proximityCheckInterval); // Stop checking proximity after unloading
+                    });
+                }
             } else {
                 console.error('Failed to fetch rescuer location');
             }
@@ -468,79 +552,99 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Set the current task ID
             currentTaskId = row.getAttribute('data-task-id');
-            currentTaskIdentifier = row.getAttribute('data-offer-id');
+            currentTaskIdentifier = row.getAttribute('data-offer-id') || row.getAttribute('data-request-id');
             type = row.getAttribute('data-type');
 
             completeTaskBtn.disabled = true;
 
-            // Check if the items for this offer/task have been loaded by the rescuer
-            fetch(`/rescuer_form/check_if_loaded?rescuer_id=${rescuerId}&offer_id=${currentTaskIdentifier}`)
-                .then(response => response.json())
-                .then(result => {
-                    if (result.alreadyLoaded) {
-                        // If the items are loaded, enable the "Complete Task" button
-                        completeTaskBtn.disabled = false;
-                        cancelTaskBtn.disabled = true; // Disable the "Cancel Task" button
-                    } else {
-                        // If not loaded, keep the button disabled
-                        completeTaskBtn.disabled = true;
-                    }
-                })
-                .catch(error => console.error('Error checking if items are loaded:', error));
+            if (type === 'Offer') {
+                // Check if the items for this offer/task have been loaded by the rescuer
+                fetch(`/rescuer_form/check_if_loaded?rescuer_id=${rescuerId}&offer_id=${currentTaskIdentifier}`)
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.alreadyLoaded) {
+                            // If the items are loaded, enable the "Complete Task" button
+                            completeTaskBtn.disabled = false;
+                            cancelTaskBtn.disabled = true; // Disable the "Cancel Task" button
+                        } else {
+                            // If not loaded, keep the button disabled
+                            completeTaskBtn.disabled = true;
+                        }
+                    })
+                    .catch(error => console.error('Error checking if items are loaded:', error));
+            } else if (type === 'Request') {
+                // Check if items from the request have been unloaded by the rescuer
+                fetch(`/rescuer_form/check_if_unloaded?rescuer_id=${rescuerId}&request_id=${currentTaskIdentifier}`)
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.alreadyUnloaded) {
+                            completeTaskBtn.disabled = false;
+                            cancelTaskBtn.disabled = true; // Disable "Cancel Task" button for unloaded items
+                        } else {
+                            completeTaskBtn.disabled = true;
+                        }
+                    })
+                    .catch(error => console.error('Error checking if items are unloaded:', error));
+            }
         }
+
     });
 
     // Handle "Complete Task" button click
-completeTaskBtn.addEventListener('click', function () {
-    if (!currentTaskIdentifier) {
-        console.error('No task selected');
-        return;
-    }
-
-    const row = document.querySelector(`tr[data-offer-id="${currentTaskIdentifier}"]`);
-
-    // 1. Send request to update the task status and offer status in the backend
-    fetch('/tasks/complete_task', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            task_id: currentTaskId,
-            offer_id: currentTaskIdentifier,
-            rescuer_id: rescuerId
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // 2. Remove the row from the table
-            if (row) {
-                row.remove(); // Removes the task row from the table
-            }
-
-            // 3. Show success message
-            Swal.fire({
-                title: 'Success!',
-                text: 'Task and Offer have been marked as completed!',
-                icon: 'success',
-                confirmButtonText: 'OK'
-            });
-
-            // Optionally, disable the "Complete Task" button after the row is removed
-            completeTaskBtn.disabled = true;
-        } else {
-            Swal.fire({
-                title: 'Error!',
-                text: data.message,
-                icon: 'error',
-                confirmButtonText: 'OK'
-            });
-            console.error('Failed to complete the task:', data.message);
+    completeTaskBtn.addEventListener('click', function () {
+        if (!currentTaskIdentifier) {
+            console.error('No task selected');
+            return;
         }
-    })
-    .catch(error => console.error('Error completing task:', error));
-});
+
+        const row = document.querySelector(`tr[data-offer-id="${currentTaskIdentifier}"], tr[data-request-id="${currentTaskIdentifier}"]`);
+
+        // 1. Send request to update the task status (and offer or request) in the backend
+        const url = type === 'Offer' ? '/tasks/complete_offer_task' : '/tasks/complete_request_task';
+
+        // 1. Send request to update the task status and offer status in the backend
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                task_id: currentTaskId,
+                offer_id: type === 'Offer' ? currentTaskIdentifier : null,
+                request_id: type === 'Request' ? currentTaskIdentifier : null,
+                rescuer_id: rescuerId
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // 2. Remove the row from the table
+                    if (row) {
+                        row.remove(); // Removes the task row from the table
+                    }
+
+                    // 3. Show success message
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Task and associated action have been marked as completed!',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
+
+                    // Optionally, disable the "Complete Task" button after the row is removed
+                    completeTaskBtn.disabled = true;
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: data.message,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                    console.error('Failed to complete the task:', data.message);
+                }
+            })
+            .catch(error => console.error('Error completing task:', error));
+    });
 
 
 
