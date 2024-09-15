@@ -40,6 +40,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 atBaseTd.textContent = product.at_base;
                 tr.appendChild(atBaseTd);
 
+                const onVehiclesTd = document.createElement('td');
+                onVehiclesTd.textContent = product.on_vehicles;  // Add this column
+                tr.appendChild(onVehiclesTd);
+
                 productTableBody.appendChild(tr);
             });
 
