@@ -3,7 +3,6 @@ const router = express.Router();
 
 // Route to get the current rescuer's location
 router.get('/get_rescuer_location', (req, res) => {
-    console.log('Session data:', req.session);  // This should now show { id: 5, username: 'Alex', user_type: 2 }
     
     if (!req.session.user) {  
         return res.status(403).json({ success: false, message: 'Unauthorized' });

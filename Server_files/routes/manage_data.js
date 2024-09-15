@@ -302,6 +302,272 @@ router.get('/get_products', (req, res) => {
 });
 
 
+// Route to fetch warehouse stock
+router.get('/get_stock', (req, res) => {
+    const query = `
+        SELECT item_name, quantity
+        FROM item
+    `;
+
+    req.db.query(query, (error, results) => {
+        if (error) {
+            console.error('Error fetching warehouse stock:', error);
+            return res.status(500).json({ success: false, message: 'Error fetching warehouse stock.' });
+        }
+        res.json({ success: true, stock: results });
+    });
+});
+
+
+// Route to handle rescuer loading an item
+router.post('/load_item', (req, res) => {
+    const { item_name, quantity } = req.body;
+    const userId = req.session.user.id; // Getting user_id from session data
+
+    // Query to fetch the rescuer_id from the rescuer table using the user_id
+    const getRescuerIdSql = `
+        SELECT rescuer_id 
+        FROM rescuer 
+        WHERE user_id = ?
+    `;
+
+    // Check if the item already exists in the rescuer's load
+    const checkLoadQuery = `
+        SELECT quantity 
+        FROM rescuer_load 
+        WHERE rescuer_id = ? AND item_name = ?
+        `;
+
+    // Deduct item from warehouse and add to rescuer_load table
+    const deductItemSql = `
+        UPDATE item 
+        SET quantity = quantity - ?
+        WHERE item_name = ? 
+    `;
+
+    //Add the item to rescuer_load    
+    const addToRescuerLoadSql = `
+        INSERT INTO rescuer_load (rescuer_id, item_name, quantity)
+        VALUES (?, ?, ?)
+    `;
+
+    // Start by fetching the rescuer_id
+    req.db.query(getRescuerIdSql, [userId], (err, result) => {
+        if (err || result.length === 0) {
+            console.error('Error fetching rescuer ID:', err);
+            return res.status(500).json({ success: false, message: 'Failed to fetch rescuer ID' });
+        }
+
+        const rescuerId = result[0].rescuer_id;
+
+        // Now deduct item from database
+        req.db.query(deductItemSql, [quantity, item_name], (err, result) => {
+            if (err || result.affectedRows === 0) {
+                console.error('Error deducting item:', err);
+                return res.status(400).json({ success: false, message: 'Insufficient stock or error updating warehouse.' });
+            }   
+
+            req.db.query(checkLoadQuery, [rescuerId, item_name], (err, result) => { 
+                if (err) {
+                    console.error('Error checking rescuer load:', err);
+                    return res.status(500).json({ success: false, message: 'Failed to check load data' });
+                }
+        
+                if (result.length > 0) {
+                    // If the item already exists, update the quantity
+                    const currentQuantity = result[0].quantity;
+                    const newQuantity = parseInt(currentQuantity, 10) + parseInt(quantity, 10);
+                    
+
+                    const updateQuery = 'UPDATE rescuer_load SET quantity = ? WHERE rescuer_id = ? AND item_name = ?';
+                    req.db.query(updateQuery, [newQuantity, rescuerId, item_name], (err) => {
+                        if (err) {
+                            console.error('Error updating rescuer load:', err);
+                            return res.status(500).json({ success: false, message: 'Failed to update load data' });
+                        }
+        
+                        res.json({ success: true, message: 'Item quantity updated in load' });
+                    });
+                } else {
+                    // If the item doesn't exist, insert a new record
+                    const insertQuery = 'INSERT INTO rescuer_load (rescuer_id, item_name, quantity) VALUES (?, ?, ?)';
+                    req.db.query(insertQuery, [rescuerId, item_name, quantity], (err) => {
+                        if (err) {
+                            console.error('Error inserting into rescuer load:', err);
+                            return res.status(500).json({ success: false, message: 'Failed to load item' });
+                        }
+        
+                        res.json({ success: true, message: 'Item loaded into rescuer load' });
+                    });
+                }
+            });
+        });
+    });
+});    
+
+
+// Route to handle unloading an item
+router.post('/unload_item', (req, res) => {
+    const { itemName, quantity } = req.body;
+
+    // Check if the user is logged in
+    if (!req.session.user) {
+        return res.status(403).json({ success: false, message: 'Unauthorized' });
+    }
+
+    const userId = req.session.user.id;
+
+    // First, get the rescuer_id using the user_id
+    const getRescuerIdSql = 'SELECT rescuer_id FROM rescuer WHERE user_id = ?';
+
+    req.db.query(getRescuerIdSql, [userId], (err, result) => {
+        if (err) {
+            console.error('Error fetching rescuer_id:', err);
+            return res.status(500).json({ success: false, message: 'Server error' });
+        }
+
+        if (result.length === 0) {
+            return res.status(404).json({ success: false, message: 'Rescuer not found for this user' });
+        }
+
+        const rescuerId = result[0].rescuer_id;
+
+    // First, get the current quantity of the item from the rescuer's load
+    const getLoadQuery = 'SELECT quantity FROM rescuer_load WHERE rescuer_id = ? AND item_name = ?';
+    
+    req.db.query(getLoadQuery, [rescuerId, itemName], (err, result) => {
+        if (err) {
+            console.error('Error fetching rescuer load:', err);
+            return res.status(500).json({ success: false, message: 'Failed to fetch load data' });
+        }
+
+        if (result.length === 0) {
+            return res.status(404).json({ success: false, message: 'Item not found in rescuer load' });
+        }
+
+        const currentQuantity = result[0].quantity;
+        const newQuantity = currentQuantity - quantity;
+
+        if (newQuantity > 0) {
+            // Update the quantity if it's still greater than 0
+            const updateQuery = 'UPDATE rescuer_load SET quantity = ? WHERE rescuer_id = ? AND item_name = ?';
+            req.db.query(updateQuery, [newQuantity, rescuerId, itemName], (err) => {
+                if (err) {
+                    console.error('Error updating rescuer load:', err);
+                    return res.status(500).json({ success: false, message: 'Failed to update load data' });
+                }
+            });
+        } else {
+            // Delete the item from the rescuer's load if the quantity is 0 or less
+            const deleteQuery = 'DELETE FROM rescuer_load WHERE rescuer_id = ? AND item_name = ?';
+            req.db.query(deleteQuery, [rescuerId, itemName], (err) => {
+                if (err) {
+                    console.error('Error deleting item from rescuer load:', err);
+                    return res.status(500).json({ success: false, message: 'Failed to delete item from load' });
+                }
+            });
+        }
+    });
+
+            // 2. Update item table to add back the quantity
+            const updateItemSql = `
+                UPDATE item
+                SET quantity = quantity + ?
+                WHERE item_name = ?`;
+
+            req.db.query(updateItemSql, [quantity, itemName], (err, result) => {
+                if (err) {
+                    console.error('Error updating item quantity:', err);
+                    return res.status(500).json({ success: false, message: 'Failed to update item quantity' });
+                }
+
+                // Everything is successful
+                res.json({ success: true, message: 'Item unloaded successfully' });
+            });
+        });
+    });
+
+
+
+// Route to handle unloading all items
+router.post('/unload_all_items', (req, res) => {
+    // Check if the user is logged in
+    if (!req.session.user) {
+        return res.status(403).json({ success: false, message: 'Unauthorized' });
+    }
+
+    const userId = req.session.user.id; // Get user ID from session
+
+    // First, get the rescuer_id using the user_id
+    const getRescuerIdSql = 'SELECT rescuer_id FROM rescuer WHERE user_id = ?';
+
+    req.db.query(getRescuerIdSql, [userId], (err, result) => {
+        if (err) {
+            console.error('Error fetching rescuer_id:', err);
+            return res.status(500).json({ success: false, message: 'Server error' });
+        }
+
+        if (result.length === 0) {
+            return res.status(404).json({ success: false, message: 'Rescuer not found for this user' });
+        }
+
+        const rescuerId = result[0].rescuer_id;
+
+        // 1. Fetch all items from the rescuer's load
+        const getLoadSql = 'SELECT item_name, quantity FROM rescuer_load WHERE rescuer_id = ?';
+
+        req.db.query(getLoadSql, [rescuerId], (err, loadResults) => {
+            if (err) {
+                console.error('Error fetching rescuer load:', err);
+                return res.status(500).json({ success: false, message: 'Failed to fetch rescuer load' });
+            }
+
+            if (loadResults.length === 0) {
+                return res.status(400).json({ success: false, message: 'No items to unload' });
+            }
+
+            // 2. Update item table for each load item
+            const updatePromises = loadResults.map(loadItem => {
+                const updateItemSql = `
+                    UPDATE item
+                    SET quantity = quantity + ?
+                    WHERE item_name = ?
+                `;
+                return new Promise((resolve, reject) => {
+                    req.db.query(updateItemSql, [loadItem.quantity, loadItem.item_name], (err, result) => {
+                        if (err) {
+                            console.error('Error updating item quantity:', err);
+                            return reject('Failed to update item quantity');
+                        }
+                        resolve();
+                    });
+                });
+            });
+
+            // 3. Once all updates are successful, clear the rescuer_load
+            Promise.all(updatePromises)
+                .then(() => {
+                    const clearLoadSql = 'DELETE FROM rescuer_load WHERE rescuer_id = ?';
+
+                    req.db.query(clearLoadSql, [rescuerId], (err, result) => {
+                        if (err) {
+                            console.error('Error clearing rescuer load:', err);
+                            return res.status(500).json({ success: false, message: 'Failed to clear rescuer load' });
+                        }
+
+                        // All items unloaded successfully
+                        res.json({ success: true, message: 'All items unloaded successfully' });
+                    });
+                })
+                .catch(error => {
+                    console.error(error);
+                    res.status(500).json({ success: false, message: 'Error unloading all items' });
+                });
+        });
+    });
+});
+
+
 
 module.exports = router;
 

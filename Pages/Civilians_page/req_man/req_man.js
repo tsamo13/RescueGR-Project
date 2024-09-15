@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Check if a product has been selected
         if (selectedProductInput.value === '' || quantityInput.value === '') {
-            Swal.fire('Please select a product and enter a quantity before submitting the form!');
+            Swal.fire('Please select a product before submitting the form!');
             return;
         }
 

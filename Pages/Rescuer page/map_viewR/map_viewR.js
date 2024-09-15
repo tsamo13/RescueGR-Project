@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const unloadButton = document.getElementById('unloadButton');
     let baseLatLng = null; // To store base marker's position
 
+
     viewLoadButton.addEventListener('click', function () {
         // Fetch rescuer load from the server
         fetch('/rescuer_form/get_rescuer_load') // Send the signed-in rescuer's ID
@@ -17,13 +18,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     // Populate the table with rescuer's load data
                     data.load.forEach(loadItem => {
-                        viewLoadTableBody.innerHTML += `
-                            <tr>
-                                <td>${loadItem.item_name}</td>
-                                <td>${loadItem.quantity}</td>
-                            </tr>
-                        `;
-                    });
+                        if (loadItem.quantity > 0) {
+                            viewLoadTableBody.innerHTML += `
+                                <tr>
+                                    <td>${loadItem.item_name}</td>
+                                    <td>${loadItem.quantity}</td>
+                                </tr>
+                            `;
+                        }
+                    });            
 
                     // Display the popup
                     viewLoadPopup.style.display = 'flex';
@@ -93,6 +96,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 .bindPopup('Base location')
                                 .openPopup();
 
+                            enableBaseButtons();    
                             fetchOffers();
                         } else {
                             console.error('No base location found.');
@@ -101,6 +105,22 @@ document.addEventListener('DOMContentLoaded', function () {
                     .catch(error => {
                         console.error('Error fetching base location:', error);
                     });
+
+            // Check distance to base
+            function enableBaseButtons(){
+                if (baseLatLng) {
+                    const distance = rescuerMarker.getLatLng().distanceTo(baseLatLng); // Distance in meters
+                    if (distance <= 100) {
+                        loadButton.disabled = false;
+                        unloadButton.disabled = false;
+
+                    } else {
+                        loadButton.disabled = true;
+                        unloadButton.disabled = true;
+                    }
+                }
+                return;
+            }    
 
                 // Fetch offers and display them on the map
                 function fetchOffers() {
@@ -654,6 +674,20 @@ completeTaskBtn.addEventListener('click', function () {
             .catch(error => console.error('Error updating rescuer availability:', error));
     }
 
+ // Check distance to base
+    if (baseLatLng) {
+        const distance = newLatLng.distanceTo(baseLatLng); // Distance in meters
+        console.log('Distance to base:', distance);
+        if (distance <= 100) {
+            loadButton.disabled = false;
+            unloadButton.disabled = false;
+
+        } else {
+            loadButton.disabled = true;
+            unloadButton.disabled = true;
+        }
+    }
+
     // Define a custom red marker icon
     var redIcon = L.icon({
         iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
@@ -708,12 +742,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const itemError = document.getElementById('item-error');  // Στοιχείο για το μήνυμα σφάλματος προϊόντος
     const quantityError = document.getElementById('quantity-error');  // Στοιχείο για μηνύματα λάθους ποσότητας (αν υπάρχει)
 
-    // Event listener for "Load Items" button to open the modal
-    loadButton.addEventListener('click', function () {
-        // Display the popup
-        loadItemsPopup.style.display = 'flex';
-    });
-
     // Function to deselect the selected row
     function deselectRow() {
         const selectedRow = loadTableBody.querySelector('tr.selected');
@@ -763,6 +791,58 @@ document.addEventListener('DOMContentLoaded', function () {
     const selectedItemInput = document.getElementById('selectedItem');
     const loadTableBody = document.querySelector('.load-table tbody');
 
+    // Event listener for "Load Items" button to open the modal
+    loadButton.addEventListener('click', function () {
+        // Display the popup
+        loadItemsPopup.style.display = 'flex';
+    
+    // Fetch database stock from the server
+    fetch('/manage_data/get_stock')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Clear the existing rows
+                loadTableBody.innerHTML = '';
+
+                // Loop through the stock data and populate the table
+                data.stock.forEach(item => {
+                    const row = document.createElement('tr');
+
+                    const itemNameCell = document.createElement('td');
+                    itemNameCell.textContent = item.item_name;
+                    row.appendChild(itemNameCell);
+
+                    const quantityCell = document.createElement('td');
+                    quantityCell.textContent = item.quantity;
+                    row.appendChild(quantityCell);
+
+                    // Append the row to the table body
+                    loadTableBody.appendChild(row);
+                });
+            } else {
+                console.error('Failed to load warehouse stock:', data.message);
+            }
+        })
+        .catch(error => console.error('Error fetching warehouse stock:', error));
+    });
+
+    // Event listener για την επιλογή γραμμής στον πίνακα
+    loadTableBody.addEventListener('click', function (event) {
+        const row = event.target.closest('tr');  // Παίρνει την κλικαρισμένη γραμμή
+
+        if (row) {
+            // Αφαιρεί την κλάση 'selected' από όλες τις γραμμές
+            Array.from(loadTableBody.getElementsByTagName('tr')).forEach(r => r.classList.remove('selected'));
+
+            // Προσθέτει την κλάση 'selected' στην κλικαρισμένη γραμμή
+            row.classList.add('selected');
+
+            // Ενημερώνει το πεδίο "Selected Item" με το όνομα του αντικειμένου από την επιλεγμένη γραμμή
+            const itemName = row.cells[0].textContent; // Πρώτη στήλη είναι το όνομα του αντικειμένου
+            selectedItemInput.value = itemName;
+        }
+    });
+    
     // Event listener για να καθαρίζεται το μήνυμα λάθους όταν ο χρήστης πληκτρολογεί στο πεδίο ποσότητας
     selectQuantityInput.addEventListener('input', function () {
         selectQuantityInput.setCustomValidity('');  // Καθαρισμός του μηνύματος λάθους
@@ -770,6 +850,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     loadSelectedItemButton.addEventListener('click', function () {
         let isValid = true;
+        const itemName = selectedItemInput.value;
+        const quantity = selectQuantityInput.value;
 
         // Check if an item is selected
         if (selectedItemInput.value.trim() === "") {
@@ -784,6 +866,12 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!selectQuantityInput.checkValidity()) {
             selectQuantityInput.reportValidity();  // Use browser's message for quantity
             isValid = false;
+        }
+
+        // Check if a product has been selected
+        if (selectedItemInput.value === '' && selectQuantityInput.value !== '') {
+            Swal.fire('Please select a product from the list above!');
+            return;
         }
 
         // Get the quantity from the selected row in the table
@@ -804,10 +892,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // If all is valid, proceed
         if (isValid) {
-            console.log('Product selected and valid quantity entered.');
-
-            // Proceed with the item load (your existing logic to handle the item load goes here)
-            // ...
+            const availableQuantity = parseInt(selectedRow.cells[1].textContent, 10);
+            // Send the data to the back-end to process the load item request
+        fetch('/manage_data/load_item', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                item_name: itemName,
+                quantity: quantity
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                selectedRow.cells[1].textContent = availableQuantity - quantity; // Update the quantity in the UI
+                Swal.fire({title: 'Success!', text:'Item loaded successfully!', icon: 'success', confirmButtonText: 'OK'});
+            } else {
+                Swal.fire('Failed to load the item. Please try again!');
+            }
+        })
+        .catch(error => console.error('Error loading item:', error));
 
             // Clear the form fields
             selectedItemInput.value = '';
@@ -817,8 +923,6 @@ document.addEventListener('DOMContentLoaded', function () {
             if (selectedRow) {
                 selectedRow.classList.remove('selected');
             }
-
-            console.log('Forms and table selection cleared.');
         }
     });
 });
@@ -837,7 +941,33 @@ document.addEventListener('DOMContentLoaded', function () {
     unloadButton.addEventListener('click', function () {
         // Εμφανίζει το παράθυρο
         unloadItemsPopup.style.display = 'flex';
+
+    // Fetch the rescuer's load from the back-end
+    fetch('/rescuer_form/get_rescuer_load')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                unloadTableBody.innerHTML = ''; // Clear the current table body
+                data.load.forEach(item => {
+                    if (item.quantity > 0) {  // Only show items with quantity greater than 0
+                        const row = document.createElement('tr');
+                        const itemNameCell = document.createElement('td');
+                        const quantityCell = document.createElement('td');
+
+                        itemNameCell.textContent = item.item_name;
+                        quantityCell.textContent = item.quantity;
+
+                        row.appendChild(itemNameCell);
+                        row.appendChild(quantityCell);
+
+                        unloadTableBody.appendChild(row);
+                    }
+                });
+            }
+        })
+        .catch(error => console.error('Error fetching rescuer load:', error));
     });
+
 
     // Λειτουργία για να αφαιρεθεί η επιλογή από την επιλεγμένη γραμμή
     function deselectUnloadRow() {
@@ -852,6 +982,7 @@ document.addEventListener('DOMContentLoaded', function () {
     closeUnloadPopupBtn.addEventListener('click', function () {
         unloadItemsPopup.style.display = 'none';
         deselectUnloadRow();  // Καλεί τη λειτουργία για να αφαιρεθεί η επιλογή
+        unloadSelectedItemInput.value = '';
         unloadQuantityInput.value = ''; // Καθαρίζει το πεδίο ποσότητας
     });
 
@@ -860,6 +991,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (event.target === unloadItemsPopup) {
             unloadItemsPopup.style.display = 'none';
             deselectUnloadRow();  // Καλεί τη λειτουργία για να αφαιρεθεί η επιλογή
+            unloadSelectedItemInput.value = '';
             unloadQuantityInput.value = ''; // Καθαρίζει το πεδίο ποσότητας
         }
     });
@@ -881,20 +1013,18 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Event listener για το κουμπί "Unload Item"
+    // Event listener for the "Unload Item" button
     unloadSelectedItemButton.addEventListener('click', function () {
         let isValid = true;
 
-        // Έλεγχος αν έχει επιλεχθεί αντικείμενο
-        if (unloadSelectedItemInput.value.trim() === "") {
-            unloadSelectedItemInput.setCustomValidity('Please select an item from the table above.');
-            unloadSelectedItemInput.reportValidity();  // Εμφάνιση μηνύματος σφάλματος μόνο όταν πατηθεί το κουμπί
-            isValid = false;
-        } else {
-            unloadSelectedItemInput.setCustomValidity('');  // Καθαρισμός του μηνύματος αν είναι έγκυρο
-        }
 
-        // Έλεγχος αν η ποσότητα είναι θετικός αριθμός
+        // Check if a product has been selected
+        if (unloadSelectedItemInput.value === '' && unloadQuantityInput.value !== '') {
+            Swal.fire('Please select a product from the list above!');
+            isValid = false;
+            return;
+        }
+        // Check if the quantity is a positive
         if (!unloadQuantityInput.checkValidity()) {
             unloadQuantityInput.reportValidity();  // Χρήση του browser μηνύματος για ποσότητα
             isValid = false;
@@ -916,25 +1046,47 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
-        // Εάν όλα είναι έγκυρα, προχωράμε
         if (isValid) {
-            console.log('Item selected and valid quantity entered for unloading.');
+            const itemName = unloadSelectedItemInput.value;
+            const quantity = unloadQuantityInput.value;
+            const availableQuantity = parseInt(selectedRow.cells[1].textContent, 10);
+    
+            // Send data to the backend
+            fetch('/manage_data/unload_item', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ itemName, quantity })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
 
-            // Υλοποίηση λογικής unload εδώ
-            // ...
+                    const newQuantity = availableQuantity - quantity; // Calculate the new quantity
 
-            // Καθαρισμός των πεδίων της φόρμας
-            unloadSelectedItemInput.value = '';
-            unloadQuantityInput.value = '';
-
-            // Αφαίρεση της επιλογής από την επιλεγμένη γραμμή του πίνακα
-            if (selectedRow) {
-                selectedRow.classList.remove('selected');
-            }
-
-            console.log('Forms and table selection cleared.');
-        }
-    });
+                    if (newQuantity <= 0) {
+                        
+                        selectedRow.remove();   // Remove the row if the new quantity is 0 or less
+                    } else {
+                    
+                        selectedRow.cells[1].textContent = newQuantity;    // Otherwise, just update the quantity in the UI
+                    }
+                    
+                    Swal.fire({title: 'Success!', text:'Item unloaded successfully!', icon: 'success', confirmButtonText: 'OK'});
+                    // Clear the form fields
+                    unloadSelectedItemInput.value = '';
+                    unloadQuantityInput.value = '';
+    
+                    // Deselect the selected row from the table
+                    selectedRow.classList.remove('selected');
+                } else {
+                    console.error('Failed to unload item:', data.message);
+                }
+            })
+            .catch(error => console.error('Error unloading item:', error));
+        };
+    });    
 });
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -948,17 +1100,49 @@ document.addEventListener('DOMContentLoaded', function () {
     // Αποθήκευση του αρχικού HTML για να το επαναφέρουμε
     const originalTableContent = unloadTableBody.innerHTML;
 
-    // Event listener για το κουμπί "Unload All Items"
-    unloadAllItemsButton.addEventListener('click', function () {
-        // Κρύβει όλα τα στοιχεία του πίνακα προσωρινά
-        unloadTableBody.innerHTML = '';
-        console.log('Όλα τα στοιχεία έχουν κρυφτεί προσωρινά.');
 
-        // Καθαρίζει τα πεδία της φόρμας
-        unloadSelectedItemInput.value = '';
-        unloadQuantityInput.value = '';
-        console.log('Τα πεδία "Selected Item" και "Quantity" καθαρίστηκαν.');
+// Event listener for the "Unload All Items" button
+unloadAllItemsButton.addEventListener('click', function () {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "This will unload all items from your vehicle.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, unload all!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Send request to unload all items
+            fetch('/manage_data/unload_all_items', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire('All items have been unloaded!');
+
+                    // Clear the table UI
+                    unloadTableBody.innerHTML = '';
+
+                    // Clear form fields
+                    unloadSelectedItemInput.value = '';
+                    unloadQuantityInput.value = '';
+                } else {
+                    Swal.fire('Failed!', data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error unloading all items:', error);
+                Swal.fire('Error!', 'An error occurred while unloading items.', 'error');
+            });
+        }
     });
+});
+
 
     // Όταν κλείνει το παράθυρο και ξανανοίγει, επαναφέρει τα δεδομένα
     unloadItemsPopup.addEventListener('click', function (event) {

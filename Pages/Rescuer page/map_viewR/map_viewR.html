@@ -53,11 +53,6 @@
 
     </div>
 
-
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="/map_viewR/map_viewR.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <!-- Pop-up window for "View Load" -->
     <div id="viewLoadPopup" class="modal1">
         <div class="modal-content1">
@@ -96,66 +91,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>Water Bottles</td>
-                                <td>150</td>
-                            </tr>
-                            <tr>
-                                <td>First Aid Kits</td>
-                                <td>50</td>
-                            </tr>
-                            <tr>
-                                <td>Blankets</td>
-                                <td>200</td>
-                            </tr>
-                            <tr>
-                                <td>Canned Food</td>
-                                <td>300</td>
-                            </tr>
-                            <tr>
-                                <td>Flashlights</td>
-                                <td>100</td>
-                            </tr>
-                            <tr>
-                                <td>Batteries</td>
-                                <td>500</td>
-                            </tr>
-                            <tr>
-                                <td>Sleeping Bags</td>
-                                <td>75</td>
-                            </tr>
-                            <tr>
-                                <td>Medical Gloves</td>
-                                <td>1000</td>
-                            </tr>
-                            <tr>
-                                <td>Hand Sanitizers</td>
-                                <td>250</td>
-                            </tr>
-                            <tr>
-                                <td>Tents</td>
-                                <td>40</td>
-                            </tr>
-                            <tr>
-                                <td>Raincoats</td>
-                                <td>60</td>
-                            </tr>
-                            <tr>
-                                <td>Face Masks</td>
-                                <td>5000</td>
-                            </tr>
-                            <tr>
-                                <td>Gas Canisters</td>
-                                <td>30</td>
-                            </tr>
-                            <tr>
-                                <td>Portable Stoves</td>
-                                <td>25</td>
-                            </tr>
-                            <tr>
-                                <td>Water Purification Tablets</td>
-                                <td>1000</td>
-                            </tr>
+                            
                         </tbody>
                     </table>
                 </div>
@@ -164,8 +100,8 @@
                 <div class="form-container">
                     <div class="form-row">
                         <label for="selectedItem" class="form-label">Selected Item:</label>
-                        <input type="text" id="selectedItem" class="form-input"  required>
-                        
+                        <input type="text" id="selectedItem" class="form-input"  required readonly>
+                          
                     </div>
 
                     <div class="form-row">
@@ -200,26 +136,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Ropes</td>
-                            <td>30</td>
-                        </tr>
-                        <tr>
-                            <td>Water Bottles</td>
-                            <td>100</td>
-                        </tr>
-                        <tr>
-                            <td>First Aid Kits</td>
-                            <td>50</td>
-                        </tr>
-                        <tr>
-                            <td>Blankets</td>
-                            <td>200</td>
-                        </tr>
-                        <tr>
-                            <td>Flashlights</td>
-                            <td>15</td>
-                        </tr>
+                        
                     </tbody>
                 </table>
             </div>
@@ -228,7 +145,7 @@
             <div class="form-container">
                 <div class="form-row">
                     <label for="unloadSelectedItem" class="form-label">Selected Item:</label>
-                    <input type="text" id="unloadSelectedItem" class="form-input" required>
+                    <input type="text" id="unloadSelectedItem" class="form-input" required, readonly>
                 </div>
 
                 <div class="form-row">
@@ -245,9 +162,9 @@
     </div>
 </div>
 
-        
-    
-
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="/map_viewR/map_viewR.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>    
 </body>
 
 </html>
