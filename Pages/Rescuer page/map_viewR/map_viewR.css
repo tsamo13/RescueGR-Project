@@ -172,7 +172,7 @@ body {
     color: #000080;
 }
 
-/* Προσαρμογή πλάτους στηλών */
+
 .a-table th:nth-child(1),
 .a-table td:nth-child(1) {
     width: 20%;
