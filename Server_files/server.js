@@ -38,12 +38,25 @@ app.use(session({
 app.use(bodyParser.json()); 
 app.use(bodyParser.urlencoded({ extended: true })); 
 
+// Add cache-control headers for static files
+const oneDay = 86400000;  // 1 day in milliseconds
+app.use(express.static(path.join(__dirname, '..', 'pages', 'Login and Reg Page'), {
+  maxAge: oneDay, // Cache static files for 1 day
+  setHeaders: function (res, path) {
+    if (path.endsWith('.css') || path.endsWith('.js')) {
+      res.setHeader('Cache-Control', 'public, max-age=604800');  // 7 days for JS and CSS
+    } else if (path.endsWith('.jpg') || path.endsWith('.png')) {
+      res.setHeader('Cache-Control', 'public, max-age=2592000'); // 30 days for images
+    }
+  }
+}));
 
-app.use(express.static(path.join(__dirname, '..', 'pages', 'Login and Reg Page')));
-app.use(express.static(path.join(__dirname, '..', 'pages', 'Admin page')));
-app.use(express.static(path.join(__dirname, '..', 'pages', 'Rescuer page')));
-app.use(express.static(path.join(__dirname, '..', 'pages', 'Civilians_page')));
-app.use(express.static(path.join(__dirname, '..', 'pages', 'Sign_up page')));
+
+app.use(express.static(path.join(__dirname, '..', 'pages', 'Login and Reg Page'), { maxAge: oneDay }));
+app.use(express.static(path.join(__dirname, '..', 'pages', 'Admin page'), { maxAge: oneDay }));
+app.use(express.static(path.join(__dirname, '..', 'pages', 'Rescuer page'), { maxAge: oneDay }));
+app.use(express.static(path.join(__dirname, '..', 'pages', 'Civilians_page'), { maxAge: oneDay }));
+app.use(express.static(path.join(__dirname, '..', 'pages', 'Sign_up page'), { maxAge: oneDay }));
 
 // Redirect root path to the login page
 app.get('/', (req, res) => {
