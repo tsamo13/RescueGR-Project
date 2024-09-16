@@ -1,4 +1,3 @@
-// JavaScript to handle redirection to the civilian page
 const params = new URLSearchParams(window.location.search);
 const username = params.get('username');
 
@@ -44,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             if (data.success) {
                 // Populate categories
-                categoryList.innerHTML = ''; // Clear any existing categories
+                categoryList.innerHTML = ''; 
                 data.categories.forEach(category => {
                     const li = document.createElement('li');
                     li.classList.add('category-item');
@@ -53,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
     
                 // Populate products
-                productTableBody.innerHTML = ''; // Clear any existing products
+                productTableBody.innerHTML = ''; 
                 data.items.forEach(item => {
                     const tr = document.createElement('tr');
     
@@ -194,7 +193,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    historyTableBody.innerHTML = ''; // Clear existing table rows
+                    historyTableBody.innerHTML = ''; 
 
                     data.requests.forEach(request => {
                         const row = document.createElement('tr');

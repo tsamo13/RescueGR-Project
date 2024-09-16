@@ -57,7 +57,7 @@ body {
     display: flex;
     justify-content: space-between;
     padding: 50px;
-    gap: 20px; /* Μειωμένο κενό μεταξύ chart και φόρμας */
+    gap: 20px; 
 }
 
 .chart-container {
@@ -67,8 +67,8 @@ body {
 }
 
 .form-container {
-    width: 20%; /* Μικρότερο πλάτος φόρμας */
-    padding: 30px; /* Μικρότερο padding */
+    width: 20%; 
+    padding: 30px; 
     background-color: #d5f2fc;
     border: 2.2px solid #000080;
     border-radius: 10px;
@@ -81,7 +81,7 @@ body {
     font-weight: bold;
     color: #000080;
     display: block;
-    margin-bottom: 8px; /* Μειωμένο κενό μεταξύ label και input */
+    margin-bottom: 8px; 
     margin-left: 20%;
     margin-top: 10px;
     
@@ -89,11 +89,11 @@ body {
 
 .form-container input {
     width: 50%;
-    padding: 6px; /* Μικρότερα πεδία εισαγωγής */
-    margin-bottom: 15px; /* Μειωμένο κενό μεταξύ πεδίων */
+    padding: 6px; 
+    margin-bottom: 15px; 
     border: 2px solid #ccc;
     border-radius: 5px;
-    font-size: 0.9em; /* Μικρότερο μέγεθος γραμματοσειράς */
+    font-size: 0.9em; 
     margin-left: 30% ;
 }
 
@@ -101,9 +101,9 @@ body {
     background-color: #FF7F50;
     border: none;
     color: white;
-    padding: 8px 16px; /* Μικρότερο κουμπί */
+    padding: 8px 16px; 
     cursor: pointer;
-    font-size: 0.9em; /* Μικρότερο μέγεθος γραμματοσειράς */
+    font-size: 0.9em; 
     border-radius: 5px;
     width: 40%;
     margin-left: 30%;

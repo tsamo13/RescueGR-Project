@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RescueGR - Map View</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <link rel="stylesheet" href="/map_viewR/map_viewR.css" /> <!-- Προσθήκη του νέου CSS αρχείου -->
+    <link rel="stylesheet" href="/map_viewR/map_viewR.css" />
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
 </head>
 
@@ -24,8 +24,8 @@
     <div class="content-wrapper">
         <div class="map-control-container">
             <button id="viewLoadButton" class="view-load-btn">View Load</button>
-            <button id="loadButton" class="load-btn" disabled>Load Items</button> <!-- New Load button -->
-            <button id="unloadButton" class="unload-btn" disabled>Unload Items</button> <!-- New Unload button -->
+            <button id="loadButton" class="load-btn" disabled>Load Items</button>
+            <button id="unloadButton" class="unload-btn" disabled>Unload Items</button> 
         </div>
         <div id="map"></div>
         <div class="table-wrapper">
@@ -42,11 +42,10 @@
                     </tr>
                 </thead>
                 <tbody id="tasks-table-body">
-                    <!-- Εδώ θα προστεθούν δυναμικά τα tasks από τον server -->
+                   
                 </tbody>
             </table>
 
-            <!-- Προσθήκη κουμπιών κάτω από τον πίνακα -->
             <button id="completeTaskBtn" class="complete-task-btn" disabled>Complete task</button>
             <button id="cancelTaskBtn" class="cancel-task-btn" disabled>Cancel task</button>
         </div>
@@ -68,7 +67,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Τα δεδομένα θα προστεθούν δυναμικά εδώ -->
+
                         </tbody>
                     </table>
                 </div>

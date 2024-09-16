@@ -49,32 +49,5 @@ router.post('/sign_up', async (req, res) => {
     }
 });
 
-/*
-
-router.get('/locations', (req, res) => {
-    const db = req.db;
-    const sql = 'SELECT name, ST_AsText(location) as location FROM user WHERE user_type = 3'; // Assuming user_type = 3 represents civilians
-
-    db.query(sql, (err, results) => {
-        if (err) {
-            console.error('Error fetching locations:', err);
-            return res.status(500).json({ success: false, message: 'Database error' });
-        }
-
-        // Transform the location into readable latitude and longitude
-        const locations = results.map(row => {
-            const locationMatch = row.location.match(/POINT\(([^ ]+) ([^ ]+)\)/);
-            return {
-                name: row.name,
-                longitude: parseFloat(locationMatch[1]),
-                latitude: parseFloat(locationMatch[2])
-            };
-        });
-
-        res.json({ success: true, locations });
-    });
-});
-
-*/
 
 module.exports = router;

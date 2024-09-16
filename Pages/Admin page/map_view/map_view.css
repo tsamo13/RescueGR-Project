@@ -45,10 +45,10 @@ body {
 }
 
 #map {
-    height: 550px; /* Κράτα το ύψος του χάρτη όπως επιθυμείς */
-    width: 950px;    /* Κράτα το πλάτος του χάρτη όπως επιθυμείς */
+    height: 550px; 
+    width: 950px;    
     margin: 0 auto;
-    border: 1px solid #ccc; /* Προαιρετικό: Για να βάλεις ένα περίγραμμα γύρω από τον χάρτη */
+    border: 1px solid #ccc; 
 }
 
 .logout-button {

@@ -51,7 +51,7 @@ body {
     padding-top: 0px;
     text-align: center;
     padding-right: 70px;
-    padding-left: 70px; /* Adjusted for left padding */
+    padding-left: 70px; 
 }
 
 .form-container {
@@ -145,11 +145,11 @@ textarea {
 
 .announcements-container {
     width: 40%;
-    margin-left: 20px; /* Spacing between form and announcements */
+    margin-left: 20px; 
 }
 
 .announcements-title {
-    color: #000080; /* Matching the color of "Create Announcements" */
+    color: #000080; 
     font-size: 1.8em;
     margin-bottom: 10px;
 }
@@ -158,7 +158,7 @@ textarea {
     width: 100%;
     border-collapse: collapse;
     background-color: #ffffff;
-    margin-bottom: 15px; /* Space for the Delete button */
+    margin-bottom: 15px; 
 }
 
 .announcements-table th,
@@ -179,7 +179,7 @@ textarea {
 }
 
 .announcements-table tbody tr.selected {
-    background-color: #87CEEB; /* A slightly darker blue for selected rows */
+    background-color: #87CEEB; 
 }
 
 .delete-btn {

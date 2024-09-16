@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RescueGR - Create Announcements</title>
-    <link rel="stylesheet" href="/cr_an/cr_an.css"> <!-- Σύνδεση με το cr_an.css -->
-    <!-- Include SweetAlert2 CSS -->
+    <link rel="stylesheet" href="/cr_an/cr_an.css"> 
+   
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
 </head>
 <body>
     <div class="header-container">
-        <h1><b>Create Announcements</b></h1> <!-- Τίτλος της σελίδας -->
+        <h1><b>Create Announcements</b></h1> 
         <img src="/wareh_man/logo.ico" alt="Logo" class="logo">
     </div>
 
@@ -29,12 +29,12 @@
                 </div>
                 <div class="form-group">
                     <label for="description">Description:</label>
-                    <textarea id="description" name="description"></textarea> <!-- Το required αφαιρέθηκε για να γίνει προαιρετικό -->
+                    <textarea id="description" name="description"></textarea> 
                 </div>
                 <div class="form-group">
                     <label for="productSelect">Select Product:</label>
-                    <select id="productSelect" name="product" size="5" required> <!-- Προστέθηκε το required για να γίνει υποχρεωτικό -->
-                        <!-- Προϊόντα θα προστεθούν από το JavaScript -->
+                    <select id="productSelect" name="product" size="5" required> 
+                        
                     </select>
                     <input type="text" id="productSearch" placeholder="Search for a product..." onkeyup="filterProducts()">
                 </div>

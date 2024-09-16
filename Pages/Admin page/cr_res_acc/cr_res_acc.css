@@ -46,10 +46,10 @@ body {
 
 .content-container {
     display: flex;
-    justify-content: flex-start; /* Ευθυγράμμιση προς τα αριστερά */
+    justify-content: flex-start; 
     align-items: flex-start;
     padding-top: 10px;
-    gap: 90px; /* Μειώνει το κενό μεταξύ της φόρμας και της εικόνας */
+    gap: 90px; 
     padding-left: 300px;
 }
 
@@ -62,14 +62,14 @@ body {
 }
 
 .image-wrapper {
-    margin-left: 0px; /* Αφαιρέθηκε το περιθώριο για να πλησιάσει η εικόνα στη φόρμα */
+    margin-left: 0px; 
 }
 
 .rescuer-image {
     border-radius: 5px;
-    max-width: 70%; /* Μείωση του μεγέθους της εικόνας στο 70% */
+    max-width: 70%; 
     height: auto;
-    box-shadow: 0px 0px 15px 5px #FF7F50; /* Πλαίσιο που μοιάζει με αυτό στην admin page */
+    box-shadow: 0px 0px 15px 5px #FF7F50; 
 }
 
 form {

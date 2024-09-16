@@ -1,5 +1,3 @@
-// JavaScript to handle 'Load Products' button click
-
 const params = new URLSearchParams(window.location.search);
 const username = params.get('username');
 let allItems = [];                          // Global storage for all items
@@ -161,19 +159,19 @@ document.getElementById('clearProductsBtn').addEventListener('click', function()
 // Function to clear the category list in the front-end
 function clearCategoryList() {
     const categoryList = document.querySelector('.category-list');
-    categoryList.innerHTML = ''; // Clear the list
+    categoryList.innerHTML = ''; 
 }
 
 // Function to clear the products table in the front-end
 function clearProductTable() {
     const productTableBody = document.querySelector('.product-table tbody');
-    productTableBody.innerHTML = ''; // Clear all products
+    productTableBody.innerHTML = ''; 
 }
 
 // Event listener for the "Add Category" button to show the modal
 document.getElementById('addCategoryBtn').addEventListener('click', function() {
     const errorMessage = document.getElementById('errorMessage');
-    errorMessage.style.display = 'none'; // Hide the error message when opening the modal
+    errorMessage.style.display = 'none'; 
     document.getElementById('addCategoryForm').reset();
     document.getElementById('addCategoryModal').style.display = 'flex';
 });

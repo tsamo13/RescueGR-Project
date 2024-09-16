@@ -1,4 +1,3 @@
-/* Reset some basic elements */
 body, h1, p {
     margin: 0;
     padding: 0;
@@ -113,7 +112,7 @@ input[type="password"]{
 
 .disaster-image {
     border-radius: 5px;
-    max-width: 70%; /* Μείωση του μεγέθους της εικόνας στο 70% */
+    max-width: 70%; 
     height: auto;
 }
 

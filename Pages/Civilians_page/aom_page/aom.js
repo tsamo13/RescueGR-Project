@@ -1,4 +1,3 @@
-// JavaScript to handle redirection to the civilian page
 const params = new URLSearchParams(window.location.search);
 const username = params.get('username');
 
@@ -118,7 +117,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 if (data.success) {
                     const historyTableBody = document.querySelector('.history-table tbody');
-                    historyTableBody.innerHTML = ''; // Clear existing table rows
+                    historyTableBody.innerHTML = ''; 
     
                     data.offers.forEach(offer => {
                         const row = document.createElement('tr');
@@ -174,7 +173,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     closeOfferPopupBtn.addEventListener('click', function() {
         makeOfferPopup.style.display = 'none';
-        // Κατά το κλείσιμο του παραθύρου "Make an Offer", αποεπιλέγουμε την επιλεγμένη γραμμή και την κάνουμε null
+        // When closing the "Make an Offer" window, deselect the selected line and make it null
         if (selectedRow) {
             selectedRow.classList.remove('selected');
             selectedRow = null;
@@ -184,7 +183,7 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('click', function(event) {
         if (event.target === makeOfferPopup) {
             makeOfferPopup.style.display = 'none';
-            // Κατά το κλείσιμο του παραθύρου "Make an Offer" με κλικ έξω, αποεπιλέγουμε την επιλεγμένη γραμμή και την κάνουμε null
+            // When closing the "Make an Offer" window by clicking outside, deselect the selected line and make it null
             if (selectedRow) {
                 selectedRow.classList.remove('selected');
                 selectedRow = null;
@@ -294,7 +293,7 @@ document.getElementById('cancelOfferButton').addEventListener('click', function(
 
     closeHistoryPopupBtn.addEventListener('click', function() {
         offersHistoryPopup.style.display = 'none';
-        // Κατά το κλείσιμο του παραθύρου "Offers History", αποεπιλέγουμε την επιλεγμένη γραμμή και την κάνουμε null
+        // When closing the "Offers History" window, deselect the selected line and make it null
         if (selectedHistoryRow) {
             selectedHistoryRow.classList.remove('selected');
             selectedHistoryRow = null;

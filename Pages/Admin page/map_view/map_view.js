@@ -113,36 +113,36 @@ var redIcon = L.icon({
 var squareIconRed = L.divIcon({
     className: 'custom-square-marker',
     html: '<div style="width: 15px; height: 15px; background-color: red; border: 2px solid #555;"></div>',
-    iconSize: [24, 24], // size of the icon
-    iconAnchor: [12, 12], // point of the icon which will correspond to marker's location
-    popupAnchor: [0, -12] // point from which the popup should open relative to the iconAnchor
+    iconSize: [24, 24], 
+    iconAnchor: [12, 12],
+    popupAnchor: [0, -12] 
 });
 
 
 var circleIconRed = L.divIcon({
     className: 'custom-circle-marker',
     html: '<div style="width: 15px; height: 15px; background-color: red; border-radius: 50%; border: 2px solid #555;"></div>',
-    iconSize: [24, 24], // size of the icon
-    iconAnchor: [12, 12], // point of the icon which will correspond to marker's location
-    popupAnchor: [0, -12] // point from which the popup should open relative to the iconAnchor
+    iconSize: [24, 24], 
+    iconAnchor: [12, 12], 
+    popupAnchor: [0, -12] 
 });
 
 
 var squareIconGreen = L.divIcon({
     className: 'custom-square-marker',
     html: '<div style="width: 15px; height: 15px; background-color: green; border: 2px solid #555;"></div>',
-    iconSize: [24, 24], // size of the icon
-    iconAnchor: [12, 12], // point of the icon which will correspond to marker's location
-    popupAnchor: [0, -12] // point from which the popup should open relative to the iconAnchor
+    iconSize: [24, 24], 
+    iconAnchor: [12, 12],
+    popupAnchor: [0, -12] 
 });
 
 
 var circleIconGreen = L.divIcon({
     className: 'custom-circle-marker',
     html: '<div style="width: 15px; height: 15px; background-color: green; border-radius: 50%; border: 2px solid #555;"></div>',
-    iconSize: [24, 24], // size of the icon
-    iconAnchor: [12, 12], // point of the icon which will correspond to marker's location
-    popupAnchor: [0, -12] // point from which the popup should open relative to the iconAnchor
+    iconSize: [24, 24], 
+    iconAnchor: [12, 12], 
+    popupAnchor: [0, -12] 
 });
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -176,8 +176,6 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             if (data.success) {
                 data.rescuers.forEach(rescuer => {
-                    // Ensure rescuer_id is correctly retrieved and used
-                    console.log('Rescuer ID:', rescuer.rescuer_id);  // Debugging log to ensure rescuer_id is present
 
                     // Add rescuer marker (vehicle marker) to the map
                     const rescuerMarker = L.marker([rescuer.lat, rescuer.lng], { icon: redIcon })
@@ -208,9 +206,6 @@ document.addEventListener('DOMContentLoaded', function() {
                                             <b>Accepted At:</b> ${offer.accepted_at ? new Date(offer.accepted_at).toLocaleString() : 'Not accepted'}<br>
                                             <b>Assigned Rescuer:</b> ${offer.assigned_rescuer_id ? offer.rescuer_username : 'Not assigned'}
                                         `);
-
-                                        // Log for debugging
-                                        console.log('Rescuer ID:', rescuer.rescuer_id, 'Offer Assigned Rescuer:', offer.assigned_rescuer_id);
 
                                         // Draw lines between rescuer and accepted offers
                                         if (offer.assigned_rescuer_id !== null && offer.assigned_rescuer_id == rescuer.rescuer_id) {
@@ -249,9 +244,6 @@ document.addEventListener('DOMContentLoaded', function() {
                                             <b>Accepted At:</b> ${request.accepted_at ? new Date(request.accepted_at).toLocaleString() : 'Not accepted'}<br>
                                             <b>Assigned Rescuer:</b> ${request.assigned_rescuer_id ? request.rescuer_username : 'Not assigned'}
                                         `);
-
-                                        // Log for debugging
-                                        console.log('Rescuer ID:', rescuer.rescuer_id, 'Request Assigned Rescuer:', request.assigned_rescuer_id);
 
                                         // Draw lines between rescuer and accepted requests
                                         if (request.assigned_rescuer_id !== null && request.assigned_rescuer_id == rescuer.rescuer_id) {

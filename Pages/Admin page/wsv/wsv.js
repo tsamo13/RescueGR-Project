@@ -1,4 +1,3 @@
-// JavaScript to handle redirection to the admin page
 const params = new URLSearchParams(window.location.search);
 const username = params.get('username');
 
