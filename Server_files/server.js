@@ -169,6 +169,9 @@ app.use('/offers', offerRoute);
 const rescuerformRoute = require('./routes/rescuer_form');
 app.use('/rescuer_form', rescuerformRoute);
 
+const serviceStatisticsRoute = require('./routes/service_statistics');
+app.use('/service_statistics', serviceStatisticsRoute);
+
 function ensureAuthenticated(req, res, next) {
   if (req.session && req.session.user) {
       return next();                  // User is authenticated, proceed to the next middleware
