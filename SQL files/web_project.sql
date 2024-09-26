@@ -130,3 +130,10 @@ quantity INT NOT NULL,
 FOREIGN KEY (rescuer_id) REFERENCES rescuer(rescuer_id)
 );
 
+CREATE TABLE unload_items_requests (
+    unload_items_request_id INT AUTO_INCREMENT PRIMARY KEY,
+    rescuer_id INT NOT NULL,
+    request_id INT NOT NULL,
+    FOREIGN KEY (rescuer_id) REFERENCES rescuer(rescuer_id),
+    FOREIGN KEY (request_id) REFERENCES request(request_id)
+);

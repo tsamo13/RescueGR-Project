@@ -12,16 +12,16 @@ router.get('/get_categories_items', (req, res) => {
     `;
 
 
-        req.db.query(itemsQuery, (err, items) => {
-            if (err) {
-                console.error('Error fetching items:', err);
-                return res.status(500).json({ success: false, message: 'Failed to fetch items' });
-            }
+    req.db.query(itemsQuery, (err, items) => {
+        if (err) {
+            console.error('Error fetching items:', err);
+            return res.status(500).json({ success: false, message: 'Failed to fetch items' });
+        }
 
-            // Send back both the categories and items
-            res.json({ success: true,items});
-        });
-    
+        // Send back both the categories and items
+        res.json({ success: true, items });
+    });
+
 });
 
 // Route to get the rescuer's load (along with their location)
@@ -69,7 +69,7 @@ router.post('/load_items', (req, res) => {
 
     // Check if the item already exists in the rescuer_load table for the rescuer
     const checkQuery = 'SELECT * FROM rescuer_load WHERE rescuer_id = ? AND item_name = ?';
-    req.db.query(checkQuery, [rescuer_id, item_name,offer_id], (err, result) => {
+    req.db.query(checkQuery, [rescuer_id, item_name, offer_id], (err, result) => {
         if (err) {
             console.error('Error checking for existing item in rescuer_load:', err);
             return res.status(500).json({ success: false, message: 'Server error while checking existing items.' });
@@ -110,7 +110,7 @@ router.get('/check_if_loaded', (req, res) => {
             console.error('Error checking load status:', err);
             return res.status(500).json({ success: false, message: 'Server error' });
         }
-        
+
 
         const alreadyLoaded = results[0].count > 0;
         res.json({ success: true, alreadyLoaded });
@@ -120,18 +120,21 @@ router.get('/check_if_loaded', (req, res) => {
 router.get('/check_if_unloaded', (req, res) => {
     const { rescuer_id, request_id } = req.query;
 
-    const checkQuery = 'SELECT COUNT(*) AS count FROM rescuer_load WHERE rescuer_id = ? AND request_id = ? AND quantity > 0';
+    // Check if an entry exists in unload_items_requests for this rescuer and request
+    const checkUnloadQuery = 'SELECT COUNT(*) AS count FROM unload_items_requests WHERE rescuer_id = ? AND request_id = ?';
 
-    req.db.query(checkQuery, [rescuer_id, request_id], (err, results) => {
+    req.db.query(checkUnloadQuery, [rescuer_id, request_id], (err, results) => {
         if (err) {
             console.error('Error checking if items are unloaded:', err);
             return res.status(500).json({ success: false, message: 'Server error while checking unloaded status' });
         }
 
+        // If an entry exists, it means the items have been unloaded
         const alreadyUnloaded = results[0].count > 0;
         res.json({ success: true, alreadyUnloaded });
     });
 });
+
 
 // Route to unload items for a specific request
 router.post('/unload_items', (req, res) => {
@@ -156,20 +159,38 @@ router.post('/unload_items', (req, res) => {
                         console.error('Error updating unloaded item quantity:', err);
                         return res.status(500).json({ success: false, message: 'Server error while updating unloaded item quantity.' });
                     }
-                    
-                    // If the quantity reaches zero, we can optionally remove the row
-                    if (loadedQuantity - quantity <= 0) {
-                        const deleteQuery = 'DELETE FROM rescuer_load WHERE rescuer_id = ? AND item_name = ?';
-                        req.db.query(deleteQuery, [rescuer_id, item_name], (err, deleteResult) => {
-                            if (err) {
-                                console.error('Error deleting unloaded items:', err);
-                                return res.status(500).json({ success: false, message: 'Server error while deleting unloaded items.' });
-                            }
-                            return res.json({ success: true, message: 'All items unloaded and entry removed.' });
-                        });
-                    } else {
-                        return res.json({ success: true, message: 'Items successfully unloaded and quantity updated.' });
-                    }
+
+                    // Insert into the new table unload_items_requests
+                    const insertUnloadQuery = 'INSERT INTO unload_items_requests (rescuer_id, request_id) VALUES (?, ?)';
+                    req.db.query(insertUnloadQuery, [rescuer_id, request_id], (err, insertResult) => {
+                        if (err) {
+                            console.error('Error inserting into unload_items_requests:', err);
+                            return res.status(500).json({ success: false, message: 'Server error while inserting into unload_items_requests.' });
+                        }
+
+                        // If the quantity reaches zero, we can optionally remove the row
+                        if (loadedQuantity - quantity <= 0) {
+                            const deleteQuery = 'DELETE FROM rescuer_load WHERE rescuer_id = ? AND item_name = ?';
+                            req.db.query(deleteQuery, [rescuer_id, item_name], (err, deleteResult) => {
+                                if (err) {
+                                    console.error('Error deleting unloaded items:', err);
+                                    return res.status(500).json({ success: false, message: 'Server error while deleting unloaded items.' });
+                                }
+
+                                // Insert into the new table deleted_items_load
+                                const insertDeletedItemQuery = 'INSERT INTO unload_items_requests (rescuer_id, request_id) VALUES (?, ?)';
+                                req.db.query(insertDeletedItemQuery, [rescuer_id, request_id], (err, insertResult) => {
+                                    if (err) {
+                                        console.error('Error inserting into deleted_items_load:', err);
+                                        return res.status(500).json({ success: false, message: 'Server error while inserting into unload_items_requests.' });
+                                    }
+                                    return res.json({ success: true, message: 'All items unloaded and entry removed.' });
+                                });
+                            });
+                        } else {
+                            return res.json({ success: true, message: 'Items successfully unloaded and quantity updated.' });
+                        }
+                    });
                 });
             } else {
                 return res.status(400).json({ success: false, message: 'Not enough items loaded to unload that quantity.' });
