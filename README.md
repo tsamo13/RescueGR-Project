@@ -69,5 +69,5 @@ This platform helps coordinate relief efforts in areas affected by natural disas
 - Offer surplus supplies to be picked up by rescuers.
 - View task statuses and updates.
 
-## Contributors
+# Contributors
 This project was developed by Angelos Tsamopoulos, Christos Karamanos and Nikos Belibasakis as part of the course "Programming & Systems on the World Wide Web" during the 2023-2024 academic year at the Department of Computer Engineering & Informatics (CEID).
